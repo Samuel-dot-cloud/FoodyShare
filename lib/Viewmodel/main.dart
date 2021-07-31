@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:food_share/Viewmodel/bottom_nav.dart';
 import 'package:food_share/screens/home_page.dart';
+import 'package:food_share/screens/login_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,11 +14,18 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Recipe Share App',
-      home: BottomNav(),
+      title: 'FoodyShare',
+      theme: ThemeData(
+        textTheme:
+            GoogleFonts.josefinSansTextTheme(Theme.of(context).textTheme),
+      ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const LoginScreen(),
+        'ForgotPassword': (context) => const ForgotPassword(),
+      },
     );
   }
 }
-
