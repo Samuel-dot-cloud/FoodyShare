@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:food_share/Viewmodel/bottom_nav.dart';
+import 'package:food_share/screens/forgot_password.dart';
 import 'package:food_share/screens/home_page.dart';
 import 'package:food_share/screens/login_screen.dart';
+import 'package:food_share/screens/sign_up_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
@@ -25,6 +27,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const LoginScreen(),
         'ForgotPassword': (context) => const ForgotPassword(),
+        'SignUp': (context) => const SignUpScreen(),
       },
     );
   }
