@@ -7,12 +7,22 @@ import 'package:food_share/widgets/background_image.dart';
 import 'package:food_share/widgets/rounded_button.dart';
 import 'package:food_share/widgets/text_input_field.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
 
   @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  final _usernameController = TextEditingController();
+  final _displayNameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    final myController = TextEditingController();
     return Stack(
       children: [
         const BackgroundImage(image: 'assets/images/img-6.jpg'),
@@ -73,38 +83,49 @@ class SignUpScreen extends StatelessWidget {
                 ),
                 Column(
                   children: [
-                    const TextInputField(
-                      icon: FontAwesomeIcons.user,
+                     TextInputField(
+                      icon: FontAwesomeIcons.at,
                       hint: 'Username',
+                      obscure: true,
+                      inputType: TextInputType.name,
+                      action: TextInputAction.next,
+                      controller: _usernameController,
+                    ),
+                    TextInputField(
+                      icon: FontAwesomeIcons.user,
+                      hint: 'Display name',
                       obscure: false,
                       inputType: TextInputType.name,
                       action: TextInputAction.next,
+                      controller: _displayNameController,
                     ),
-                    const TextInputField(
+                    TextInputField(
                       icon: FontAwesomeIcons.envelope,
                       hint: 'Email',
                       obscure: false,
                       inputType: TextInputType.emailAddress,
                       action: TextInputAction.next,
+                      controller: _emailController,
                     ),
-                    const TextInputField(
+                    TextInputField(
                       icon: FontAwesomeIcons.lock,
                       hint: 'Password',
                       obscure: true,
                       inputType: TextInputType.name,
                       action: TextInputAction.next,
-                    ),
-                    const TextInputField(
-                      icon: FontAwesomeIcons.lock,
-                      hint: 'Confirm Password',
-                      obscure: true,
-                      inputType: TextInputType.name,
-                      action: TextInputAction.next,
+                      controller: _passwordController,
                     ),
                     const SizedBox(
                       height: 25.0,
                     ),
-                    const RoundedButton(buttonName: 'Register'),
+                    RoundedButton(
+                      buttonName: 'Register',
+                      onPressed: () async {
+                        if(_usernameController.text != '' && _displayNameController.text != '' && _emailController.text != '' && _passwordController.text != '' ){
+                          
+                        }
+                      },
+                    ),
                     const SizedBox(
                       height: 30.0,
                     ),

@@ -1,7 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:food_share/Viewmodel/new_recipe.dart';
+import 'package:food_share/Viewmodel/new_recipe_page.dart';
 import 'package:food_share/screens/search_page.dart';
 import 'package:food_share/screens/user_profile.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';

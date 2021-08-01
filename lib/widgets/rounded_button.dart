@@ -3,10 +3,12 @@ import 'package:food_share/utils/pallete.dart';
 
 class RoundedButton extends StatelessWidget {
   final String buttonName;
+  final GestureTapCallback onPressed;
 
   const RoundedButton({
     Key? key,
     required this.buttonName,
+    required this.onPressed,
   }) : super(key: key);
 
   @override
@@ -20,7 +22,7 @@ class RoundedButton extends StatelessWidget {
         color: kBlue,
       ),
       child: TextButton(
-        onPressed: () {},
+        onPressed: onPressed,
         child: Text(
           buttonName,
           style: kBodyText.copyWith(fontWeight: FontWeight.bold),

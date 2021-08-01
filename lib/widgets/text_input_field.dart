@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/utils/pallete.dart';
 
-class TextInputField extends StatelessWidget {
+class TextInputField extends StatefulWidget {
   final IconData icon;
   final String hint;
   final bool obscure;
   final TextInputType inputType;
   final TextInputAction action;
+  final TextEditingController controller;
 
   const TextInputField({
     Key? key,
@@ -16,7 +16,14 @@ class TextInputField extends StatelessWidget {
     required this.obscure,
     required this.inputType,
     required this.action,
+    required this.controller,
   }) : super(key: key);
+
+  @override
+  State<TextInputField> createState() => _TextInputFieldState();
+}
+
+class _TextInputFieldState extends State<TextInputField> {
 
   @override
   Widget build(BuildContext context) {
@@ -41,18 +48,19 @@ class TextInputField extends StatelessWidget {
                   horizontal: 20.0,
                 ),
                 child: Icon(
-                  icon,
+                  widget.icon,
                   size: 28.0,
                   color: kWhite,
                 ),
               ),
-              hintText: hint,
+              hintText: widget.hint,
               hintStyle: kBodyText,
             ),
-            obscureText: obscure,
+            obscureText: widget.obscure,
+            controller: widget.controller,
             style: kBodyText,
-            keyboardType: inputType,
-            textInputAction: action,
+            keyboardType: widget.inputType,
+            textInputAction: widget.action,
           ),
         ),
       ),

@@ -5,9 +5,15 @@ import 'package:food_share/widgets/background_image.dart';
 import 'package:food_share/widgets/rounded_button.dart';
 import 'package:food_share/widgets/text_input_field.dart';
 
-class ForgotPassword extends StatelessWidget {
+class ForgotPassword extends StatefulWidget {
   const ForgotPassword({Key? key}) : super(key: key);
 
+  @override
+  State<ForgotPassword> createState() => _ForgotPasswordState();
+}
+
+class _ForgotPasswordState extends State<ForgotPassword> {
+  final _emailController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -54,17 +60,21 @@ class ForgotPassword extends StatelessWidget {
                       const SizedBox(
                         height: 20.0,
                       ),
-                      const TextInputField(
+                      TextInputField(
                         icon: FontAwesomeIcons.envelope,
                         hint: 'Email',
                         obscure: false,
                         inputType: TextInputType.emailAddress,
                         action: TextInputAction.done,
+                        controller: _emailController,
                       ),
                       const SizedBox(
                         height: 20.0,
                       ),
-                      const RoundedButton(buttonName: 'Send'),
+                      RoundedButton(
+                        buttonName: 'Send',
+                        onPressed: () {  },
+                      ),
                     ],
                   ),
                 ),

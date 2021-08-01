@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "863480703370",
+    "project_id": "foodyshare-2a84c",
+    "storage_bucket": "foodyshare-2a84c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:863480703370:android:56745bc8d6c339fe040073",
+        "android_client_info": {
+          "package_name": "com.samwahome.foodshare.food_share"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "863480703370-m37su8bvdo8jm35g0nuqpm5ea4n36gs2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCb1B3EMMRfLjhJCD7w3EBuyrtiVhR922Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "863480703370-m37su8bvdo8jm35g0nuqpm5ea4n36gs2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
