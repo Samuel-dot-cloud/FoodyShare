@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class AuthService {
-  FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Stream<User> get authStateChanges => _auth.authStateChanges();
 
   //Create Account
   Future<String> createAccount(String email, String password) async {
     try {
-      await auth.createUserWithEmailAndPassword(
+      await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -29,7 +31,7 @@ class AuthService {
   // Login user
   Future<String> loginUser(String email, String password) async {
     try {
-      await auth.signInWithEmailAndPassword(
+      await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -47,7 +49,7 @@ class AuthService {
   //Reset password
   Future<String> resetPassword(String email) async {
     try {
-      await auth.sendPasswordResetEmail(
+      await _auth.sendPasswordResetEmail(
         email: email,
       );
       return 'Reset email sent';
@@ -60,6 +62,6 @@ class AuthService {
 
   //Log out
   void logOut() {
-    auth.signOut();
+    _auth.signOut();
   }
 }

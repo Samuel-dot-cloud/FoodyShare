@@ -31,17 +31,14 @@ class _LoginScreenState extends State<LoginScreen> {
           body: isLoading == false
               ? Column(
                   children: [
-                    Flexible(
+                    const Flexible(
                       child: Center(
-                        child: GestureDetector(
-                          onTap: () => Navigator.pushNamed(context, 'home'),
-                          child: const Text(
-                            'FoodyShare',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 60.0,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        child: Text(
+                          'FoodyShare',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 60.0,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),

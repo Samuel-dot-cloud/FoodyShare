@@ -18,7 +18,7 @@ class _StartupViewState extends State<StartupView> {
   Widget build(BuildContext context) {
     Future.delayed(
         const Duration(
-          milliseconds: 3000,
+          milliseconds: 5000,
         ), () {
       if (auth.currentUser == null) {
         Navigator.pushAndRemoveUntil(

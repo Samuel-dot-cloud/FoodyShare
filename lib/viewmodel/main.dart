@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_share/Viewmodel/bottom_nav.dart';
-import 'package:food_share/screens/auth/authenticate.dart';
 import 'package:food_share/screens/auth/forgot_password.dart';
 import 'package:food_share/screens/auth/startup_view.dart';
-import 'package:food_share/services/auth_service.dart';
-import 'package:food_share/viewmodel/wrapper.dart';
 import 'package:food_share/screens/auth/login_screen.dart';
 import 'package:food_share/screens/auth/sign_up_screen.dart';
 import 'package:google_fonts/google_fonts.dart';

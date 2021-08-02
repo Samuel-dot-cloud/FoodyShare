@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -127,12 +129,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     RoundedButton(
                       buttonName: 'Register',
-                      onPressed: () {
+                      onPressed: () async {
                         setState(() {
                           isLoading = true;
                         });
                         if( _emailController.text != '' && _passwordController.text != '' ){
-                          AuthService().createAccount(_emailController.text, _passwordController.text).then((value) {
+                          AuthService().createAccount(_emailController.text, _passwordController.text).then((value) async {
+                            // final FirebaseAuth auth = FirebaseAuth.instance;
+                            // final User? user = auth.currentUser;
+                            // final uid = user!.uid;
+                            // await FirebaseFirestore.instance.collection('users').doc(uid).
                             if (value == 'Account created'){
                               setState(() {
                                 isLoading = false;
