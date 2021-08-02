@@ -1,8 +1,11 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/viewmodel/bottom_nav.dart';
 import 'package:food_share/widgets/background_image.dart';
 import 'package:food_share/widgets/rounded_button.dart';
 import 'package:food_share/widgets/text_input_field.dart';
@@ -19,6 +22,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _displayNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  bool isLoading = false;
+
+  // final AuthService _auth = AuthService();
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -28,7 +35,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         const BackgroundImage(image: 'assets/images/img-6.jpg'),
         Scaffold(
           backgroundColor: Colors.transparent,
-          body: SingleChildScrollView(
+          body: isLoading == false ? SingleChildScrollView(
             child: Column(
               children: [
                 SizedBox(
@@ -83,7 +90,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 Column(
                   children: [
-                     TextInputField(
+                    TextInputField(
                       icon: FontAwesomeIcons.at,
                       hint: 'Username',
                       obscure: true,
@@ -120,9 +127,45 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     RoundedButton(
                       buttonName: 'Register',
-                      onPressed: () async {
-                        if(_usernameController.text != '' && _displayNameController.text != '' && _emailController.text != '' && _passwordController.text != '' ){
-                          
+                      onPressed: () {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        if( _emailController.text != '' && _passwordController.text != '' ){
+                          AuthService().createAccount(_emailController.text, _passwordController.text).then((value) {
+                            if (value == 'Account created'){
+                              setState(() {
+                                isLoading = false;
+                              });
+                              Fluttertoast.showToast(
+                                  msg: value,
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0
+                              );
+
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const BottomNav()),
+                                      (route) => false);
+                            } else {
+                              setState(() {
+                                isLoading = false;
+                              });
+                              Fluttertoast.showToast(
+                                  msg: value,
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0
+                              );
+                            }
+                          });
                         }
                       },
                     ),
@@ -154,6 +197,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ],
                 ),
               ],
+            ),
+          ) : const Center(
+            child: CircularProgressIndicator(
+              backgroundColor: Colors.cyanAccent,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.yellow),
             ),
           ),
         ),
