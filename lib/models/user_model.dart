@@ -5,7 +5,6 @@ class CustomUser{
   final String email;
   final String photoUrl;
   final String bio;
-  final DateTime timeStamp;
 
   CustomUser({
     required this.id,
@@ -14,7 +13,6 @@ class CustomUser{
     required this.email,
     required this.photoUrl,
     required this.bio,
-    required this.timeStamp,
   });
 
 

@@ -26,8 +26,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _passwordController = TextEditingController();
 
   bool isLoading = false;
-
-  // final AuthService _auth = AuthService();
+  final usersRef = FirebaseFirestore.instance.collection('users');
+  final DateTime timestamp = DateTime.now();
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -135,10 +135,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         });
                         if( _emailController.text != '' && _passwordController.text != '' ){
                           AuthService().createAccount(_emailController.text, _passwordController.text).then((value) async {
-                            // final FirebaseAuth auth = FirebaseAuth.instance;
-                            // final User? user = auth.currentUser;
-                            // final uid = user!.uid;
-                            // await FirebaseFirestore.instance.collection('users').doc(uid).
+                            createUserInFirestore();
                             if (value == 'Account created'){
                               setState(() {
                                 isLoading = false;
@@ -213,5 +210,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ],
     );
+  }
+
+  createUserInFirestore() async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final uid = user!.uid;
+
+    final DocumentSnapshot doc = await usersRef.doc(uid).get();
+    if(!doc.exists){
+      final String username = _usernameController.text;
+      final String displayName = _displayNameController.text;
+      final String email = _emailController.text;
+      usersRef.doc(uid).set({
+        'id': uid,
+        'username': username,
+        'email': email,
+        'photoUrl': '',
+        'displayName': displayName,
+        'bio': '',
+        'timestamp': timestamp
+      });
+    }
   }
 }
