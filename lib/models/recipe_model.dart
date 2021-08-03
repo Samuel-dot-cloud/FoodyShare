@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class RecipeModel {
   String title, writer, description;
   int cookingTime;

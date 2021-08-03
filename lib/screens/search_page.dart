@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:food_share/models/recipe_model.dart';
+import 'package:food_share/utils/pallete.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -8,12 +12,294 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  List<bool> optionSelected = [true, false, false];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text('Search page'),
+      backgroundColor: Colors.grey[50],
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0.0,
+        leading: const Icon(
+          Icons.sort,
+          color: Colors.black,
+        ),
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(
+              right: 16.0,
+            ),
+            child: Icon(
+              Icons.search,
+              color: Colors.black,
+            ),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildTextTitleVariation1('Explore section'),
+                  buildTextSubtitleVariation1(
+                      'A huge selection of tasty and delicious food recipes.'),
+                  const SizedBox(
+                    height: 32.0,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // option(
+                      //   text: 'Vegetables',
+                      //   image: 'assets/icons/salad.png',
+                      //   index: 0,
+                      // ),
+                      // const SizedBox(
+                      //   width: 8.0,
+                      // ),
+                      option(
+                        text: 'Meats',
+                        image: 'assets/icons/steak.png',
+                        index: 0,
+                      ),
+                      // const SizedBox(
+                      //   width: 8.0,
+                      // ),
+                      option(
+                        text: 'Sweets',
+                        image: 'assets/icons/candies.png',
+                        index: 1,
+                      ),
+                      // const SizedBox(
+                      //   width: 8.0,
+                      // ),
+                      option(
+                        text: 'Cakes',
+                        image: 'assets/icons/cake.png',
+                        index: 2,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 24.0,
+            ),
+            SizedBox(
+              height: 350.0,
+              child: ListView(
+                physics: const BouncingScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                children: buildRecipes(),
+              ),
+            ),
+            const SizedBox(
+              height: 16.0,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+              ),
+              child: Row(
+                children: [
+                  buildTextTitleVariation2('Popular', false),
+                  const SizedBox(
+                    width: 8.0,
+                  ),
+                  buildTextTitleVariation2('Food', true),
+                ],
+              ),
+            ),
+            Container(
+              height: 190.0,
+              child: PageView(
+                physics: const BouncingScrollPhysics(),
+                children: buildPopulars(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
+
+  Widget option(
+      {required String text, required String image, required int index}) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          optionSelected[index] = !optionSelected[index];
+        });
+      },
+      child: Container(
+        height: 40.0,
+        decoration: BoxDecoration(
+          color: optionSelected[index] ? kBlue : Colors.white,
+          borderRadius: const BorderRadius.all(
+            Radius.circular(
+              20.0,
+            ),
+          ),
+          boxShadow: [kBoxShadow],
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12.0,
+        ),
+        child: Row(
+          children: [
+            SizedBox(
+              height: 32.0,
+              width: 32.0,
+              child: Image.asset(
+                image,
+              ),
+            ),
+            const SizedBox(
+              width: 8.0,
+            ),
+            Text(
+              text,
+              style: TextStyle(
+                color: optionSelected[index] ? Colors.white : Colors.black,
+                fontSize: 14.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<Widget> buildRecipes() {
+    List<Widget> list = [];
+    for (var i = 0; i < RecipeModel.demoRecipe.length; i++) {
+      list.add(buildRecipe(RecipeModel.demoRecipe[i], i));
+    }
+    return list;
+  }
+
+  Widget buildRecipe(RecipeModel recipe, int index) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.all(
+          Radius.circular(
+            20.0,
+          ),
+        ),
+        boxShadow: [kBoxShadow],
+      ),
+      margin: EdgeInsets.only(
+        right: 16.0,
+        left: index == 0 ? 16.0 : 0,
+        bottom: 16.0,
+        top: 8.0,
+      ),
+      padding: const EdgeInsets.all(16.0),
+      width: 220.0,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: Hero(
+              tag: recipe.imgPath,
+              child: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(recipe.imgPath),
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 8.0,
+          ),
+          buildRecipeTitle(recipe.title),
+          buildTextSubtitleVariation2(recipe.description),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              buildCalories(recipe.servings.toString() + ' servings'),
+              const Icon(
+                FontAwesomeIcons.gratipay,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> buildPopulars() {
+    List<Widget> list = [];
+    for (var i = 0; i < RecipeModel.demoRecipe.length; i++) {
+      list.add(buildPopular(RecipeModel.demoRecipe[i]));
+    }
+    return list;
+  }
+}
+
+Widget buildPopular(RecipeModel recipe) {
+  return Container(
+    margin: const EdgeInsets.all(16.0),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: const BorderRadius.all(
+        Radius.circular(20.0),
+      ),
+      boxShadow: [kBoxShadow],
+    ),
+    child: Row(
+      children: [
+        Container(
+          height: 160.0,
+          width: 160.0,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(recipe.imgPath),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildRecipeTitle(recipe.title),
+                buildRecipeSubtitle(recipe.description),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    buildCalories(recipe.servings.toString() + ' servings'),
+                    const Icon(
+                      FontAwesomeIcons.gratipay,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }
