@@ -1,4 +1,6 @@
-class CustomUser{
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class CustomUser {
   final String id;
   final String username;
   final String displayName;
@@ -15,5 +17,14 @@ class CustomUser{
     required this.bio,
   });
 
-
+  factory CustomUser.fromDocument(DocumentSnapshot doc) {
+    return CustomUser(
+      id: doc['id'],
+      username: doc['username'],
+      displayName: doc['displayName'],
+      email: doc['email'],
+      photoUrl: doc['photoUrl'],
+      bio: doc['bio'],
+    );
+  }
 }

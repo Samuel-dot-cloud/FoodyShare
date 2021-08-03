@@ -25,7 +25,7 @@ class AuthService {
     } catch (e) {
       return 'Error occurred';
     }
-    return 'default';
+    return 'Error occurred';
   }
 
   // Login user
@@ -43,7 +43,7 @@ class AuthService {
         return 'Wrong password provided for that user.';
       }
     }
-    return 'default';
+    return 'Error occurred';
   }
 
   //Reset password
@@ -57,7 +57,6 @@ class AuthService {
       return 'Error occurred';
     }
 
-    return 'default';
   }
 
   //Log out

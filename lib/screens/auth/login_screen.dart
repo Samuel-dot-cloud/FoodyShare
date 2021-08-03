@@ -18,6 +18,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   bool isLoading = false;
 
@@ -43,83 +44,103 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        TextInputField(
-                          hint: 'Email',
-                          icon: FontAwesomeIcons.envelope,
-                          action: TextInputAction.next,
-                          inputType: TextInputType.emailAddress,
-                          obscure: false,
-                          controller: _emailController,
-                        ),
-                        TextInputField(
-                          hint: 'Password',
-                          icon: FontAwesomeIcons.lock,
-                          action: TextInputAction.done,
-                          inputType: TextInputType.name,
-                          obscure: true,
-                          controller: _passwordController,
-                        ),
-                        GestureDetector(
-                          onTap: () =>
-                              Navigator.pushNamed(context, 'ForgotPassword'),
-                          child: const Text(
-                            'Forgot Password?',
-                            style: kBodyText,
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          TextInputField(
+                            hint: 'Email',
+                            icon: FontAwesomeIcons.envelope,
+                            action: TextInputAction.next,
+                            inputType: TextInputType.emailAddress,
+                            obscure: false,
+                            controller: _emailController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please input your email address';
+                              }
+                              return null;
+                            },
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
                           ),
-                        ),
-                        const SizedBox(
-                          height: 25.0,
-                        ),
-                        RoundedButton(
-                          buttonName: 'Login',
-                          onPressed: () async {
-                            setState(() {
-                              isLoading = true;
-                            });
-                            if( _emailController.text != '' && _passwordController.text != '' ){
-                              AuthService().loginUser(_emailController.text, _passwordController.text).then((value) {
-                                if (value == 'Welcome'){
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                  Fluttertoast.showToast(
-                                      msg: value,
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.CENTER,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor: Colors.red,
-                                      textColor: Colors.white,
-                                      fontSize: 16.0
-                                  );
-                                  Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => const BottomNav()),
-                                          (route) => false);
-                                } else {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                  Fluttertoast.showToast(
-                                      msg: value,
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.CENTER,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor: Colors.red,
-                                      textColor: Colors.white,
-                                      fontSize: 16.0
-                                  );
-                                }
+                          TextInputField(
+                            hint: 'Password',
+                            icon: FontAwesomeIcons.lock,
+                            action: TextInputAction.done,
+                            inputType: TextInputType.name,
+                            obscure: true,
+                            controller: _passwordController,
+                            validator: (value) {
+                              if (value.trim().length < 6 || value.isEmpty) {
+                                return 'Please input password that is more than 6 characters long';
+                              }
+                              return null;
+                            },
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                          ),
+                          GestureDetector(
+                            onTap: () =>
+                                Navigator.pushNamed(context, 'ForgotPassword'),
+                            child: const Text(
+                              'Forgot Password?',
+                              style: kBodyText,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 25.0,
+                          ),
+                          RoundedButton(
+                            buttonName: 'Login',
+                            onPressed: () async {
+                              setState(() {
+                                isLoading = true;
                               });
-                            }
-                          },
-                        ),
-                        const SizedBox(
-                          height: 25.0,
-                        ),
-                      ],
+                              if (_formKey.currentState!.validate()) {
+                                AuthService()
+                                    .loginUser(_emailController.text,
+                                        _passwordController.text)
+                                    .then((value) {
+                                  if (value == 'Welcome') {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                    Fluttertoast.showToast(
+                                        msg: value,
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor: Colors.green,
+                                        textColor: Colors.white,
+                                        fontSize: 16.0);
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const BottomNav()),
+                                        (route) => false);
+                                  } else {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                    Fluttertoast.showToast(
+                                        msg: value,
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor: Colors.red,
+                                        textColor: Colors.white,
+                                        fontSize: 16.0);
+                                  }
+                                });
+                              }
+                            },
+                          ),
+                          const SizedBox(
+                            height: 25.0,
+                          ),
+                        ],
+                      ),
                     ),
                     GestureDetector(
                       onTap: () => Navigator.pushNamed(context, 'SignUp'),

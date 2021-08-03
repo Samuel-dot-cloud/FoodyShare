@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:food_share/utils/pallete.dart';
 
 class TextInputField extends StatefulWidget {
+  final FormFieldValidator validator;
+  final AutovalidateMode autovalidateMode;
   final IconData icon;
   final String hint;
   final bool obscure;
@@ -11,6 +13,8 @@ class TextInputField extends StatefulWidget {
 
   const TextInputField({
     Key? key,
+    required this.validator,
+    required this.autovalidateMode,
     required this.icon,
     required this.hint,
     required this.obscure,
@@ -40,7 +44,9 @@ class _TextInputFieldState extends State<TextInputField> {
           borderRadius: BorderRadius.circular(16.0),
         ),
         child: Center(
-          child: TextField(
+          child: TextFormField(
+            validator: widget.validator,
+            autovalidateMode: widget.autovalidateMode,
             decoration: InputDecoration(
               border: InputBorder.none,
               prefixIcon: Padding(
