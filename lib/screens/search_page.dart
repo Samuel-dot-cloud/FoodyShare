@@ -1,8 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/models/recipe_model.dart';
+import 'package:food_share/models/user_model.dart';
 import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/viewmodel/loading_animation.dart';
+import 'package:lottie/lottie.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -13,6 +17,18 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   List<bool> optionSelected = [true, false, false];
+  bool _searchState = false;
+  final usersRef = FirebaseFirestore.instance.collection('users');
+  Future<QuerySnapshot>? searchResultsFuture;
+
+  handlesearch(String query) {
+    Future<QuerySnapshot> users = usersRef
+        .where('displayName', isGreaterThanOrEqualTo: query)
+        .get();
+    setState(() {
+      searchResultsFuture = users;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,111 +42,134 @@ class _SearchPageState extends State<SearchPage> {
           Icons.sort,
           color: Colors.black,
         ),
-        actions: const [
+        actions: [
           Padding(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               right: 16.0,
             ),
-            child: Icon(
-              Icons.search,
-              color: Colors.black,
+            child: IconButton(
+              icon: const Icon(
+                Icons.search,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                setState(() {
+                  _searchState = !_searchState;
+                });
+              },
             ),
           ),
         ],
-      ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  buildTextTitleVariation1('Explore section'),
-                  buildTextSubtitleVariation1(
-                      'A huge selection of tasty and delicious food recipes.'),
-                  const SizedBox(
-                    height: 32.0,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // option(
-                      //   text: 'Vegetables',
-                      //   image: 'assets/icons/salad.png',
-                      //   index: 0,
-                      // ),
-                      // const SizedBox(
-                      //   width: 8.0,
-                      // ),
-                      option(
-                        text: 'Meats',
-                        image: 'assets/icons/steak.png',
-                        index: 0,
-                      ),
-                      // const SizedBox(
-                      //   width: 8.0,
-                      // ),
-                      option(
-                        text: 'Sweets',
-                        image: 'assets/icons/candies.png',
-                        index: 1,
-                      ),
-                      // const SizedBox(
-                      //   width: 8.0,
-                      // ),
-                      option(
-                        text: 'Cakes',
-                        image: 'assets/icons/cake.png',
-                        index: 2,
-                      ),
-                    ],
-                  ),
-                ],
+        title: Visibility(
+          visible: _searchState,
+          child: TextFormField(
+            decoration: InputDecoration(
+              hintText: 'Search here...',
+              filled: true,
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () {},
               ),
             ),
-            const SizedBox(
-              height: 24.0,
-            ),
-            SizedBox(
-              height: 350.0,
-              child: ListView(
-                physics: const BouncingScrollPhysics(),
-                scrollDirection: Axis.horizontal,
-                shrinkWrap: true,
-                children: buildRecipes(),
-              ),
-            ),
-            const SizedBox(
-              height: 16.0,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-              ),
-              child: Row(
-                children: [
-                  buildTextTitleVariation2('Popular', false),
-                  const SizedBox(
-                    width: 8.0,
-                  ),
-                  buildTextTitleVariation2('Food', true),
-                ],
-              ),
-            ),
-            Container(
-              height: 190.0,
-              child: PageView(
-                physics: const BouncingScrollPhysics(),
-                children: buildPopulars(),
-              ),
-            ),
-          ],
+            onFieldSubmitted: handlesearch,
+          ),
         ),
       ),
+      body: !_searchState
+          ? SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        buildTextTitleVariation1('Explore section'),
+                        buildTextSubtitleVariation1(
+                            'A huge selection of tasty and delicious food recipes.'),
+                        const SizedBox(
+                          height: 32.0,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // option(
+                            //   text: 'Vegetables',
+                            //   image: 'assets/icons/salad.png',
+                            //   index: 0,
+                            // ),
+                            // const SizedBox(
+                            //   width: 8.0,
+                            // ),
+                            option(
+                              text: 'Meats',
+                              image: 'assets/icons/steak.png',
+                              index: 0,
+                            ),
+                            // const SizedBox(
+                            //   width: 8.0,
+                            // ),
+                            option(
+                              text: 'Sweets',
+                              image: 'assets/icons/candies.png',
+                              index: 1,
+                            ),
+                            // const SizedBox(
+                            //   width: 8.0,
+                            // ),
+                            option(
+                              text: 'Cakes',
+                              image: 'assets/icons/cake.png',
+                              index: 2,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 24.0,
+                  ),
+                  SizedBox(
+                    height: 350.0,
+                    child: ListView(
+                      physics: const BouncingScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      children: buildRecipes(),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16.0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                    ),
+                    child: Row(
+                      children: [
+                        buildTextTitleVariation2('Popular', false),
+                        const SizedBox(
+                          width: 8.0,
+                        ),
+                        buildTextTitleVariation2('Food', true),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 190.0,
+                    child: PageView(
+                      physics: const BouncingScrollPhysics(),
+                      children: buildPopulars(),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : searchState(),
     );
   }
 
@@ -251,6 +290,50 @@ class _SearchPageState extends State<SearchPage> {
     }
     return list;
   }
+
+  searchState() {
+    return searchResultsFuture == null ? Center(
+      child: ListView(
+        shrinkWrap: true,
+        children: [
+          Lottie.asset(
+            'assets/lottie/chef.json',
+            height: 300.0,
+            width: 300.0,
+          ),
+          const Text(
+            'Search for all things recipes!!!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.w600,
+              fontSize: 25.0,
+            ),
+          ),
+        ],
+      ),
+    ) : buildSearchResults();
+  }
+
+  buildSearchResults(){
+    return FutureBuilder(
+      future: searchResultsFuture,
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if(!snapshot.hasData){
+          return loadingAnimation();
+        }
+        List<Text> searchResults = [];
+        snapshot.data.documents.forEach((doc) {
+          CustomUser customUser = CustomUser.fromDocument(doc);
+          searchResults.add(Text(customUser.username));
+        });
+        return ListView(
+            children: searchResults,
+        );
+      });
+  }
+
 }
 
 Widget buildPopular(RecipeModel recipe) {
