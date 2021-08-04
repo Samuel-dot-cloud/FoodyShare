@@ -177,7 +177,7 @@ class RecipeDetails extends StatelessWidget {
                           children: [
                             Ingredients(recipeModel: recipeModel),
                             PreparationSection(recipeModel: recipeModel),
-                            Container(
+                            const SizedBox(
                               child: Text('Review'),
                             ),
                           ],

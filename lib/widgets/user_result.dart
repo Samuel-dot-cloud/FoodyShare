@@ -10,7 +10,7 @@ class UserResult extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.yellow[500],
+      color: Colors.yellow,
       child: Column(
         children: [
           GestureDetector(

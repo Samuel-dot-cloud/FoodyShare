@@ -1,6 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:food_share/screens/recipes/create_recipe.dart';
 import 'package:food_share/screens/home_page.dart';
 import 'package:food_share/screens/search_page.dart';
 import 'package:food_share/screens/user_profile.dart';
@@ -17,8 +18,8 @@ class _BottomNavState extends State<BottomNav> {
   final List<Widget> _widgetOptions = <Widget>[
     const HomePage(),
     const SearchPage(),
+    const CreateRecipe(),
     const UserProfile(),
-    const SearchPage(),
   ];
 
   void _onItemTap(int index) {
@@ -49,12 +50,12 @@ class _BottomNavState extends State<BottomNav> {
             size: 20.0,
           ),
           FaIcon(
-            FontAwesomeIcons.user,
+            FontAwesomeIcons.utensils,
             color: Colors.black,
             size: 20.0,
           ),
           FaIcon(
-            FontAwesomeIcons.cog,
+            FontAwesomeIcons.user,
             size: 20.0,
           ),
         ],
