@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_share/models/user_model.dart';
+import 'package:food_share/screens/recipes/create_recipe.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/rounded_button.dart';
 import 'package:lottie/lottie.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImageUpload extends StatefulWidget {
-  const ImageUpload({Key? key}) : super(key: key);
+  ImageUpload({Key? key, required this.currentUser}) : super(key: key);
+
+  CustomUser? currentUser;
 
   @override
   _ImageUploadState createState() => _ImageUploadState();
@@ -25,6 +30,7 @@ class _ImageUploadState extends State<ImageUpload> {
     setState(() {
       this.file = file!;
     });
+    photoCondition();
   }
 
   handleChooseFromGallery() async {
@@ -35,6 +41,30 @@ class _ImageUploadState extends State<ImageUpload> {
     setState(() {
       this.file = file!;
     });
+    photoCondition();
+  }
+
+  photoCondition() {
+    if (file == null) {
+      Fluttertoast.showToast(
+          msg: 'Something went wrong!!',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else {
+      Fluttertoast.showToast(
+          msg: 'XFile safe',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      navigateToAddRecipeDetails();
+    }
   }
 
   selectImage(parentContext) {
@@ -127,11 +157,10 @@ class _ImageUploadState extends State<ImageUpload> {
   }
 
   navigateToAddRecipeDetails() {
-    const Text(
-      'XFile loaded',
-      style: TextStyle(
-        color: Colors.black,
-      ),
+    // Navigator.pushNamed(context, 'create_recipe');
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CreateRecipe(file: file)),
     );
   }
 
@@ -151,29 +180,27 @@ class _ImageUploadState extends State<ImageUpload> {
         ),
         centerTitle: true,
       ),
-      body: file == null
-          ? Container(
-              alignment: Alignment.center,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 300.0,
-                    width: 300.0,
-                    child: Lottie.asset('assets/lottie/image_upload.json'),
-                  ),
-                  const SizedBox(
-                    height: 20.0,
-                  ),
-                  RoundedButton(
-                    buttonName: 'Upload Image',
-                    onPressed: () => selectImage(context),
-                  ),
-                ],
-              ),
-            )
-          : navigateToAddRecipeDetails(),
+      body: Container(
+        alignment: Alignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 300.0,
+              width: 300.0,
+              child: Lottie.asset('assets/lottie/image_upload.json'),
+            ),
+            const SizedBox(
+              height: 20.0,
+            ),
+            RoundedButton(
+              buttonName: 'Upload Image',
+              onPressed: () => selectImage(context),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

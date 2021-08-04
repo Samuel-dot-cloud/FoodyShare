@@ -5,6 +5,7 @@ import 'package:food_share/screens/auth/forgot_password.dart';
 import 'package:food_share/screens/auth/startup_view.dart';
 import 'package:food_share/screens/auth/login_screen.dart';
 import 'package:food_share/screens/auth/sign_up_screen.dart';
+import 'package:food_share/screens/recipes/create_recipe.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const Home(),
         'home': (context) => const BottomNav(),
+        // 'create_recipe': (context) => CreateRecipe(),
         'login': (context) => const LoginScreen(),
         'ForgotPassword': (context) => const ForgotPassword(),
         'SignUp': (context) => const SignUpScreen(),

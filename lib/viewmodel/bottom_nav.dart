@@ -1,11 +1,13 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:food_share/screens/recipes/create_recipe.dart';
+import 'package:food_share/models/user_model.dart';
 import 'package:food_share/screens/home_page.dart';
 import 'package:food_share/screens/search_page.dart';
 import 'package:food_share/screens/user_profile.dart';
 import 'package:food_share/widgets/create_recipe_page/upload_image_page.dart';
+
+CustomUser? currentUser;
 
 class BottomNav extends StatefulWidget {
   const BottomNav({Key? key}) : super(key: key);
@@ -19,7 +21,7 @@ class _BottomNavState extends State<BottomNav> {
   final List<Widget> _widgetOptions = <Widget>[
     const HomePage(),
     const SearchPage(),
-    const ImageUpload(),
+    ImageUpload(currentUser: currentUser),
     // const CreateRecipe(),
     const UserProfile(),
   ];
