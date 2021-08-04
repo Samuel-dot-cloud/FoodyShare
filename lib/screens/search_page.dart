@@ -6,6 +6,7 @@ import 'package:food_share/models/recipe_model.dart';
 import 'package:food_share/models/user_model.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/loading_animation.dart';
+import 'package:food_share/widgets/user_result.dart';
 import 'package:lottie/lottie.dart';
 
 class SearchPage extends StatefulWidget {
@@ -18,8 +19,10 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   List<bool> optionSelected = [true, false, false];
   bool _searchState = false;
-  final usersRef = FirebaseFirestore.instance.collection('users');
+  var usersRef = FirebaseFirestore.instance.collection('users');
   Future<QuerySnapshot>? searchResultsFuture;
+
+  TextEditingController searchController = TextEditingController();
 
   handlesearch(String query) {
     Future<QuerySnapshot> users = usersRef
@@ -28,6 +31,10 @@ class _SearchPageState extends State<SearchPage> {
     setState(() {
       searchResultsFuture = users;
     });
+  }
+
+  clearSearch(){
+    searchController.clear();
   }
 
   @override
@@ -63,12 +70,13 @@ class _SearchPageState extends State<SearchPage> {
         title: Visibility(
           visible: _searchState,
           child: TextFormField(
+            controller: searchController,
             decoration: InputDecoration(
               hintText: 'Search here...',
               filled: true,
               suffixIcon: IconButton(
                 icon: const Icon(Icons.clear),
-                onPressed: () {},
+                onPressed: clearSearch,
               ),
             ),
             onFieldSubmitted: handlesearch,
@@ -319,14 +327,15 @@ class _SearchPageState extends State<SearchPage> {
   buildSearchResults(){
     return FutureBuilder(
       future: searchResultsFuture,
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
         if(!snapshot.hasData){
           return loadingAnimation();
         }
-        List<Text> searchResults = [];
-        snapshot.data.documents.forEach((doc) {
+        List<UserResult> searchResults = [];
+        snapshot.data?.docs.forEach((doc) {
           CustomUser customUser = CustomUser.fromDocument(doc);
-          searchResults.add(Text(customUser.username));
+         UserResult searchResult = UserResult(customUser: customUser);
+          searchResults.add(searchResult);
         });
         return ListView(
             children: searchResults,

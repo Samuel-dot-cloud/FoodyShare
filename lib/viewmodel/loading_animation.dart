@@ -17,7 +17,7 @@ loadingAnimation() {
               height: 20.0,
             ),
             const Text(
-              'Cooking...',
+              'Loading...',
               style: TextStyle(
                 fontSize: 25.0,
                 fontWeight: FontWeight.bold,
