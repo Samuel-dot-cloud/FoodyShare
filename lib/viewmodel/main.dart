@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:food_share/Viewmodel/bottom_nav.dart';
 import 'package:food_share/screens/auth/forgot_password.dart';
 import 'package:food_share/screens/auth/startup_view.dart';
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'FoodyShare',
