@@ -56,11 +56,11 @@ class _ImageUploadState extends State<ImageUpload> {
           fontSize: 16.0);
     } else {
       Fluttertoast.showToast(
-          msg: 'XFile safe',
+          msg: 'Image selected successfully',
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.green,
           textColor: Colors.white,
           fontSize: 16.0);
       navigateToAddRecipeDetails();
@@ -157,7 +157,6 @@ class _ImageUploadState extends State<ImageUpload> {
   }
 
   navigateToAddRecipeDetails() {
-    // Navigator.pushNamed(context, 'create_recipe');
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => CreateRecipe(file: file)),

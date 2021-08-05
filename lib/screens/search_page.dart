@@ -329,7 +329,7 @@ class _SearchPageState extends State<SearchPage> {
       future: searchResultsFuture,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if(!snapshot.hasData){
-          return loadingAnimation();
+          return loadingAnimation('Loading...');
         }
         List<UserResult> searchResults = [];
         snapshot.data?.docs.forEach((doc) {

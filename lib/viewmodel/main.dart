@@ -34,7 +34,6 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const Home(),
         'home': (context) => const BottomNav(),
-        // 'create_recipe': (context) => CreateRecipe(),
         'login': (context) => const LoginScreen(),
         'ForgotPassword': (context) => const ForgotPassword(),
         'SignUp': (context) => const SignUpScreen(),
