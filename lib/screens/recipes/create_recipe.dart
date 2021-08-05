@@ -1,13 +1,18 @@
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart' as firebase_core;
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/utils/form_values.dart';
 import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/viewmodel/bottom_nav.dart';
 import 'package:food_share/widgets/create_recipe_page/recipe_form.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image/image.dart' as image_plugin;
 import 'package:uuid/uuid.dart';
+
+import '../auth/sign_up_screen.dart';
 
 class CreateRecipe extends StatefulWidget {
   CreateRecipe({Key? key, required this.file}) : super(key: key);
@@ -31,8 +36,60 @@ class _CreateRecipeState extends State<CreateRecipe> {
     super.initState();
   }
 
-  uploadImage(imageFile) async{
+  // uploadImage(imageFile) async{
+  //   firebase_storage.UploadTask uploadTask = storageRef.child('post_$postId.jpg')
+  //       .putFile(imageFile);
+  // }
 
+  Future<String> uploadImage(imageFile) async {
+    File file = File(imageFile);
+
+    try {
+      await storageRef.child('post_$postId.jpg')
+          .putFile(file);
+      downloadURL();
+    } on firebase_core.FirebaseException catch (e) {
+      Fluttertoast.showToast(
+          msg: e.toString(),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+
+    return downloadURL();
+  }
+
+  Future<String> downloadURL() async {
+    String downloadURL = await storageRef
+        .getDownloadURL();
+    return downloadURL;
+  }
+
+  createPostInFirestore({
+    required String mediaUrl,
+    required String name,
+    required String description,
+    required String cookingTime,
+    required String servings,
+    required List<Map<String, String>> ingredients}){
+    recipesRef.doc(currentUser!.id)
+    .collection('userRecipes')
+    .doc(postId)
+    .set({
+      'postId': postId,
+      'authorId': currentUser!.id,
+      'username': currentUser!.username,
+      'mediaUrl': mediaUrl,
+      'description': description,
+      'likes': {},
+    });
+    setState(() {
+      photoFile = null;
+      isUploading = false;
+    });
   }
 
 
@@ -41,8 +98,15 @@ class _CreateRecipeState extends State<CreateRecipe> {
       isUploading = true;
     });
     await compressImage();
-    await uploadImage(photoFile);
-    //https://javascript.plainenglish.io/best-mobile-app-ideas-for-successful-business-in-2021-710c7efccd93?source=explore---------24-83--------------------4bd66714_50c9_47b0_89fe_8a28ec633d93-------15
+    String mediaUrl = await uploadImage(photoFile);
+    createPostInFirestore(
+        cookingTime: values.cookingTime.toString(),
+        servings: values.servings.toString(),
+        ingredients: [],
+        description: values.description.toString(),
+        mediaUrl: mediaUrl,
+        name: values.name.toString(),
+    );
   }
 
   compressImage() async {

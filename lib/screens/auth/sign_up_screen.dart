@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -12,6 +13,10 @@ import 'package:food_share/viewmodel/bottom_nav.dart';
 import 'package:food_share/widgets/background_image.dart';
 import 'package:food_share/widgets/rounded_button.dart';
 import 'package:food_share/widgets/text_input_field.dart';
+
+final Reference storageRef = FirebaseStorage.instance.ref();
+final usersRef = FirebaseFirestore.instance.collection('users');
+final recipesRef = FirebaseFirestore.instance.collection('recipes');
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -28,7 +33,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
 
   bool isLoading = false;
-  final usersRef = FirebaseFirestore.instance.collection('users');
   final DateTime timestamp = DateTime.now();
   late CustomUser currentUser;
 
