@@ -261,11 +261,11 @@ class _SearchPageState extends State<SearchPage> {
         children: [
           Expanded(
             child: Hero(
-              tag: recipe.imgPath,
+              tag: recipe.imgPath.toString(),
               child: Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage(recipe.imgPath),
+                    image: AssetImage(recipe.imgPath.toString()),
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -275,8 +275,8 @@ class _SearchPageState extends State<SearchPage> {
           const SizedBox(
             height: 8.0,
           ),
-          buildRecipeTitle(recipe.title),
-          buildTextSubtitleVariation2(recipe.description),
+          buildRecipeTitle(recipe.title.toString()),
+          buildTextSubtitleVariation2(recipe.description.toString()),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -362,7 +362,7 @@ Widget buildPopular(RecipeModel recipe) {
           width: 160.0,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(recipe.imgPath),
+              image: AssetImage(recipe.imgPath.toString()),
               fit: BoxFit.cover,
             ),
           ),
@@ -376,8 +376,8 @@ Widget buildPopular(RecipeModel recipe) {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                buildRecipeTitle(recipe.title),
-                buildRecipeSubtitle(recipe.description),
+                buildRecipeTitle(recipe.title.toString()),
+                buildRecipeSubtitle(recipe.description.toString()),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

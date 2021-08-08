@@ -14,9 +14,11 @@ import 'package:food_share/widgets/background_image.dart';
 import 'package:food_share/widgets/rounded_button.dart';
 import 'package:food_share/widgets/text_input_field.dart';
 
-final Reference storageRef = FirebaseStorage.instance.ref();
+// final Reference storageRef = FirebaseStorage.instance.ref();
 final usersRef = FirebaseFirestore.instance.collection('users');
 final recipesRef = FirebaseFirestore.instance.collection('recipes');
+CustomUser? currentUser;
+final DateTime  timestamp = DateTime.now();
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -33,8 +35,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
 
   bool isLoading = false;
-  final DateTime timestamp = DateTime.now();
-  late CustomUser currentUser;
 
   @override
   Widget build(BuildContext context) {

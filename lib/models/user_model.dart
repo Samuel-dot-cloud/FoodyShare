@@ -8,7 +8,7 @@ class CustomUser {
   final String photoUrl;
   final String bio;
 
-  CustomUser({
+  CustomUser( {
     required this.id,
     required this.username,
     required this.displayName,

@@ -1,10 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class RecipeModel {
-  String title, writer, description;
-  int cookingTime;
-  int servings;
-  List<String> ingredients = [];
-  List<String> preparation = [];
-  String imgPath;
+  String? id;
+  String? title, writer, description;
+  int? cookingTime;
+  int? servings;
+  List<String>? ingredients = [];
+  List<String>? preparation = [];
+  String? imgPath;
+  Timestamp? createdAt;
 
   RecipeModel({
     required this.title,
@@ -15,6 +19,7 @@ class RecipeModel {
     required this.ingredients,
     required this.preparation,
     required this.imgPath,
+    required this.createdAt,
   });
 
   static List<RecipeModel> demoRecipe = [
@@ -38,7 +43,7 @@ class RecipeModel {
       preparation: [
         'In a large bowl, whisk together eggs, Dijon mustard, 1 tablespoon water and 1/2 teaspoon each salt and pepper.',
         'Heat oil or butter in 10-inch nonstick skillet on medium. Add eggs and cook, stirring with rubber spatula every few seconds, to desired doneness, 2 to 3 minutes for medium-soft eggs. Fold in bacon, spinach, and Gruyère cheese.',
-      ],
+      ], createdAt: Timestamp.now(),
     ),
     RecipeModel(
       title: 'Spaghetti and Air Fryer Meatballs',
@@ -70,7 +75,7 @@ class RecipeModel {
         'Meanwhile, cook spaghetti per package directions.',
         'In a bowl, toss tomatoes, chile and chopped garlic with oil and 1/4 teaspoon each salt and pepper. Scatter over meatballs and continue air-frying until meatballs are cooked through, 5 to 6 minutes more.',
         'Toss meatballs and tomatoes with marinara, then gently with pasta. Serve topped with Parmesan and basil if desired.',
-      ],
+      ], createdAt: Timestamp.now(),
     ),
     RecipeModel(
       title: 'Mushroom and Brussels Sprouts Pizza',
@@ -97,7 +102,7 @@ class RecipeModel {
         'Heat oven to 475°F. Sprinkle baking sheet with cornmeal or line with parchment paper. On lightly floured surface, shape pizza dough into large oval. Transfer to prepared sheet and sprinkle with all but ½ cup fontina.',
         'In large bowl, toss mushrooms with balsamic vinegar. Add Brussels sprouts (whole leaves and slices) and onion, drizzle with oil and season with ½ tsp each salt and pepper. Toss to combine and scatter over dough.',
         'Sprinkle with remaining fontina, then crumble goat cheese over top and sprinkle with thyme. Bake until crust is deep golden brown and vegetables are tender, 10 to 12 min.',
-      ],
+      ], createdAt: Timestamp.now(),
     ),
     RecipeModel(
       title: 'Roasted Garlicky Shrimp',
@@ -121,7 +126,7 @@ class RecipeModel {
       preparation: [
         'Heat oven to 425°F. In 1½- to 2-qt baking dish, combine shrimp, red peppers, scallions, garlic, wine, lemon juice and ¼ teaspoon each salt and pepper.',
         'Drizzle with olive oil and sprinkle with feta cheese. Bake until shrimp are opaque throughout, 12 to 15 minutes. Spoon into pitas along with baby spinach, serve over rice or couscous or toss with your favorite salad greens.',
-      ],
+      ], createdAt: Timestamp.now(),
     ),
     RecipeModel(
       title: 'Vegetable Ramen With Mushrooms and Bok Choy',
@@ -148,7 +153,7 @@ class RecipeModel {
         'Slice white parts of scallions and place in large pot with ginger and 8 cups water; bring to a boil. ',
         'Stir in tamari, then add noodles and cook per package directions, adding mushrooms and bok choy 3 minutes after adding noodles. Remove from heat and stir in snow peas and vinegar.',
         'Divide soup among 4 bowls and place 1 egg half on top of each. Slice remaining scallion greens and serve over soup along with cilantro and red chile.',
-      ],
+      ], createdAt: Timestamp.now(),
     ),
     RecipeModel(
       title: 'Carnitas Tacos',
@@ -175,7 +180,20 @@ class RecipeModel {
         'In 12-in skillet, heat oil on medium-high until hot. Season pork all over with cumin and 1 teaspoon salt. Cook 5 minutes or until browned on two sides, turning over once halfway through. Transfer pork to slow-cooker bowl.',
         'To skillet, add onion, chiles and garlic; cook 2 minutes, stirring often. Transfer to slow cooker bowl along with broth and lime juice. Cover and cook on Low for 7 hours or until very tender.',
         'Transfer pork to cutting board; with two forks, pull into bite-size shreds, discarding any fat. Serve with tortillas and fixings.',
-      ],
+      ], createdAt: Timestamp.now(),
     ),
   ];
+
+  RecipeModel.fromMap(Map<String, dynamic> data){
+    id = data['id'];
+    title = data['title'];
+    writer = data['writer'];
+    description = data['description'];
+    cookingTime = data['cookingTime'];
+    servings = data['servings'];
+    imgPath = data['imgPath'];
+    ingredients = data['ingredients'];
+    preparation = data['preparation'];
+    createdAt = data['createdAt'];
+  }
 }

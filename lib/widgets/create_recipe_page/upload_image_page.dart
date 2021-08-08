@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/models/user_model.dart';
+import 'package:food_share/screens/auth/sign_up_screen.dart';
 import 'package:food_share/screens/recipes/create_recipe.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/rounded_button.dart';
@@ -8,27 +11,26 @@ import 'package:lottie/lottie.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImageUpload extends StatefulWidget {
-  ImageUpload({Key? key, required this.currentUser}) : super(key: key);
+  const ImageUpload({Key? key}) : super(key: key);
 
-  CustomUser? currentUser;
 
   @override
   _ImageUploadState createState() => _ImageUploadState();
 }
 
 class _ImageUploadState extends State<ImageUpload> {
-  XFile? file;
+  late XFile file;
   final ImagePicker picker = ImagePicker();
 
   handleTakePhoto() async {
     Navigator.pop(context);
-    XFile? file = await picker.pickImage(
+     file = (await picker.pickImage(
       source: ImageSource.camera,
       maxHeight: 675.0,
       maxWidth: 960.0,
-    );
+    ))!;
     setState(() {
-      this.file = file!;
+      file = file;
     });
     photoCondition();
   }
@@ -156,7 +158,7 @@ class _ImageUploadState extends State<ImageUpload> {
     );
   }
 
-  navigateToAddRecipeDetails() {
+  navigateToAddRecipeDetails() async {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => CreateRecipe(file: file)),

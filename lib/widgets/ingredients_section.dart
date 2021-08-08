@@ -15,7 +15,7 @@ class Ingredients extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Text('⚫ ' + recipeModel.ingredients[index]),
+                child: Text('⚫ ' + recipeModel.ingredients![index]),
               );
             },
             separatorBuilder: (BuildContext context, int index) {
@@ -23,7 +23,7 @@ class Ingredients extends StatelessWidget {
                 color: Colors.black.withOpacity(0.3),
               );
             },
-            itemCount: recipeModel.ingredients.length,
+            itemCount: recipeModel.ingredients!.length,
             shrinkWrap: true,
             physics: const ScrollPhysics(),
           ),

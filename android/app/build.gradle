@@ -70,4 +70,5 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.3.0')
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.google.firebase:firebase-storage-ktx'
+    implementation 'com.google.firebase:firebase-appcheck-debug:16.0.0-beta01'
 }

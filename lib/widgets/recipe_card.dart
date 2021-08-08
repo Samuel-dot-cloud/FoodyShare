@@ -25,12 +25,12 @@ class _RecipeCardState extends State<RecipeCard> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(24.0),
                 child: Hero(
-                  tag: widget.recipeModel.imgPath,
+                  tag: widget.recipeModel.imgPath.toString(),
                   child: Image(
                     height: 320.0,
                     width: 320.0,
                     fit: BoxFit.cover,
-                    image: AssetImage(widget.recipeModel.imgPath),
+                    image: AssetImage(widget.recipeModel.imgPath.toString()),
                   ),
                 ),
               ),
@@ -71,14 +71,14 @@ class _RecipeCardState extends State<RecipeCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.recipeModel.title,
+                      widget.recipeModel.title.toString(),
                       style: Theme.of(context).textTheme.subtitle1,
                     ),
                     const SizedBox(
                       height: 8.0,
                     ),
                     Text(
-                      widget.recipeModel.writer,
+                      widget.recipeModel.writer.toString(),
                       style: Theme.of(context).textTheme.caption,
                     ),
                   ],

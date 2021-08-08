@@ -1,11 +1,14 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_share/models/user_model.dart';
 import 'package:food_share/utils/form_values.dart';
 import 'package:food_share/utils/pallete.dart';
-import 'package:food_share/viewmodel/bottom_nav.dart';
 import 'package:food_share/widgets/create_recipe_page/recipe_form.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -15,8 +18,10 @@ import 'package:uuid/uuid.dart';
 import '../auth/sign_up_screen.dart';
 
 class CreateRecipe extends StatefulWidget {
-  CreateRecipe({Key? key, required this.file}) : super(key: key);
-   XFile? file;
+  CreateRecipe({Key? key, required this.file})
+      : super(key: key);
+  XFile file;
+  // CustomUser? currentUser;
 
   @override
   State<CreateRecipe> createState() => _CreateRecipeState();
@@ -24,15 +29,19 @@ class CreateRecipe extends StatefulWidget {
 
 class _CreateRecipeState extends State<CreateRecipe> {
 
-  File? photoFile;
+  late File photoFile;
   bool isUploading = false;
+  firebase_storage.Reference reference = firebase_storage.FirebaseStorage
+      .instance.ref();
   String postId = const Uuid().v4();
+
+  // User? user = FirebaseAuth.instance.currentUser;
 
 
   @override
   void initState() {
     // TODO: implement initState
-    photoFile = File(widget.file!.path);
+    photoFile = File(widget.file.path);
     super.initState();
   }
 
@@ -41,31 +50,46 @@ class _CreateRecipeState extends State<CreateRecipe> {
   //       .putFile(imageFile);
   // }
 
-  Future<String> uploadImage(imageFile) async {
-    File file = File(imageFile);
+  // Future<String> uploadImage(imageFile) async {
+  //   // File file = File(imageFile);
+  //
+  //   try {
+  //     await storageRef.child('recipe_$postId.jpg')
+  //         .putFile(imageFile);
+  //   } on firebase_core.FirebaseException catch (e) {
+  //     Fluttertoast.showToast(
+  //         msg: e.toString(),
+  //         toastLength: Toast.LENGTH_SHORT,
+  //         gravity: ToastGravity.CENTER,
+  //         timeInSecForIosWeb: 1,
+  //         backgroundColor: Colors.red,
+  //         textColor: Colors.white,
+  //         fontSize: 16.0);
+  //   }
+  //   String downloadURL = await storageRef
+  //       .getDownloadURL();
+  //
+  //   return downloadURL;
+  // }
 
-    try {
-      await storageRef.child('post_$postId.jpg')
-          .putFile(file);
-      downloadURL();
-    } on firebase_core.FirebaseException catch (e) {
+  Future<String> uploadImage(imageFile,
+      firebase_storage.Reference reference) async {
+    String urlString = '';
+    firebase_storage.UploadTask task = reference.putFile(imageFile);
+    await (task.whenComplete(() async {
+      urlString = await task.snapshot.ref.getDownloadURL();
+    }).catchError((onError) {
       Fluttertoast.showToast(
-          msg: e.toString(),
+          msg: onError.toString(),
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
-    }
+    }));
 
-    return downloadURL();
-  }
-
-  Future<String> downloadURL() async {
-    String downloadURL = await storageRef
-        .getDownloadURL();
-    return downloadURL;
+    return urlString;
   }
 
   createPostInFirestore({
@@ -74,20 +98,32 @@ class _CreateRecipeState extends State<CreateRecipe> {
     required String description,
     required String cookingTime,
     required String servings,
-    required List<Map<String, String>> ingredients}){
-    recipesRef.doc(currentUser!.id)
-    .collection('userRecipes')
-    .doc(postId)
-    .set({
-      'postId': postId,
-      'authorId': currentUser!.id,
-      'username': currentUser!.username,
-      'mediaUrl': mediaUrl,
-      'description': description,
-      'likes': {},
+    required List<Map<String, String>> ingredients}) async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final uid = user!.uid;
+    usersRef.doc(uid).get().then((value) {
+      String username = value.get('username').toString();
+
+      recipesRef.doc(user.uid)
+          .collection('userRecipes')
+          .doc(postId)
+          .set({
+        'postId': postId,
+        'authorId': user.uid,
+        'username': username,
+        'mediaUrl': mediaUrl,
+        'description': description,
+        'name': name,
+        'cookingTime': cookingTime,
+        'servings': servings,
+        'ingredients': ingredients,
+        'timestamp': timestamp,
+        'likes': {},
+      });
     });
     setState(() {
-      photoFile = null;
+      photoFile = File('');
       isUploading = false;
     });
   }
@@ -98,22 +134,24 @@ class _CreateRecipeState extends State<CreateRecipe> {
       isUploading = true;
     });
     await compressImage();
-    String mediaUrl = await uploadImage(photoFile);
+    String mediaUrl = await uploadImage(photoFile, reference);
     createPostInFirestore(
-        cookingTime: values.cookingTime.toString(),
-        servings: values.servings.toString(),
-        ingredients: [],
-        description: values.description.toString(),
-        mediaUrl: mediaUrl,
-        name: values.name.toString(),
+      cookingTime: values.cookingTime.toString(),
+      servings: values.servings.toString(),
+      ingredients: [],
+      description: values.description.toString(),
+      mediaUrl: mediaUrl,
+      name: values.name.toString(),
     );
   }
 
   compressImage() async {
     final tempDir = await getTemporaryDirectory();
     final path = tempDir.path;
-    image_plugin.Image? imageFile = image_plugin.decodeImage(photoFile!.readAsBytesSync());
-    var compressedImageFile = File('$path/img_$postId.jpg')..writeAsBytesSync(image_plugin.encodeJpg(imageFile!, quality: 85));
+    image_plugin.Image? imageFile = image_plugin.decodeImage(
+        photoFile.readAsBytesSync());
+    final compressedImageFile = File('$path/img_$postId.jpg')
+      ..writeAsBytesSync(image_plugin.encodeJpg(imageFile!, quality: 85));
 
     setState(() {
       photoFile = compressedImageFile;
@@ -157,7 +195,10 @@ class _CreateRecipeState extends State<CreateRecipe> {
                 ) : const Text(''),
                 SizedBox(
                   height: 220.0,
-                  width: MediaQuery.of(context).size.width * 0.8,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width * 0.8,
                   child: Center(
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(24.0),
@@ -166,7 +207,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
                         child: Container(
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                                image: FileImage(photoFile!),
+                              image: FileImage(photoFile),
                               fit: BoxFit.cover,
                             ),
                           ),

@@ -30,12 +30,12 @@ class RecipeDetails extends StatelessWidget {
               Align(
                 alignment: Alignment.topCenter,
                 child: Hero(
-                  tag: recipeModel.imgPath,
+                  tag: recipeModel.imgPath.toString(),
                   child: Image(
                     height: (size.height / 2) + 50,
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    image: AssetImage(recipeModel.imgPath),
+                    image: AssetImage(recipeModel.imgPath.toString()),
                   ),
                 ),
               ),
@@ -82,14 +82,14 @@ class RecipeDetails extends StatelessWidget {
                 height: 30.0,
               ),
               Text(
-                recipeModel.title,
+                recipeModel.title.toString(),
                 style: _textTheme.headline6,
               ),
               const SizedBox(
                 height: 10.0,
               ),
               Text(
-                recipeModel.writer,
+                recipeModel.writer.toString(),
                 style: _textTheme.caption,
               ),
               const SizedBox(

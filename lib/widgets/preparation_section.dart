@@ -27,7 +27,7 @@ class PreparationSection extends StatelessWidget {
                     ),
                     children: [
                       TextSpan(
-                        text: recipeModel.preparation[index],
+                        text: recipeModel.preparation![index],
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.normal,
@@ -44,7 +44,7 @@ class PreparationSection extends StatelessWidget {
                 color: Colors.black.withOpacity(0.3),
               );
             },
-            itemCount: recipeModel.preparation.length,
+            itemCount: recipeModel.preparation!.length,
             shrinkWrap: true,
             physics: const ScrollPhysics(),
           ),
