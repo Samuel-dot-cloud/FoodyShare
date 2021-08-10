@@ -1,15 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:food_share/models/user_model.dart';
 import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/viewmodel/loading_animation.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+import 'auth/sign_up_screen.dart';
+
 class UserProfile extends StatefulWidget {
-  const UserProfile({Key? key}) : super(key: key);
+  const UserProfile({Key? key, required this.profileId}) : super(key: key);
+  final String? profileId;
 
   @override
   _UserProfileState createState() => _UserProfileState();
 }
 
 class _UserProfileState extends State<UserProfile> {
+  // buildProfileHeader(){
+  //   return FutureBuilder(
+  //     future: usersRef.doc(widget.profileId).get(),
+  //     builder: (context, AsyncSnapshot snapshot) {
+  //     if(!snapshot.hasData){
+  //       return loadingAnimation('Loading Profile details...');
+  //     }
+  //     CustomUser user = CustomUser.fromDocument(snapshot.data);
+  //   },
+  //   );
+  // }
   bool _isOpen = false;
   final PanelController _panelController = PanelController();
   final _imageList = [
@@ -116,11 +132,17 @@ class _UserProfileState extends State<UserProfile> {
               crossAxisCount: 3,
               mainAxisSpacing: 16.0,
             ),
-            itemBuilder: (BuildContext context, int index) => Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(_imageList[index]),
-                  fit: BoxFit.cover,
+            itemBuilder: (BuildContext context, int index) => Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 3.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(_imageList[index]),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
               ),
             ),

@@ -1,14 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:food_share/services/database_service.dart';
-import 'package:food_share/services/recipe_notifier.dart';
+import 'package:flutter/material.dart';
 
-class AuthService {
+class AuthService with ChangeNotifier{
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Stream<User> get authStateChanges => _auth.authStateChanges();
+  String? userUID;
+  String? get getuserUID => userUID;
 
-  //Create Account
+  ///Create Account
   Future<String> createAccount(String email, String password) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
@@ -16,6 +15,8 @@ class AuthService {
         password: password,
       );
       User? user = result.user;
+      userUID = user!.uid;
+      notifyListeners();
 
       //Create a new document for user with the uid
       // await DatabaseService(uid: user!.uid).updateUserData(
@@ -35,13 +36,16 @@ class AuthService {
     return 'Error occurred';
   }
 
-  // Login user
+  /// Login user
   Future<String> loginUser(String email, String password) async {
     try {
-      await _auth.signInWithEmailAndPassword(
+      UserCredential result = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+      User? user = result.user;
+      userUID = user!.uid;
+      notifyListeners();
 
       return 'Welcome';
     } on FirebaseAuthException catch (e) {
@@ -54,7 +58,7 @@ class AuthService {
     return 'Error occurred';
   }
 
-  //Reset password
+  ///Reset password
   Future<String> resetPassword(String email) async {
     try {
       await _auth.sendPasswordResetEmail(
@@ -66,7 +70,7 @@ class AuthService {
     }
   }
 
-  //Log out
+  ///Log out
   void logOut() {
     _auth.signOut();
   }

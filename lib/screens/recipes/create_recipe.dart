@@ -18,9 +18,9 @@ import 'package:uuid/uuid.dart';
 import '../auth/sign_up_screen.dart';
 
 class CreateRecipe extends StatefulWidget {
-  CreateRecipe({Key? key, required this.file})
-      : super(key: key);
+  CreateRecipe({Key? key, required this.file}) : super(key: key);
   XFile file;
+
   // CustomUser? currentUser;
 
   @override
@@ -28,15 +28,13 @@ class CreateRecipe extends StatefulWidget {
 }
 
 class _CreateRecipeState extends State<CreateRecipe> {
-
   late File photoFile;
   bool isUploading = false;
-  firebase_storage.Reference reference = firebase_storage.FirebaseStorage
-      .instance.ref();
+  firebase_storage.Reference reference =
+      firebase_storage.FirebaseStorage.instance.ref();
   String postId = const Uuid().v4();
 
   // User? user = FirebaseAuth.instance.currentUser;
-
 
   @override
   void initState() {
@@ -45,35 +43,8 @@ class _CreateRecipeState extends State<CreateRecipe> {
     super.initState();
   }
 
-  // uploadImage(imageFile) async{
-  //   firebase_storage.UploadTask uploadTask = storageRef.child('post_$postId.jpg')
-  //       .putFile(imageFile);
-  // }
-
-  // Future<String> uploadImage(imageFile) async {
-  //   // File file = File(imageFile);
-  //
-  //   try {
-  //     await storageRef.child('recipe_$postId.jpg')
-  //         .putFile(imageFile);
-  //   } on firebase_core.FirebaseException catch (e) {
-  //     Fluttertoast.showToast(
-  //         msg: e.toString(),
-  //         toastLength: Toast.LENGTH_SHORT,
-  //         gravity: ToastGravity.CENTER,
-  //         timeInSecForIosWeb: 1,
-  //         backgroundColor: Colors.red,
-  //         textColor: Colors.white,
-  //         fontSize: 16.0);
-  //   }
-  //   String downloadURL = await storageRef
-  //       .getDownloadURL();
-  //
-  //   return downloadURL;
-  // }
-
-  Future<String> uploadImage(imageFile,
-      firebase_storage.Reference reference) async {
+  Future<String> uploadImage(
+      imageFile, firebase_storage.Reference reference) async {
     String urlString = '';
     firebase_storage.UploadTask task = reference.putFile(imageFile);
     await (task.whenComplete(() async {
@@ -92,23 +63,20 @@ class _CreateRecipeState extends State<CreateRecipe> {
     return urlString;
   }
 
-  createPostInFirestore({
-    required String mediaUrl,
-    required String name,
-    required String description,
-    required String cookingTime,
-    required String servings,
-    required List<Map<String, String>> ingredients}) async {
+  createPostInFirestore(
+      {required String mediaUrl,
+      required String name,
+      required String description,
+      required String cookingTime,
+      required String servings,
+      required List<Map<String, String>> ingredients}) async {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User? user = auth.currentUser;
     final uid = user!.uid;
     usersRef.doc(uid).get().then((value) {
       String username = value.get('username').toString();
 
-      recipesRef.doc(user.uid)
-          .collection('userRecipes')
-          .doc(postId)
-          .set({
+      recipesRef.doc(user.uid).collection('userRecipes').doc(postId).set({
         'postId': postId,
         'authorId': user.uid,
         'username': username,
@@ -127,7 +95,6 @@ class _CreateRecipeState extends State<CreateRecipe> {
       isUploading = false;
     });
   }
-
 
   void _addRecipe(BuildContext context, FormValues values) async {
     setState(() {
@@ -148,8 +115,8 @@ class _CreateRecipeState extends State<CreateRecipe> {
   compressImage() async {
     final tempDir = await getTemporaryDirectory();
     final path = tempDir.path;
-    image_plugin.Image? imageFile = image_plugin.decodeImage(
-        photoFile.readAsBytesSync());
+    image_plugin.Image? imageFile =
+        image_plugin.decodeImage(photoFile.readAsBytesSync());
     final compressedImageFile = File('$path/img_$postId.jpg')
       ..writeAsBytesSync(image_plugin.encodeJpg(imageFile!, quality: 85));
 
@@ -189,16 +156,16 @@ class _CreateRecipeState extends State<CreateRecipe> {
             minimum: const EdgeInsets.all(15.0),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                isUploading ? const LinearProgressIndicator(
-                  backgroundColor: Colors.cyanAccent,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.yellow),
-                ) : const Text(''),
+                isUploading
+                    ? const LinearProgressIndicator(
+                        backgroundColor: Colors.cyanAccent,
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Colors.yellow),
+                      )
+                    : const Text(''),
                 SizedBox(
                   height: 220.0,
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width * 0.8,
+                  width: MediaQuery.of(context).size.width * 0.8,
                   child: Center(
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(24.0),

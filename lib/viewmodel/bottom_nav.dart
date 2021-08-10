@@ -8,6 +8,7 @@ import 'package:food_share/screens/auth/sign_up_screen.dart';
 import 'package:food_share/screens/home_page.dart';
 import 'package:food_share/screens/search_page.dart';
 import 'package:food_share/screens/user_profile.dart';
+import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/create_recipe_page/upload_image_page.dart';
 
 class BottomNav extends StatefulWidget {
@@ -24,7 +25,7 @@ class _BottomNavState extends State<BottomNav> {
     const SearchPage(),
     const ImageUpload(),
     // const CreateRecipe(),
-    const UserProfile(),
+    UserProfile(profileId : currentUser?.id),
   ];
 
   void _onItemTap(int index) {
@@ -41,6 +42,7 @@ class _BottomNavState extends State<BottomNav> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: CurvedNavigationBar(
+        backgroundColor: kBlue,
         height: 75.0,
         index: _selectedIndex,
         onTap: _onItemTap,

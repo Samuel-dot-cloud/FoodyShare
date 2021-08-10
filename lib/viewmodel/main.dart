@@ -5,8 +5,11 @@ import 'package:food_share/screens/auth/forgot_password.dart';
 import 'package:food_share/screens/auth/startup_view.dart';
 import 'package:food_share/screens/auth/login_screen.dart';
 import 'package:food_share/screens/auth/sign_up_screen.dart';
-import 'package:food_share/screens/recipes/create_recipe.dart';
+import 'package:food_share/services/auth_service.dart';
+import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/services/recipe_notifier.dart';
+import 'package:food_share/services/screens/sign_up_service.dart';
+import 'package:food_share/utils/sign_up_util.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,12 +18,22 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await FirebaseAppCheck.instance.activate(webRecaptchaSiteKey: 'recaptcha-v3-site-key');
+  await FirebaseAppCheck.instance.activate(
+      webRecaptchaSiteKey: 'recaptcha-v3-site-key');
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
           create: (context) => RecipeNotifier(),
+        ),
+        ChangeNotifierProvider(create: (context) => FirebaseOperations(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => AuthService(),
+        ),
+        ChangeNotifierProvider(create: (context) => SignUpUtils(),
+        ),
+        ChangeNotifierProvider(create: (context) => SignUpService(),
         ),
       ],
       child: const MyApp(),
@@ -40,7 +53,9 @@ class MyApp extends StatelessWidget {
       title: 'FoodyShare',
       theme: ThemeData(
         textTheme:
-            GoogleFonts.josefinSansTextTheme(Theme.of(context).textTheme),
+        GoogleFonts.josefinSansTextTheme(Theme
+            .of(context)
+            .textTheme),
       ),
       initialRoute: '/',
       routes: {

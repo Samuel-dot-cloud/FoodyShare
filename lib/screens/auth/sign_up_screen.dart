@@ -8,17 +8,21 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/models/user_model.dart';
 import 'package:food_share/services/auth_service.dart';
+import 'package:food_share/services/firebase_operations.dart';
+import 'package:food_share/services/screens/sign_up_service.dart';
 import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/sign_up_util.dart';
 import 'package:food_share/viewmodel/bottom_nav.dart';
 import 'package:food_share/widgets/background_image.dart';
 import 'package:food_share/widgets/rounded_button.dart';
 import 'package:food_share/widgets/text_input_field.dart';
+import 'package:provider/provider.dart';
 
 // final Reference storageRef = FirebaseStorage.instance.ref();
 final usersRef = FirebaseFirestore.instance.collection('users');
 final recipesRef = FirebaseFirestore.instance.collection('recipes');
 CustomUser? currentUser;
-final DateTime  timestamp = DateTime.now();
+final DateTime timestamp = DateTime.now();
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -61,14 +65,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   sigmaY: 3,
                                 ),
                                 child: CircleAvatar(
-                                  backgroundColor:
-                                      Colors.grey[400]!.withOpacity(0.4),
+                                  backgroundImage: FileImage(
+                                      Provider.of<SignUpUtils>(context,
+                                              listen: false)
+                                          .getUserAvatar),
+                                  // backgroundColor:
+                                  //    Colors.grey[400]!.withOpacity(0.4),
                                   radius: size.width * 0.14,
-                                  child: Icon(
-                                    FontAwesomeIcons.user,
-                                    color: kWhite,
-                                    size: size.width * 0.1,
-                                  ),
+                                  // child: Icon(
+                                  //   FontAwesomeIcons.user,
+                                  //   color: kWhite,
+                                  //   size: size.width * 0.1,
+                                  // ),
                                 ),
                               ),
                             ),
@@ -76,21 +84,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           Positioned(
                             top: size.height * 0.08,
                             left: size.width * 0.56,
-                            child: Container(
-                              height: size.width * 0.1,
-                              width: size.width * 0.1,
-                              decoration: BoxDecoration(
-                                color: kBlue,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: kWhite,
-                                  width: 2,
+                            child: GestureDetector(
+                              onTap: () {
+                                Provider.of<SignUpService>(context,
+                                        listen: false)
+                                    .showUserAvatar(context);
+                              },
+                              child: Container(
+                                height: size.width * 0.1,
+                                width: size.width * 0.1,
+                                decoration: BoxDecoration(
+                                  color: kBlue,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: kWhite,
+                                    width: 2,
+                                  ),
                                 ),
-                              ),
-                              child: Icon(
-                                FontAwesomeIcons.arrowUp,
-                                color: kWhite,
-                                size: size.width * 0.06,
+                                child: Icon(
+                                  FontAwesomeIcons.arrowUp,
+                                  color: kWhite,
+                                  size: size.width * 0.06,
+                                ),
                               ),
                             ),
                           ),
@@ -106,7 +121,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             TextInputField(
                               icon: FontAwesomeIcons.at,
                               hint: 'Username',
-                              obscure: true,
+                              obscure: false,
                               inputType: TextInputType.name,
                               action: TextInputAction.next,
                               controller: _usernameController,
@@ -119,7 +134,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   return null;
                                 }
                               },
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                             ),
                             TextInputField(
                               icon: FontAwesomeIcons.user,
@@ -134,7 +150,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 }
                                 return null;
                               },
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                             ),
                             TextInputField(
                               icon: FontAwesomeIcons.envelope,
@@ -149,7 +166,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 }
                                 return null;
                               },
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                             ),
                             TextInputField(
                               icon: FontAwesomeIcons.lock,
@@ -164,7 +182,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 }
                                 return null;
                               },
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                             ),
                             const SizedBox(
                               height: 25.0,
@@ -176,44 +195,77 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   isLoading = true;
                                 });
                                 if (_formKey.currentState!.validate()) {
-                                  AuthService()
+                                  // AuthService()
+                                  //     .createAccount(_emailController.text,
+                                  //         _passwordController.text)
+                                  //     .then((value) async {
+                                  //   createUserInFirestore();
+                                  //   if (value == 'Account created') {
+                                  //     setState(() {
+                                  //       isLoading = false;
+                                  //     });
+                                  //     Fluttertoast.showToast(
+                                  //         msg: value,
+                                  //         toastLength: Toast.LENGTH_SHORT,
+                                  //         gravity: ToastGravity.CENTER,
+                                  //         timeInSecForIosWeb: 1,
+                                  //         backgroundColor: Colors.red,
+                                  //         textColor: Colors.white,
+                                  //         fontSize: 16.0);
+                                  //
+                                  //     Navigator.pushAndRemoveUntil(
+                                  //         context,
+                                  //         MaterialPageRoute(
+                                  //             builder: (context) =>
+                                  //                 const BottomNav()),
+                                  //         (route) => false);
+                                  //   } else {
+                                  //     setState(() {
+                                  //       isLoading = false;
+                                  //     });
+                                  //     Fluttertoast.showToast(
+                                  //         msg: value,
+                                  //         toastLength: Toast.LENGTH_SHORT,
+                                  //         gravity: ToastGravity.CENTER,
+                                  //         timeInSecForIosWeb: 1,
+                                  //         backgroundColor: Colors.red,
+                                  //         textColor: Colors.white,
+                                  //         fontSize: 16.0);
+                                  //   }
+                                  // });
+
+                                  Provider.of<AuthService>(context,
+                                          listen: false)
                                       .createAccount(_emailController.text,
                                           _passwordController.text)
-                                      .then((value) async {
-                                    createUserInFirestore();
-                                    if (value == 'Account created') {
-                                      setState(() {
-                                        isLoading = false;
-                                      });
-                                      Fluttertoast.showToast(
-                                          msg: value,
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 1,
-                                          backgroundColor: Colors.red,
-                                          textColor: Colors.white,
-                                          fontSize: 16.0);
-
-                                      Navigator.pushAndRemoveUntil(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const BottomNav()),
-                                          (route) => false);
-                                    } else {
-                                      setState(() {
-                                        isLoading = false;
-                                      });
-                                      Fluttertoast.showToast(
-                                          msg: value,
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 1,
-                                          backgroundColor: Colors.red,
-                                          textColor: Colors.white,
-                                          fontSize: 16.0);
-                                    }
+                                      .whenComplete(() {
+                                        Provider.of<FirebaseOperations>(context, listen: false).createUserCollection(context, {
+                                          'id': Provider.of<AuthService>(context, listen: false).getuserUID,
+                                          'username': _usernameController.text,
+                                          'email': _emailController.text,
+                                          'photoUrl': Provider.of<SignUpUtils>(context, listen: false).getUserAvatarUrl,
+                                          'displayName': _displayNameController.text,
+                                          'bio': '',
+                                          'timestamp': timestamp
+                                        });
+                                  })
+                                      .whenComplete(() {
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const BottomNav()),
+                                        (route) => false);
                                   });
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: 'Fill all the fields',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.CENTER,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 16.0);
                                 }
                               },
                             ),
