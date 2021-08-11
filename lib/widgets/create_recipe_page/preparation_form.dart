@@ -3,19 +3,20 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:uuid/uuid.dart';
 
-class IngredientsForm extends StatefulWidget {
-  const IngredientsForm({Key? key, required this.onUpdate}) : super(key: key);
+class PreparationForm extends StatefulWidget {
+  const PreparationForm({Key? key, required this.onUpdate}) : super(key: key);
 
   final ValueChanged<List<Map<String, String>>> onUpdate;
   final Uuid uuid = const Uuid();
 
   @override
-  _IngredientsFormState createState() => _IngredientsFormState();
+  _PreparationFormState createState() => _PreparationFormState();
 }
 
-class _IngredientsFormState extends State<IngredientsForm> {
+class _PreparationFormState extends State<PreparationForm> {
+
   final List<Map<String, String>> fields = [];
-  
+
   void _addFields(){
     fields.add({widget.uuid.v1(): ''});
     setState(() {});
@@ -38,35 +39,36 @@ class _IngredientsFormState extends State<IngredientsForm> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text('Add Ingredients',
+        Text('Add Preparation steps',
           style: kBodyText.copyWith(
-              color: Colors.black,
+            color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 15.0),
 
         for(var i = 0; i <fields.length; i++)
-        Row(
-          key: ValueKey(fields[i].keys.first),
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 5.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15.0),
+          Row(
+            key: ValueKey(fields[i].keys.first),
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 5.0),
+                  child: TextFormField(
+                    maxLines: 3,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
                     ),
+                    onChanged: (value){
+                      _updateField(value, i);
+                    },
                   ),
-                  onChanged: (value){
-                    _updateField(value, i);
-                  },
                 ),
-              ),
 
-            ),
-            IconButton(
+              ),
+              IconButton(
                 onPressed: (){
                   _removeField(i);
                 },
@@ -74,9 +76,9 @@ class _IngredientsFormState extends State<IngredientsForm> {
                   FontAwesomeIcons.minusCircle,
                   color: kBlue,
                 ),
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
         TextButton(
           onPressed: () {
             _addFields();
@@ -86,7 +88,7 @@ class _IngredientsFormState extends State<IngredientsForm> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: const [
               Icon(
-                  Icons.add,
+                Icons.add,
                 color: kBlue,
                 size: 20.0,
               ),

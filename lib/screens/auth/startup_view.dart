@@ -2,7 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/screens/auth/login_screen.dart';
 import 'package:food_share/services/firebase_operations.dart';
+import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/bottom_nav.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +30,7 @@ class _StartupViewState extends State<StartupView> {
     Future.delayed(
         const Duration(
           milliseconds: 5000,
-        ), () {
+        ), () async {
       if (auth.currentUser == null) {
         Navigator.pushAndRemoveUntil(
             context,
@@ -49,19 +51,34 @@ class _StartupViewState extends State<StartupView> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              height: 300.0,
-              width: 300.0,
+              height: MediaQuery.of(context).size.height * 0.60,
+              width: MediaQuery.of(context).size.width,
               child: Lottie.asset('assets/lottie/splash.json'),
             ),
             const SizedBox(
               height: 20.0,
             ),
-            const Text(
-              'Cooking...',
-              style: TextStyle(
-                fontSize: 25.0,
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                Text(
+                  'FoodyShare ',
+                  style: TextStyle(
+                    color: kBlue,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 28.0,
+                  ),
+                ),
+                Text(
+                  'setting up...',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 25.0,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

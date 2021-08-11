@@ -117,7 +117,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
     final path = tempDir.path;
     image_plugin.Image? imageFile =
         image_plugin.decodeImage(photoFile.readAsBytesSync());
-    final compressedImageFile = File('$path/img_$postId.jpg')
+    final compressedImageFile = File('recipe-images/$path/img_$postId.jpg')
       ..writeAsBytesSync(image_plugin.encodeJpg(imageFile!, quality: 85));
 
     setState(() {

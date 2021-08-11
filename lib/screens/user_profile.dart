@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:food_share/models/user_model.dart';
 import 'package:food_share/services/auth_service.dart';
+import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/loading_animation.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -22,12 +24,12 @@ class _UserProfileState extends State<UserProfile> {
   bool _isOpen = false;
   final PanelController _panelController = PanelController();
   final _imageList = [
-    'assets/images/img-1.jpg',
-    'assets/images/img-2.jpg',
-    'assets/images/img-3.jpg',
-    'assets/images/img-4.jpg',
-    'assets/images/img-5.jpg',
-    'assets/images/img-6.jpg',
+    // 'assets/images/img-1.jpg',
+    // 'assets/images/img-2.jpg',
+    // 'assets/images/img-3.jpg',
+    // 'assets/images/img-4.jpg',
+    // 'assets/images/img-5.jpg',
+    // 'assets/images/img-6.jpg',
   ];
 
   @override
@@ -41,9 +43,10 @@ class _UserProfileState extends State<UserProfile> {
             alignment: Alignment.topCenter,
             heightFactor: 0.7,
             child: Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/img-1.jpg'),
+                  image: NetworkImage( Provider.of<FirebaseOperations>(context, listen: false)
+                      .getUserImage),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -116,7 +119,7 @@ class _UserProfileState extends State<UserProfile> {
               ],
             ),
           ),
-          GridView.builder(
+          _imageList.isNotEmpty ? GridView.builder(
             primary: false,
             shrinkWrap: true,
             padding: EdgeInsets.zero,
@@ -139,7 +142,7 @@ class _UserProfileState extends State<UserProfile> {
                 ),
               ),
             ),
-          ),
+          ) : _defaultNoRecipes(),
         ],
       ),
     );
@@ -265,25 +268,50 @@ class _UserProfileState extends State<UserProfile> {
   ///Title section
   Column _titleSection() {
     return Column(
-      children: const [
+      children: [
         Text(
-          'Display Name',
-          style: TextStyle(
+          Provider.of<FirebaseOperations>(context, listen: false)
+              .getDisplayName,
+          style: const TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 30.0,
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 8.0,
         ),
         Text(
-          'Bio',
-          style: TextStyle(
+          '@' +Provider.of<FirebaseOperations>(context, listen: false)
+              .getUsername,
+          style: const TextStyle(
             fontStyle: FontStyle.italic,
             fontSize: 22.0,
           ),
         ),
       ],
+    );
+  }
+
+  Center _defaultNoRecipes(){
+    return Center(
+      child: Column(
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.30,
+            width: MediaQuery.of(context).size.width * 0.80,
+            child: Lottie.asset('assets/lottie/no-post.json'),
+          ),
+          const SizedBox(height: 20.0,),
+          const Text(
+            'No Recipes Here...',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 25.0,
+              fontWeight: FontWeight.bold
+            ),
+          )
+        ],
+      ),
     );
   }
 }

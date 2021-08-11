@@ -182,14 +182,15 @@ class _ImageUploadState extends State<ImageUpload> {
         centerTitle: true,
       ),
       body: Container(
+        height: MediaQuery.of(context).size.height,
         alignment: Alignment.center,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              height: 300.0,
-              width: 300.0,
+              height: MediaQuery.of(context).size.height * 0.50,
+              width: MediaQuery.of(context).size.width * 0.90,
               child: Lottie.asset('assets/lottie/image_upload.json'),
             ),
             const SizedBox(
