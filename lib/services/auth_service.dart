@@ -1,21 +1,22 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class AuthService with ChangeNotifier{
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+class AuthService with ChangeNotifier {
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   String? userUID;
+
   String? get getuserUID => userUID;
 
   ///Create Account
   Future<String> createAccount(String email, String password) async {
     try {
-      UserCredential result = await _auth.createUserWithEmailAndPassword(
+      UserCredential result = await auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
       User? user = result.user;
-      userUID = user!.uid;
+      userUID = user?.uid;
       notifyListeners();
 
       //Create a new document for user with the uid
@@ -39,7 +40,7 @@ class AuthService with ChangeNotifier{
   /// Login user
   Future<String> loginUser(String email, String password) async {
     try {
-      UserCredential result = await _auth.signInWithEmailAndPassword(
+      UserCredential result = await auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -61,7 +62,7 @@ class AuthService with ChangeNotifier{
   ///Reset password
   Future<String> resetPassword(String email) async {
     try {
-      await _auth.sendPasswordResetEmail(
+      await auth.sendPasswordResetEmail(
         email: email,
       );
       return 'Reset email sent';
@@ -72,10 +73,6 @@ class AuthService with ChangeNotifier{
 
   ///Log out
   void logOut() {
-    _auth.signOut();
+    auth.signOut();
   }
-
-// getRecipes(RecipeNotifier recipeNotifier){
-//   FirebaseFirestore.instance.doc(_auth.currentUser!.uid).collection('')
-// }
 }

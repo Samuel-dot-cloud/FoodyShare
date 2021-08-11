@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:food_share/Viewmodel/bottom_nav.dart';
+import 'package:food_share/helpers/bottom_nav_helper.dart';
 import 'package:food_share/screens/auth/forgot_password.dart';
 import 'package:food_share/screens/auth/startup_view.dart';
 import 'package:food_share/screens/auth/login_screen.dart';
@@ -34,6 +35,8 @@ void main() async {
         ChangeNotifierProvider(create: (context) => SignUpUtils(),
         ),
         ChangeNotifierProvider(create: (context) => SignUpService(),
+        ),
+        ChangeNotifierProvider(create: (context) => BottomNavHelper(),
         ),
       ],
       child: const MyApp(),

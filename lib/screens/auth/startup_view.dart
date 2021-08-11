@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/screens/auth/login_screen.dart';
+import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/viewmodel/bottom_nav.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 class StartupView extends StatefulWidget {
   const StartupView({Key? key}) : super(key: key);
@@ -13,6 +15,13 @@ class StartupView extends StatefulWidget {
 
 class _StartupViewState extends State<StartupView> {
   FirebaseAuth auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    Provider.of<FirebaseOperations>(context, listen: false)
+        .initUserData(context);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

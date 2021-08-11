@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,9 +12,14 @@ class FirebaseOperations with ChangeNotifier {
   late UploadTask imageUploadTask;
 
   late String userAvatarUrl;
-
   String get getUserAvatarUrl => userAvatarUrl;
 
+  String userEmail = '', username = '', displayName = '', userImage = '', userBio = '';
+  String get getUserEmail => userEmail;
+  String get getUsername => username;
+  String get getDisplayName => displayName;
+  String get getUserImage => userImage;
+  String get getUserBio => userBio;
 
   Future uploadUserAvatar(BuildContext context) async {
     Reference imageReference =
@@ -41,5 +47,37 @@ class FirebaseOperations with ChangeNotifier {
         .collection('users')
         .doc(Provider.of<AuthService>(context, listen: false).getuserUID)
         .set(data);
+  }
+
+  Future initUserData(BuildContext context) async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final uid = user!.uid;
+
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .get()
+        .then((doc) {
+      print('------------------------------------');
+      print('Current user UID is ${uid}');
+      username = doc.data()!['username'];
+      displayName = doc.data()!['displayName'];
+      userEmail = doc.data()!['email'];
+      userBio = doc.data()!['bio'];
+      userImage = doc.data()!['photoUrl'];
+      print('------------------------------------');
+      print(displayName);
+      print('------------------------------------');
+      print(username);
+      print('------------------------------------');
+      print(userBio);
+      print('------------------------------------');
+      print(userEmail);
+      print('------------------------------------');
+      print(userImage);
+      print('------------------------------------');
+      notifyListeners();
+    });
   }
 }

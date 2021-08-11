@@ -1,15 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:food_share/models/user_model.dart';
+import 'package:food_share/helpers/bottom_nav_helper.dart';
 import 'package:food_share/screens/auth/sign_up_screen.dart';
 import 'package:food_share/screens/home_page.dart';
 import 'package:food_share/screens/search_page.dart';
 import 'package:food_share/screens/user_profile.dart';
-import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/widgets/create_recipe_page/upload_image_page.dart';
+import 'package:provider/provider.dart';
 
 class BottomNav extends StatefulWidget {
   const BottomNav({Key? key}) : super(key: key);
@@ -19,59 +16,30 @@ class BottomNav extends StatefulWidget {
 }
 
 class _BottomNavState extends State<BottomNav> {
-  int _selectedIndex = 0;
-  final List<Widget> _widgetOptions = <Widget>[
-    const HomePage(),
-    const SearchPage(),
-    const ImageUpload(),
-    // const CreateRecipe(),
-    UserProfile(profileId : currentUser?.id),
-  ];
-
-  void _onItemTap(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  final PageController _homepageController = PageController();
+  int _pageIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: kBlue,
-        height: 75.0,
-        index: _selectedIndex,
-        onTap: _onItemTap,
-        items: const [
-          FaIcon(
-            FontAwesomeIcons.home,
-            color: Colors.black,
-            size: 20.0,
-          ),
-          FaIcon(
-            FontAwesomeIcons.search,
-            color: Colors.black,
-            size: 20.0,
-          ),
-          FaIcon(
-            FontAwesomeIcons.utensils,
-            color: Colors.black,
-            size: 20.0,
-          ),
-          FaIcon(
-            FontAwesomeIcons.user,
-            size: 20.0,
-          ),
+      backgroundColor: Colors.white,
+      body: PageView(
+        controller: _homepageController,
+        children: [
+          const HomePage(),
+          const SearchPage(),
+          const ImageUpload(),
+          UserProfile(profileId: currentUser?.id),
         ],
-        animationDuration: const Duration(
-          milliseconds: 200,
-        ),
-        animationCurve: Curves.bounceInOut,
+        physics: const NeverScrollableScrollPhysics(),
+        onPageChanged: (page) {
+          setState(() {
+            _pageIndex = page;
+          });
+        },
       ),
+      bottomNavigationBar: Provider.of<BottomNavHelper>(context, listen: false)
+          .bottomNavigationBar(context, _pageIndex, _homepageController),
     );
   }
 }
