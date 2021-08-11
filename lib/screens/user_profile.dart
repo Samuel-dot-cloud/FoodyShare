@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:food_share/models/user_model.dart';
+import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/loading_animation.dart';
+import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+import 'auth/login_screen.dart';
 import 'auth/sign_up_screen.dart';
 
 class UserProfile extends StatefulWidget {
@@ -15,17 +19,6 @@ class UserProfile extends StatefulWidget {
 }
 
 class _UserProfileState extends State<UserProfile> {
-  // buildProfileHeader(){
-  //   return FutureBuilder(
-  //     future: usersRef.doc(widget.profileId).get(),
-  //     builder: (context, AsyncSnapshot snapshot) {
-  //     if(!snapshot.hasData){
-  //       return loadingAnimation('Loading Profile details...');
-  //     }
-  //     CustomUser user = CustomUser.fromDocument(snapshot.data);
-  //   },
-  //   );
-  // }
   bool _isOpen = false;
   final PanelController _panelController = PanelController();
   final _imageList = [

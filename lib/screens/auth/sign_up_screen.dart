@@ -243,7 +243,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           'id': Provider.of<AuthService>(context, listen: false).getuserUID,
                                           'username': _usernameController.text,
                                           'email': _emailController.text,
-                                          'photoUrl': Provider.of<SignUpUtils>(context, listen: false).getUserAvatarUrl,
+                                          'photoUrl': Provider.of<FirebaseOperations>(context, listen: false).getUserAvatarUrl,
                                           'displayName': _displayNameController.text,
                                           'bio': '',
                                           'timestamp': timestamp

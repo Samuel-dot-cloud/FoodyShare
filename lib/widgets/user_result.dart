@@ -27,7 +27,7 @@ class UserResult extends StatelessWidget {
                 ),
               ),
               subtitle: Text(
-                customUser.username,
+                '@' + customUser.username,
                 style: const TextStyle(
                   color: Colors.black,
                 ),

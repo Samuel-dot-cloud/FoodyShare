@@ -10,6 +10,11 @@ import 'auth_service.dart';
 class FirebaseOperations with ChangeNotifier {
   late UploadTask imageUploadTask;
 
+  late String userAvatarUrl;
+
+  String get getUserAvatarUrl => userAvatarUrl;
+
+
   Future uploadUserAvatar(BuildContext context) async {
     Reference imageReference =
         FirebaseStorage.instance.ref().child('userAvatar/${TimeOfDay.now()}');
@@ -26,8 +31,7 @@ class FirebaseOperations with ChangeNotifier {
           fontSize: 16.0);
     });
     imageReference.getDownloadURL().then((url) {
-      Provider.of<SignUpUtils>(context, listen: false).userAvatarUrl =
-          url.toString();
+      userAvatarUrl = url.toString();
       notifyListeners();
     });
   }

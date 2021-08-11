@@ -12,12 +12,8 @@ class SignUpUtils with ChangeNotifier {
   final picker = ImagePicker();
   File userAvatar = File('');
 
-  // late File userAvatarPhoto;
   File get getUserAvatar => userAvatar;
 
-  String userAvatarUrl = '';
-
-  String get getUserAvatarUrl => userAvatarUrl;
 
   Future pickUserAvatar(BuildContext context, ImageSource source) async {
     final pickedUserAvatar = await picker.pickImage(source: source);
@@ -33,8 +29,8 @@ class SignUpUtils with ChangeNotifier {
         : userAvatar = File(pickedUserAvatar.path);
 
     userAvatar != null
-        ? Provider.of<FirebaseOperations>(context, listen: false)
-            .uploadUserAvatar(context)
+        ? Provider.of<SignUpService>(context, listen: false)
+            .showUserAvatar(context)
         : Fluttertoast.showToast(
             msg: 'Image upload error!!!',
             toastLength: Toast.LENGTH_SHORT,
