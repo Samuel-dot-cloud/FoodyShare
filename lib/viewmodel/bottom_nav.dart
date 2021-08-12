@@ -3,7 +3,7 @@ import 'package:food_share/helpers/bottom_nav_helper.dart';
 import 'package:food_share/screens/auth/sign_up_screen.dart';
 import 'package:food_share/screens/home_page.dart';
 import 'package:food_share/screens/search_page.dart';
-import 'package:food_share/screens/user_profile.dart';
+import 'package:food_share/screens/profile/user_profile.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/widgets/create_recipe_page/upload_image_page.dart';
 import 'package:provider/provider.dart';
