@@ -306,8 +306,8 @@ class _SearchPageState extends State<SearchPage> {
         children: [
           Lottie.asset(
             'assets/lottie/chef.json',
-            height: 300.0,
-            width: 300.0,
+            height: MediaQuery.of(context).size.height * 0.60,
+            width: MediaQuery.of(context).size.width * 0.80,
           ),
           const Text(
             'Search for all things recipes!!!',

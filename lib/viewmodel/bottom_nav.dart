@@ -16,6 +16,7 @@ class BottomNav extends StatefulWidget {
 }
 
 class _BottomNavState extends State<BottomNav> {
+
   final PageController _homepageController = PageController();
   int _pageIndex = 0;
 

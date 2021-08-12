@@ -196,4 +196,19 @@ class RecipeModel {
     preparation = data['preparation'];
     createdAt = data['createdAt'];
   }
+
+  Map<String, dynamic> toMap(){
+    return {
+      'id': id,
+      'title': title,
+      'writer': writer,
+      'description': description,
+      'cookingTime': cookingTime,
+      'servings': servings,
+      'imgPath': imgPath,
+      'ingredients': ingredients,
+      'preparation': preparation,
+      'createdAt': createdAt,
+    };
+  }
 }

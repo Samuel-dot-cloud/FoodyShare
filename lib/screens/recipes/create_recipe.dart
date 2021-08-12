@@ -30,9 +30,9 @@ class CreateRecipe extends StatefulWidget {
 class _CreateRecipeState extends State<CreateRecipe> {
   late File photoFile;
   bool isUploading = false;
+  String postId = const Uuid().v4();
   firebase_storage.Reference reference =
       firebase_storage.FirebaseStorage.instance.ref();
-  String postId = const Uuid().v4();
 
   // User? user = FirebaseAuth.instance.currentUser;
 
@@ -46,7 +46,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
   Future<String> uploadImage(
       imageFile, firebase_storage.Reference reference) async {
     String urlString = '';
-    firebase_storage.UploadTask task = reference.putFile(imageFile);
+    firebase_storage.UploadTask task = reference.child('recipe-images/$postId.jpg').putFile(imageFile);
     await (task.whenComplete(() async {
       urlString = await task.snapshot.ref.getDownloadURL();
     }).catchError((onError) {
@@ -69,7 +69,8 @@ class _CreateRecipeState extends State<CreateRecipe> {
       required String description,
       required String cookingTime,
       required String servings,
-      required List<Map<String, String>> ingredients}) async {
+      required List<Map<String, String>> ingredients,
+        required List<Map<String, String>> preparation}) async {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User? user = auth.currentUser;
     final uid = user!.uid;
@@ -86,6 +87,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
         'cookingTime': cookingTime,
         'servings': servings,
         'ingredients': ingredients,
+        'preparation': preparation,
         'timestamp': timestamp,
         'likes': {},
       });
@@ -94,6 +96,15 @@ class _CreateRecipeState extends State<CreateRecipe> {
       photoFile = File('');
       isUploading = false;
     });
+    Fluttertoast.showToast(
+        msg: 'Recipe uploaded successfully 👍🍲',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0);
+    Navigator.pop(context);
   }
 
   void _addRecipe(BuildContext context, FormValues values) async {
@@ -105,7 +116,8 @@ class _CreateRecipeState extends State<CreateRecipe> {
     createPostInFirestore(
       cookingTime: values.cookingTime.toString(),
       servings: values.servings.toString(),
-      ingredients: [],
+      ingredients: values.ingredients!.toList(),
+      preparation: values.preparation!.toList(),
       description: values.description.toString(),
       mediaUrl: mediaUrl,
       name: values.name.toString(),
@@ -117,7 +129,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
     final path = tempDir.path;
     image_plugin.Image? imageFile =
         image_plugin.decodeImage(photoFile.readAsBytesSync());
-    final compressedImageFile = File('recipe-images/$path/img_$postId.jpg')
+    final compressedImageFile = File('$path/img_$postId.jpg')
       ..writeAsBytesSync(image_plugin.encodeJpg(imageFile!, quality: 85));
 
     setState(() {
