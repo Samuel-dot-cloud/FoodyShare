@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:food_share/models/user_model.dart';
+import 'package:food_share/screens/profile/edit_profile.dart';
 import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
@@ -9,8 +10,8 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-import 'auth/login_screen.dart';
-import 'auth/sign_up_screen.dart';
+import '../auth/login_screen.dart';
+import '../auth/sign_up_screen.dart';
 
 class UserProfile extends StatefulWidget {
   const UserProfile({Key? key, required this.profileId}) : super(key: key);
@@ -190,9 +191,14 @@ class _UserProfileState extends State<UserProfile> {
                   ? (MediaQuery.of(context).size.width - (2 * hPadding)) / 1.6
                   : double.infinity,
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const EditProfilePage()),
+                  );
+                },
                 child: const Text(
-                  'FOLLOW',
+                  'EDIT PROFILE',
                   style: TextStyle(
                     fontSize: 12.0,
                     fontWeight: FontWeight.w700,
