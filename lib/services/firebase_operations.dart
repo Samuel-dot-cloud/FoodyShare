@@ -59,24 +59,11 @@ class FirebaseOperations with ChangeNotifier {
         .doc(uid)
         .get()
         .then((doc) {
-      print('------------------------------------');
-      print('Current user UID is ${uid}');
       username = doc.data()!['username'];
       displayName = doc.data()!['displayName'];
       userEmail = doc.data()!['email'];
       userBio = doc.data()!['bio'];
       userImage = doc.data()!['photoUrl'];
-      print('------------------------------------');
-      print(displayName);
-      print('------------------------------------');
-      print(username);
-      print('------------------------------------');
-      print(userBio);
-      print('------------------------------------');
-      print(userEmail);
-      print('------------------------------------');
-      print(userImage);
-      print('------------------------------------');
       notifyListeners();
     });
   }
