@@ -18,7 +18,7 @@ import 'package:food_share/widgets/rounded_button.dart';
 import 'package:food_share/widgets/text_input_field.dart';
 import 'package:provider/provider.dart';
 
-// final Reference storageRef = FirebaseStorage.instance.ref();
+
 final usersRef = FirebaseFirestore.instance.collection('users');
 final recipesRef = FirebaseFirestore.instance.collection('recipes');
 CustomUser? currentUser;

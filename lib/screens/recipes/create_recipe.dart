@@ -1,12 +1,9 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart' as firebase_core;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:food_share/models/user_model.dart';
 import 'package:food_share/utils/form_values.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/create_recipe_page/recipe_form.dart';
@@ -35,6 +32,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
       firebase_storage.FirebaseStorage.instance.ref();
 
   // User? user = FirebaseAuth.instance.currentUser;
+  //recipesRef.doc(user.uid).collection('userRecipes').doc(postId).set({
 
   @override
   void initState() {
@@ -46,7 +44,8 @@ class _CreateRecipeState extends State<CreateRecipe> {
   Future<String> uploadImage(
       imageFile, firebase_storage.Reference reference) async {
     String urlString = '';
-    firebase_storage.UploadTask task = reference.child('recipe-images/$postId.jpg').putFile(imageFile);
+    firebase_storage.UploadTask task =
+        reference.child('recipe-images/$postId.jpg').putFile(imageFile);
     await (task.whenComplete(() async {
       urlString = await task.snapshot.ref.getDownloadURL();
     }).catchError((onError) {
@@ -70,17 +69,13 @@ class _CreateRecipeState extends State<CreateRecipe> {
       required String cookingTime,
       required String servings,
       required List<Map<String, String>> ingredients,
-        required List<Map<String, String>> preparation}) async {
+      required List<Map<String, String>> preparation}) async {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User? user = auth.currentUser;
     final uid = user!.uid;
-    usersRef.doc(uid).get().then((value) {
-      String username = value.get('username').toString();
-
-      recipesRef.doc(user.uid).collection('userRecipes').doc(postId).set({
+      recipesRef.doc(postId).set({
         'postId': postId,
-        'authorId': user.uid,
-        'username': username,
+        'authorId': uid,
         'mediaUrl': mediaUrl,
         'description': description,
         'name': name,
@@ -91,7 +86,6 @@ class _CreateRecipeState extends State<CreateRecipe> {
         'timestamp': timestamp,
         'likes': {},
       });
-    });
     setState(() {
       photoFile = File('');
       isUploading = false;

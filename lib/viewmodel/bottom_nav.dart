@@ -17,6 +17,13 @@ class BottomNav extends StatefulWidget {
 
 class _BottomNavState extends State<BottomNav> {
 
+  @override
+  void initState() {
+    Provider.of<FirebaseOperations>(context, listen: false)
+        .initUserData(context);
+    super.initState();
+  }
+
   final PageController _homepageController = PageController();
   int _pageIndex = 0;
 

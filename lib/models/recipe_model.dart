@@ -185,7 +185,7 @@ class RecipeModel {
   ];
 
   RecipeModel.fromMap(Map<String, dynamic> data){
-    id = data['id'];
+    id = data['postId'];
     title = data['title'];
     writer = data['writer'];
     description = data['description'];
@@ -194,7 +194,7 @@ class RecipeModel {
     imgPath = data['imgPath'];
     ingredients = data['ingredients'];
     preparation = data['preparation'];
-    createdAt = data['createdAt'];
+    createdAt = data['timestamp'];
   }
 
   Map<String, dynamic> toMap(){
