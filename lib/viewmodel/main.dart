@@ -9,6 +9,7 @@ import 'package:food_share/screens/auth/sign_up_screen.dart';
 import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/services/recipe_notifier.dart';
+import 'package:food_share/services/screens/discover_helper.dart';
 import 'package:food_share/services/screens/sign_up_service.dart';
 import 'package:food_share/utils/sign_up_util.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26,6 +27,9 @@ void main() async {
       providers: [
         ChangeNotifierProvider(
           create: (context) => RecipeNotifier(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => DiscoverHelper(),
         ),
         ChangeNotifierProvider(create: (context) => FirebaseOperations(),
         ),

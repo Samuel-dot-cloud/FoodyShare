@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_share/models/recipe_model.dart';
+import 'package:food_share/services/recipe_notifier.dart';
 import 'package:food_share/utils/sign_up_util.dart';
 import 'package:provider/provider.dart';
 
@@ -67,4 +69,20 @@ class FirebaseOperations with ChangeNotifier {
       notifyListeners();
     });
   }
+  
+  // Future getRecipes(RecipeNotifier recipeNotifier) async {
+  //   QuerySnapshot snapshot = await FirebaseFirestore.instance
+  //       .collection('recipes')
+  //       .orderBy('timestamp', descending: true)
+  //       .get();
+  //
+  //   List<RecipeModel> _recipeList = [];
+  //
+  //   snapshot.docs.forEach((document) {
+  //     RecipeModel recipeModel = RecipeModel.fromMap(document.data);
+  //     _recipeList.add(recipeModel);
+  //
+  //     recipeNotifier.recipeList = _recipeList;
+  //   });
+  // }
 }

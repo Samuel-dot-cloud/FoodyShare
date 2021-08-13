@@ -45,7 +45,7 @@ class AuthService with ChangeNotifier {
         password: password,
       );
       User? user = result.user;
-      userUID = user!.uid;
+      userUID = user?.uid;
       notifyListeners();
 
       return 'Welcome';

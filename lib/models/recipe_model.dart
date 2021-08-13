@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RecipeModel {
   String? id;
+  String? authorId;
   String? title, writer, description;
   int? cookingTime;
   int? servings;
@@ -186,12 +187,13 @@ class RecipeModel {
 
   RecipeModel.fromMap(Map<String, dynamic> data){
     id = data['postId'];
+    authorId = data['authorId'];
     title = data['title'];
     writer = data['writer'];
     description = data['description'];
     cookingTime = data['cookingTime'];
     servings = data['servings'];
-    imgPath = data['imgPath'];
+    imgPath = data['mediaUrl'];
     ingredients = data['ingredients'];
     preparation = data['preparation'];
     createdAt = data['timestamp'];
@@ -200,6 +202,7 @@ class RecipeModel {
   Map<String, dynamic> toMap(){
     return {
       'id': id,
+      'authorId': authorId,
       'title': title,
       'writer': writer,
       'description': description,
