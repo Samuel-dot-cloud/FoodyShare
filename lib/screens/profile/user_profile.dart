@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:food_share/models/user_model.dart';
 import 'package:food_share/screens/profile/edit_profile.dart';
-import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
-import 'package:food_share/viewmodel/loading_animation.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-import '../auth/login_screen.dart';
-import '../auth/sign_up_screen.dart';
 
 class UserProfile extends StatefulWidget {
   const UserProfile({Key? key, required this.profileId}) : super(key: key);
@@ -25,12 +19,12 @@ class _UserProfileState extends State<UserProfile> {
   bool _isOpen = false;
   final PanelController _panelController = PanelController();
   final _imageList = [
-    // 'assets/images/img-1.jpg',
-    // 'assets/images/img-2.jpg',
-    // 'assets/images/img-3.jpg',
-    // 'assets/images/img-4.jpg',
-    // 'assets/images/img-5.jpg',
-    // 'assets/images/img-6.jpg',
+    'assets/images/img-1.jpg',
+    'assets/images/img-2.jpg',
+    'assets/images/img-3.jpg',
+    'assets/images/img-4.jpg',
+    'assets/images/img-5.jpg',
+    'assets/images/img-6.jpg',
   ];
 
   @override
@@ -46,8 +40,9 @@ class _UserProfileState extends State<UserProfile> {
             child: Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage( Provider.of<FirebaseOperations>(context, listen: false)
-                      .getUserImage),
+                  image: NetworkImage(
+                      Provider.of<FirebaseOperations>(context, listen: false)
+                          .getUserImage),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -120,30 +115,32 @@ class _UserProfileState extends State<UserProfile> {
               ],
             ),
           ),
-          _imageList.isNotEmpty ? GridView.builder(
-            primary: false,
-            shrinkWrap: true,
-            padding: EdgeInsets.zero,
-            itemCount: _imageList.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 16.0,
-            ),
-            itemBuilder: (BuildContext context, int index) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 3.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(15.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(_imageList[index]),
-                      fit: BoxFit.cover,
+          _imageList.isNotEmpty
+              ? GridView.builder(
+                  primary: false,
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  itemCount: _imageList.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 16.0,
+                  ),
+                  itemBuilder: (BuildContext context, int index) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 3.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(_imageList[index]),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ),
-          ) : _defaultNoRecipes(),
+                )
+              : _defaultNoRecipes(),
         ],
       ),
     );
@@ -194,7 +191,8 @@ class _UserProfileState extends State<UserProfile> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const EditProfilePage()),
+                    MaterialPageRoute(
+                        builder: (context) => const EditProfilePage()),
                   );
                 },
                 child: const Text(
@@ -278,27 +276,42 @@ class _UserProfileState extends State<UserProfile> {
         Text(
           Provider.of<FirebaseOperations>(context, listen: false)
               .getDisplayName,
+          overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             fontWeight: FontWeight.w700,
-            fontSize: 30.0,
+            fontSize: 27.0,
           ),
         ),
         const SizedBox(
           height: 8.0,
         ),
         Text(
-          '@' +Provider.of<FirebaseOperations>(context, listen: false)
-              .getUsername,
+          '@' +
+              Provider.of<FirebaseOperations>(context, listen: false)
+                  .getUsername,
           style: const TextStyle(
             fontStyle: FontStyle.italic,
             fontSize: 22.0,
+          ),
+        ),
+        const SizedBox(
+          height: 8.0,
+        ),
+        Text(
+          Provider.of<FirebaseOperations>(context, listen: false).getUserBio,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            color: Colors.grey,
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.w500,
+            fontSize: 17.0,
           ),
         ),
       ],
     );
   }
 
-  Center _defaultNoRecipes(){
+  Center _defaultNoRecipes() {
     return Center(
       child: Column(
         children: [
@@ -307,14 +320,15 @@ class _UserProfileState extends State<UserProfile> {
             width: MediaQuery.of(context).size.width * 0.80,
             child: Lottie.asset('assets/lottie/no-post.json'),
           ),
-          const SizedBox(height: 20.0,),
+          const SizedBox(
+            height: 20.0,
+          ),
           const Text(
             'No Recipes Here...',
             style: TextStyle(
-              color: Colors.black,
-              fontSize: 25.0,
-              fontWeight: FontWeight.bold
-            ),
+                color: Colors.black,
+                fontSize: 25.0,
+                fontWeight: FontWeight.bold),
           )
         ],
       ),

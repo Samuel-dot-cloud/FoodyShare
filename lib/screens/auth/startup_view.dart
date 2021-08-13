@@ -29,8 +29,8 @@ class _StartupViewState extends State<StartupView> {
   Widget build(BuildContext context) {
     Future.delayed(
         const Duration(
-          milliseconds: 5000,
-        ), () async {
+          milliseconds: 3000,
+        ), () {
       if (auth.currentUser == null) {
         Navigator.pushAndRemoveUntil(
             context,
@@ -41,6 +41,10 @@ class _StartupViewState extends State<StartupView> {
             context,
             MaterialPageRoute(builder: (context) => const BottomNav()),
             (route) => false);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const BottomNav()),
+        );
       }
     });
     return Scaffold(
