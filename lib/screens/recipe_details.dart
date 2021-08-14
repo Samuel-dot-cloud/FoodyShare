@@ -1,27 +1,26 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
-
+import 'package:uuid/uuid.dart';
 
 class RecipeDetails extends StatefulWidget {
-  final String recipeId;
+  final DocumentSnapshot recipeDoc;
 
-  const RecipeDetails({Key? key, required this.recipeId}) : super(key: key);
+  const RecipeDetails({Key? key, required this.recipeDoc}) : super(key: key);
 
   @override
   State<RecipeDetails> createState() => _RecipeDetailsState();
 }
 
 class _RecipeDetailsState extends State<RecipeDetails> {
-
-
   @override
   Widget build(BuildContext context) {
     Provider.of<FirebaseOperations>(context, listen: true)
-        .getRecipeDetails(context, widget.recipeId);
+        .getRecipeDetails(context, widget.recipeDoc['postId']);
     Size size = MediaQuery.of(context).size;
     final _textTheme = Theme.of(context).textTheme;
     return Scaffold(
@@ -39,15 +38,12 @@ class _RecipeDetailsState extends State<RecipeDetails> {
               Align(
                 alignment: Alignment.topCenter,
                 child: Hero(
-                  tag: Provider.of<FirebaseOperations>(context, listen: false)
-                      .getMediaUrl,
+                  tag: widget.recipeDoc['mediaUrl'],
                   child: Image(
                     height: (size.height / 2) + 50,
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    image: NetworkImage(
-                        Provider.of<FirebaseOperations>(context, listen: false)
-                            .getMediaUrl),
+                    image: NetworkImage(widget.recipeDoc['mediaUrl']),
                   ),
                 ),
               ),
@@ -66,7 +62,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                 child: InkWell(
                   onTap: () => Navigator.pop(context),
                   child: const Icon(
-                    Icons.arrow_back,
+                    Icons.arrow_back_ios,
                     color: Colors.white,
                     size: 32.0,
                   ),
@@ -94,16 +90,14 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                 height: 30.0,
               ),
               Text(
-                Provider.of<FirebaseOperations>(context, listen: false)
-                    .getRecipeTitle,
+                widget.recipeDoc['name'],
                 style: _textTheme.headline6,
               ),
               const SizedBox(
                 height: 10.0,
               ),
               Text(
-                Provider.of<FirebaseOperations>(context, listen: false)
-                    .getAuthorId,
+                widget.recipeDoc['authorId'],
                 style: _textTheme.caption,
               ),
               const SizedBox(
@@ -128,9 +122,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                   const SizedBox(
                     width: 5.0,
                   ),
-                  Text(Provider.of<FirebaseOperations>(context, listen: false)
-                          .getRecipeCookingTime +
-                      '\''),
+                  Text(widget.recipeDoc['cookingTime'] + '\''),
                   const SizedBox(
                     width: 20.0,
                   ),
@@ -142,9 +134,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                   const SizedBox(
                     width: 10.0,
                   ),
-                  Text(Provider.of<FirebaseOperations>(context, listen: false)
-                          .getServings +
-                      ' servings'),
+                  Text(widget.recipeDoc['servings'] + ' servings'),
                 ],
               ),
               const SizedBox(

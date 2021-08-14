@@ -28,7 +28,8 @@ class _NewRecipeState extends State<NewRecipe> {
               height: 20,
             ),
             StreamBuilder<QuerySnapshot>(
-              stream: recipesRef.snapshots(),
+              stream:
+                  recipesRef.orderBy("timestamp", descending: true).snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return const Text('Error');
@@ -38,33 +39,26 @@ class _NewRecipeState extends State<NewRecipe> {
                 }
                 if (snapshot.hasData) {
                   return ListView.builder(
-                    physics: const ScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: snapshot.data!.docs.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      // Provider.of<FirebaseOperations>(context, listen: false)
-                      //     .getRecipeDetails(context, '${snapshot.data!.docs[index]['postId']}');
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12.0,
-                          vertical: 12.0,
-                        ),
-                        child: GestureDetector(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => RecipeDetails(
-                                  recipeId:
-                                      '${snapshot.data!.docs[index]['postId']}'),
+                      physics: const ScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (BuildContext context, int index) => Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0,
+                              vertical: 12.0,
                             ),
-                          ),
-                          child: RecipeCard(
-                              recipeId:
-                                  '${snapshot.data!.docs[index]['postId']}'),
-                        ),
-                      );
-                    },
-                  );
+                            child: GestureDetector(
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => RecipeDetails(
+                                      recipeDoc: snapshot.data!.docs[index]),
+                                ),
+                              ),
+                              child: RecipeCard(
+                                  recipeDoc: snapshot.data!.docs[index]),
+                            ),
+                          ));
                 }
                 return const Text('Loading ...');
               },
