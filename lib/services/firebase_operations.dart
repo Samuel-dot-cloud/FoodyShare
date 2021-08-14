@@ -14,14 +14,35 @@ class FirebaseOperations with ChangeNotifier {
   late UploadTask imageUploadTask;
 
   late String userAvatarUrl;
+
   String get getUserAvatarUrl => userAvatarUrl;
 
-  String userEmail = '', username = '', displayName = '', userImage = '', userBio = '';
+  ///User variables
+  String userEmail = '',
+      username = '',
+      displayName = '',
+      userImage = '',
+      userBio = '';
+
   String get getUserEmail => userEmail;
   String get getUsername => username;
   String get getDisplayName => displayName;
   String get getUserImage => userImage;
   String get getUserBio => userBio;
+
+  ///Recipe variables
+  String id = '', authorId = '', title = '', description = '', cookingTime = '', servings = '', mediaUrl = '';
+
+  String get recipeId => id;
+  String get getAuthorId => authorId;
+  String get getRecipeTitle => title;
+  String get getRecipeDescription => description;
+  String get getRecipeCookingTime => cookingTime;
+  String get getServings => servings;
+  String get getMediaUrl => mediaUrl;
+
+
+
 
   Future uploadUserAvatar(BuildContext context) async {
     Reference imageReference =
@@ -69,7 +90,25 @@ class FirebaseOperations with ChangeNotifier {
       notifyListeners();
     });
   }
-  
+
+  Future getRecipeDetails(BuildContext context, String recipeId) async {
+    return FirebaseFirestore.instance
+        .collection('recipes')
+        .doc(recipeId)
+        .get()
+        .then((doc) {
+      id = doc.data()!['postId'];
+      authorId = doc.data()!['authorId'];
+      title = doc.data()!['name'];
+      description = doc.data()!['description'];
+      cookingTime = doc.data()!['cookingTime'];
+      servings = doc.data()!['servings'];
+      mediaUrl = doc.data()!['mediaUrl'];
+      // t = doc.data()!['timestamp'];
+      notifyListeners();
+    });
+  }
+
   // Future getRecipes(RecipeNotifier recipeNotifier) async {
   //   QuerySnapshot snapshot = await FirebaseFirestore.instance
   //       .collection('recipes')
@@ -78,11 +117,12 @@ class FirebaseOperations with ChangeNotifier {
   //
   //   List<RecipeModel> _recipeList = [];
   //
-  //   snapshot.docs.forEach((document) {
-  //     RecipeModel recipeModel = RecipeModel.fromMap(document.data);
+  //   for (var document in snapshot.docs) {
+  //     RecipeModel recipeModel =
+  //         RecipeModel.fromMap(document.data as Map<String, dynamic>);
   //     _recipeList.add(recipeModel);
   //
   //     recipeNotifier.recipeList = _recipeList;
-  //   });
+  //   }
   // }
 }

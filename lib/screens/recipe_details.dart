@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:food_share/models/recipe_model.dart';
-import 'package:food_share/widgets/ingredients_section.dart';
-import 'package:food_share/widgets/preparation_section.dart';
+import 'package:food_share/services/firebase_operations.dart';
+import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
-class RecipeDetails extends StatelessWidget {
-  final RecipeModel recipeModel;
 
-  const RecipeDetails({Key? key, required this.recipeModel}) : super(key: key);
+class RecipeDetails extends StatefulWidget {
+  final String recipeId;
+
+  const RecipeDetails({Key? key, required this.recipeId}) : super(key: key);
+
+  @override
+  State<RecipeDetails> createState() => _RecipeDetailsState();
+}
+
+class _RecipeDetailsState extends State<RecipeDetails> {
+
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<FirebaseOperations>(context, listen: true)
+        .getRecipeDetails(context, widget.recipeId);
     Size size = MediaQuery.of(context).size;
     final _textTheme = Theme.of(context).textTheme;
     return Scaffold(
@@ -30,12 +39,15 @@ class RecipeDetails extends StatelessWidget {
               Align(
                 alignment: Alignment.topCenter,
                 child: Hero(
-                  tag: recipeModel.imgPath.toString(),
+                  tag: Provider.of<FirebaseOperations>(context, listen: false)
+                      .getMediaUrl,
                   child: Image(
                     height: (size.height / 2) + 50,
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    image: AssetImage(recipeModel.imgPath.toString()),
+                    image: NetworkImage(
+                        Provider.of<FirebaseOperations>(context, listen: false)
+                            .getMediaUrl),
                   ),
                 ),
               ),
@@ -82,14 +94,16 @@ class RecipeDetails extends StatelessWidget {
                 height: 30.0,
               ),
               Text(
-                recipeModel.title.toString(),
+                Provider.of<FirebaseOperations>(context, listen: false)
+                    .getRecipeTitle,
                 style: _textTheme.headline6,
               ),
               const SizedBox(
                 height: 10.0,
               ),
               Text(
-                recipeModel.writer.toString(),
+                Provider.of<FirebaseOperations>(context, listen: false)
+                    .getAuthorId,
                 style: _textTheme.caption,
               ),
               const SizedBox(
@@ -114,7 +128,9 @@ class RecipeDetails extends StatelessWidget {
                   const SizedBox(
                     width: 5.0,
                   ),
-                  Text(recipeModel.cookingTime.toString() + '\''),
+                  Text(Provider.of<FirebaseOperations>(context, listen: false)
+                          .getRecipeCookingTime +
+                      '\''),
                   const SizedBox(
                     width: 20.0,
                   ),
@@ -126,7 +142,9 @@ class RecipeDetails extends StatelessWidget {
                   const SizedBox(
                     width: 10.0,
                   ),
-                  Text(recipeModel.servings.toString() + ' Servings'),
+                  Text(Provider.of<FirebaseOperations>(context, listen: false)
+                          .getServings +
+                      ' servings'),
                 ],
               ),
               const SizedBox(
@@ -172,12 +190,18 @@ class RecipeDetails extends StatelessWidget {
                       Divider(
                         color: Colors.black.withOpacity(0.3),
                       ),
-                      Expanded(
+                      const Expanded(
                         child: TabBarView(
                           children: [
-                            Ingredients(recipeModel: recipeModel),
-                            PreparationSection(recipeModel: recipeModel),
-                            const SizedBox(
+                            SizedBox(
+                              child: Text('Ingredients'),
+                            ),
+                            SizedBox(
+                              child: Text('Preparation'),
+                            ),
+                            // Ingredients(recipeModel: recipeModel),
+                            // PreparationSection(recipeModel: recipeModel),
+                            SizedBox(
                               child: Text('Review'),
                             ),
                           ],

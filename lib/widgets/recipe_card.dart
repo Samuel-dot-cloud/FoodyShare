@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:food_share/models/recipe_model.dart';
+import 'package:food_share/services/firebase_operations.dart';
+import 'package:provider/provider.dart';
 
 class RecipeCard extends StatefulWidget {
-  const RecipeCard({Key? key, required this.recipeModel}) : super(key: key);
-  final RecipeModel recipeModel;
+  const RecipeCard({Key? key, required this.recipeId}) : super(key: key);
+
+  // final RecipeModel recipeModel;
+  final String recipeId;
 
   @override
   State<RecipeCard> createState() => _RecipeCardState();
@@ -16,6 +19,8 @@ class _RecipeCardState extends State<RecipeCard> {
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<FirebaseOperations>(context, listen: true)
+        .getRecipeDetails(context, widget.recipeId);
     return Column(
       children: [
         Stack(
@@ -25,12 +30,15 @@ class _RecipeCardState extends State<RecipeCard> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(24.0),
                 child: Hero(
-                  tag: widget.recipeModel.imgPath.toString(),
+                  tag: Provider.of<FirebaseOperations>(context, listen: false)
+                      .getMediaUrl,
                   child: Image(
                     height: 320.0,
                     width: 320.0,
                     fit: BoxFit.cover,
-                    image: AssetImage(widget.recipeModel.imgPath.toString()),
+                    image: NetworkImage(
+                        Provider.of<FirebaseOperations>(context, listen: false)
+                            .getMediaUrl),
                   ),
                 ),
               ),
@@ -71,14 +79,16 @@ class _RecipeCardState extends State<RecipeCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.recipeModel.title.toString(),
+                      Provider.of<FirebaseOperations>(context, listen: false)
+                          .getRecipeTitle,
                       style: Theme.of(context).textTheme.subtitle1,
                     ),
                     const SizedBox(
                       height: 8.0,
                     ),
                     Text(
-                      widget.recipeModel.writer.toString(),
+                      Provider.of<FirebaseOperations>(context, listen: false)
+                          .getAuthorId,
                       style: Theme.of(context).textTheme.caption,
                     ),
                   ],
@@ -98,7 +108,9 @@ class _RecipeCardState extends State<RecipeCard> {
                       width: 4,
                     ),
                     Text(
-                      widget.recipeModel.cookingTime.toString() + '\'',
+                      Provider.of<FirebaseOperations>(context, listen: false)
+                              .getRecipeCookingTime +
+                          '\'',
                     ),
                     const Spacer(),
                     InkWell(
