@@ -30,6 +30,19 @@ class FirebaseOperations with ChangeNotifier {
   String get getUserImage => userImage;
   String get getUserBio => userBio;
 
+  ///User post variables
+  String authorEmail = '',
+      authorUsername = '',
+      authorDisplayName = '',
+      authorUserImage = '',
+      authorBio = '';
+
+  String get getAuthorEmail => authorEmail;
+  String get getAuthorUsername => authorUsername;
+  String get getAuthorDisplayName => authorDisplayName;
+  String get getAuthorUserImage => authorUserImage;
+  String get getAuthorBio => authorBio;
+
   ///Recipe variables
   String id = '', authorId = '', title = '', description = '', cookingTime = '', servings = '', mediaUrl = '';
 
@@ -87,6 +100,21 @@ class FirebaseOperations with ChangeNotifier {
       userEmail = doc.data()!['email'];
       userBio = doc.data()!['bio'];
       userImage = doc.data()!['photoUrl'];
+      notifyListeners();
+    });
+  }
+
+  Future getAuthorData (BuildContext context, String authorId) async {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(authorId)
+        .get()
+        .then((doc) {
+      authorUsername = doc.data()!['username'];
+      authorDisplayName = doc.data()!['displayName'];
+      authorEmail = doc.data()!['email'];
+      authorBio = doc.data()!['bio'];
+      authorUserImage = doc.data()!['photoUrl'];
       notifyListeners();
     });
   }

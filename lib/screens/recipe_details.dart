@@ -21,6 +21,9 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   Widget build(BuildContext context) {
     Provider.of<FirebaseOperations>(context, listen: true)
         .getRecipeDetails(context, widget.recipeDoc['postId']);
+    Provider.of<FirebaseOperations>(context, listen: true)
+        .getAuthorData(context, widget.recipeDoc['authorId']);
+
     Size size = MediaQuery.of(context).size;
     final _textTheme = Theme.of(context).textTheme;
     return Scaffold(
@@ -97,7 +100,8 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                 height: 10.0,
               ),
               Text(
-                widget.recipeDoc['authorId'],
+                '@' + Provider.of<FirebaseOperations>(context, listen: false)
+                    .getUsername,
                 style: _textTheme.caption,
               ),
               const SizedBox(

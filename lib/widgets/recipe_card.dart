@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/services/firebase_operations.dart';
+import 'package:food_share/utils/pallete.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -23,6 +24,9 @@ class _RecipeCardState extends State<RecipeCard> {
   Widget build(BuildContext context) {
     Provider.of<FirebaseOperations>(context, listen: true)
         .getRecipeDetails(context, widget.recipeDoc['postId']);
+    Provider.of<FirebaseOperations>(context, listen: false)
+        .getAuthorData(context, widget.recipeDoc['authorId']);
+
     return Column(
       children: [
         Stack(
@@ -73,6 +77,15 @@ class _RecipeCardState extends State<RecipeCard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Flexible(
+                child: CircleAvatar(
+                  radius: 18.0,
+                  backgroundColor: kBlue,
+                  backgroundImage: NetworkImage(
+                      Provider.of<FirebaseOperations>(context, listen: false)
+                          .getUserImage),
+                ),
+              ),
+              Flexible(
                 flex: 2,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,7 +98,8 @@ class _RecipeCardState extends State<RecipeCard> {
                       height: 8.0,
                     ),
                     Text(
-                      widget.recipeDoc['authorId'],
+                      '@' + Provider.of<FirebaseOperations>(context, listen: false)
+                          .getUsername,
                       style: Theme.of(context).textTheme.caption,
                     ),
                   ],
@@ -105,8 +119,7 @@ class _RecipeCardState extends State<RecipeCard> {
                       width: 4,
                     ),
                     Text(
-                      widget.recipeDoc['cookingTime'] +
-                          '\'',
+                      widget.recipeDoc['cookingTime'] + '\'',
                     ),
                     const Spacer(),
                     InkWell(
