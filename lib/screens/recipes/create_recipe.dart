@@ -44,8 +44,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
   Future<String> uploadImage(
       imageFile, firebase_storage.Reference reference) async {
     String urlString = '';
-    firebase_storage.UploadTask task =
-        reference.child('recipe-images/$postId.jpg').putFile(imageFile);
+    firebase_storage.UploadTask task = reference.child('recipe-images/$postId.jpg').putFile(imageFile);
     await (task.whenComplete(() async {
       urlString = await task.snapshot.ref.getDownloadURL();
     }).catchError((onError) {
@@ -69,7 +68,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
       required String cookingTime,
       required String servings,
       required List<Map<String, String>> ingredients,
-      required List<Map<String, String>> preparation}) async {
+        required List<Map<String, String>> preparation}) async {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User? user = auth.currentUser;
     final uid = user!.uid;

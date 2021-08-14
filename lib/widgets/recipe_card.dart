@@ -1,10 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:food_share/models/recipe_model.dart';
+import 'package:food_share/services/firebase_operations.dart';
+import 'package:food_share/utils/pallete.dart';
+import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class RecipeCard extends StatefulWidget {
-  const RecipeCard({Key? key, required this.recipeModel}) : super(key: key);
-  final RecipeModel recipeModel;
+  const RecipeCard({Key? key, required this.recipeDoc}) : super(key: key);
+
+  // final RecipeModel recipeModel;
+  final DocumentSnapshot recipeDoc;
 
   @override
   State<RecipeCard> createState() => _RecipeCardState();
@@ -16,6 +22,11 @@ class _RecipeCardState extends State<RecipeCard> {
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<FirebaseOperations>(context, listen: true)
+        .getRecipeDetails(context, widget.recipeDoc['postId']);
+    Provider.of<FirebaseOperations>(context, listen: false)
+        .getAuthorData(context, widget.recipeDoc['authorId']);
+
     return Column(
       children: [
         Stack(
@@ -25,12 +36,12 @@ class _RecipeCardState extends State<RecipeCard> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(24.0),
                 child: Hero(
-                  tag: widget.recipeModel.imgPath.toString(),
+                  tag: widget.recipeDoc['mediaUrl'],
                   child: Image(
                     height: 320.0,
                     width: 320.0,
                     fit: BoxFit.cover,
-                    image: AssetImage(widget.recipeModel.imgPath.toString()),
+                    image: NetworkImage(widget.recipeDoc['mediaUrl']),
                   ),
                 ),
               ),
@@ -66,19 +77,29 @@ class _RecipeCardState extends State<RecipeCard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Flexible(
+                child: CircleAvatar(
+                  radius: 18.0,
+                  backgroundColor: kBlue,
+                  backgroundImage: NetworkImage(
+                      Provider.of<FirebaseOperations>(context, listen: false)
+                          .getUserImage),
+                ),
+              ),
+              Flexible(
                 flex: 2,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.recipeModel.title.toString(),
+                      widget.recipeDoc['name'],
                       style: Theme.of(context).textTheme.subtitle1,
                     ),
                     const SizedBox(
                       height: 8.0,
                     ),
                     Text(
-                      widget.recipeModel.writer.toString(),
+                      '@' + Provider.of<FirebaseOperations>(context, listen: false)
+                          .getUsername,
                       style: Theme.of(context).textTheme.caption,
                     ),
                   ],
@@ -98,7 +119,7 @@ class _RecipeCardState extends State<RecipeCard> {
                       width: 4,
                     ),
                     Text(
-                      widget.recipeModel.cookingTime.toString() + '\'',
+                      widget.recipeDoc['cookingTime'] + '\'',
                     ),
                     const Spacer(),
                     InkWell(

@@ -40,144 +40,144 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        elevation: 0.0,
-        leading: const Icon(
-          Icons.sort,
-          color: Colors.black,
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(
-              right: 16.0,
-            ),
-            child: IconButton(
-              icon: const Icon(
-                Icons.search,
-                color: Colors.black,
-              ),
-              onPressed: () {
-                setState(() {
-                  _searchState = !_searchState;
-                });
-              },
-            ),
-          ),
-        ],
-        title: Visibility(
-          visible: _searchState,
-          child: TextFormField(
-            controller: searchController,
-            decoration: InputDecoration(
-              hintText: 'Search here...',
-              filled: true,
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.clear),
-                onPressed: clearSearch,
-              ),
-            ),
-            onFieldSubmitted: handlesearch,
-          ),
-        ),
-      ),
-      body: !_searchState
-          ? SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        buildTextTitleVariation1('Explore section'),
-                        buildTextSubtitleVariation1(
-                            'A huge selection of tasty and delicious food recipes.'),
-                        const SizedBox(
-                          height: 32.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            // option(
-                            //   text: 'Vegetables',
-                            //   image: 'assets/icons/salad.png',
-                            //   index: 0,
-                            // ),
-                            // const SizedBox(
-                            //   width: 8.0,
-                            // ),
-                            option(
-                              text: 'Meats',
-                              image: 'assets/icons/steak.png',
-                              index: 0,
-                            ),
-                            // const SizedBox(
-                            //   width: 8.0,
-                            // ),
-                            option(
-                              text: 'Sweets',
-                              image: 'assets/icons/candies.png',
-                              index: 1,
-                            ),
-                            // const SizedBox(
-                            //   width: 8.0,
-                            // ),
-                            option(
-                              text: 'Cakes',
-                              image: 'assets/icons/cake.png',
-                              index: 2,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 24.0,
-                  ),
-                  SizedBox(
-                    height: 350.0,
-                    child: ListView(
-                      physics: const BouncingScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      children: buildRecipes(),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 16.0,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                    ),
-                    child: Row(
-                      children: [
-                        buildTextTitleVariation2('Popular', false),
-                        const SizedBox(
-                          width: 8.0,
-                        ),
-                        buildTextTitleVariation2('Food', true),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 190.0,
-                    child: PageView(
-                      physics: const BouncingScrollPhysics(),
-                      children: buildPopulars(),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : searchState(),
+      // backgroundColor: Colors.grey[50],
+      // appBar: AppBar(
+      //   backgroundColor: Colors.transparent,
+      //   systemOverlayStyle: SystemUiOverlayStyle.light,
+      //   elevation: 0.0,
+      //   leading: const Icon(
+      //     Icons.sort,
+      //     color: Colors.black,
+      //   ),
+      //   actions: [
+      //     Padding(
+      //       padding: const EdgeInsets.only(
+      //         right: 16.0,
+      //       ),
+      //       child: IconButton(
+      //         icon: const Icon(
+      //           Icons.search,
+      //           color: Colors.black,
+      //         ),
+      //         onPressed: () {
+      //           setState(() {
+      //             _searchState = !_searchState;
+      //           });
+      //         },
+      //       ),
+      //     ),
+      //   ],
+      //   title: Visibility(
+      //     visible: _searchState,
+      //     child: TextFormField(
+      //       controller: searchController,
+      //       decoration: InputDecoration(
+      //         hintText: 'Search here...',
+      //         filled: true,
+      //         suffixIcon: IconButton(
+      //           icon: const Icon(Icons.clear),
+      //           onPressed: clearSearch,
+      //         ),
+      //       ),
+      //       onFieldSubmitted: handlesearch,
+      //     ),
+      //   ),
+      // ),
+      // body: !_searchState
+      //     ? SingleChildScrollView(
+      //         physics: const BouncingScrollPhysics(),
+      //         child: Column(
+      //           children: [
+      //             Padding(
+      //               padding: const EdgeInsets.symmetric(
+      //                 horizontal: 16.0,
+      //               ),
+      //               child: Column(
+      //                 crossAxisAlignment: CrossAxisAlignment.start,
+      //                 children: [
+      //                   buildTextTitleVariation1('Explore section'),
+      //                   buildTextSubtitleVariation1(
+      //                       'A huge selection of tasty and delicious food recipes.'),
+      //                   const SizedBox(
+      //                     height: 32.0,
+      //                   ),
+      //                   Row(
+      //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //                     children: [
+      //                       // option(
+      //                       //   text: 'Vegetables',
+      //                       //   image: 'assets/icons/salad.png',
+      //                       //   index: 0,
+      //                       // ),
+      //                       // const SizedBox(
+      //                       //   width: 8.0,
+      //                       // ),
+      //                       option(
+      //                         text: 'Meats',
+      //                         image: 'assets/icons/steak.png',
+      //                         index: 0,
+      //                       ),
+      //                       // const SizedBox(
+      //                       //   width: 8.0,
+      //                       // ),
+      //                       option(
+      //                         text: 'Sweets',
+      //                         image: 'assets/icons/candies.png',
+      //                         index: 1,
+      //                       ),
+      //                       // const SizedBox(
+      //                       //   width: 8.0,
+      //                       // ),
+      //                       option(
+      //                         text: 'Cakes',
+      //                         image: 'assets/icons/cake.png',
+      //                         index: 2,
+      //                       ),
+      //                     ],
+      //                   ),
+      //                 ],
+      //               ),
+      //             ),
+      //             const SizedBox(
+      //               height: 24.0,
+      //             ),
+      //             SizedBox(
+      //               height: 350.0,
+      //               child: ListView(
+      //                 physics: const BouncingScrollPhysics(),
+      //                 scrollDirection: Axis.horizontal,
+      //                 shrinkWrap: true,
+      //                 children: buildRecipes(),
+      //               ),
+      //             ),
+      //             const SizedBox(
+      //               height: 16.0,
+      //             ),
+      //             Padding(
+      //               padding: const EdgeInsets.symmetric(
+      //                 horizontal: 16.0,
+      //               ),
+      //               child: Row(
+      //                 children: [
+      //                   buildTextTitleVariation2('Popular', false),
+      //                   const SizedBox(
+      //                     width: 8.0,
+      //                   ),
+      //                   buildTextTitleVariation2('Food', true),
+      //                 ],
+      //               ),
+      //             ),
+      //             SizedBox(
+      //               height: 190.0,
+      //               child: PageView(
+      //                 physics: const BouncingScrollPhysics(),
+      //                 children: buildPopulars(),
+      //               ),
+      //             ),
+      //           ],
+      //         ),
+      //       )
+      //     : searchState(),
     );
   }
 
@@ -229,13 +229,13 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  List<Widget> buildRecipes() {
-    List<Widget> list = [];
-    for (var i = 0; i < RecipeModel.demoRecipe.length; i++) {
-      list.add(buildRecipe(RecipeModel.demoRecipe[i], i));
-    }
-    return list;
-  }
+  // List<Widget> buildRecipes() {
+  //   List<Widget> list = [];
+  //   for (var i = 0; i < RecipeModel.demoRecipe.length; i++) {
+  //     list.add(buildRecipe(RecipeModel.demoRecipe[i], i));
+  //   }
+  //   return list;
+  // }
 
   Widget buildRecipe(RecipeModel recipe, int index) {
     return Container(
@@ -291,13 +291,13 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  List<Widget> buildPopulars() {
-    List<Widget> list = [];
-    for (var i = 0; i < RecipeModel.demoRecipe.length; i++) {
-      list.add(buildPopular(RecipeModel.demoRecipe[i]));
-    }
-    return list;
-  }
+  // List<Widget> buildPopulars() {
+  //   List<Widget> list = [];
+  //   for (var i = 0; i < RecipeModel.demoRecipe.length; i++) {
+  //     list.add(buildPopular(RecipeModel.demoRecipe[i]));
+  //   }
+  //   return list;
+  // }
 
   searchState() {
     return searchResultsFuture == null ? Center(

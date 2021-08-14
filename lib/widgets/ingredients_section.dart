@@ -9,26 +9,26 @@ class Ingredients extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        children: [
-          ListView.separated(
-            itemBuilder: (BuildContext context, int index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Text('⚫ ' + recipeModel.ingredients![index]),
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              return Divider(
-                color: Colors.black.withOpacity(0.3),
-              );
-            },
-            itemCount: recipeModel.ingredients!.length,
-            shrinkWrap: true,
-            physics: const ScrollPhysics(),
-          ),
-        ],
-      ),
+      // child: Column(
+      //   children: [
+      //     ListView.separated(
+      //       itemBuilder: (BuildContext context, int index) {
+      //         return Padding(
+      //           padding: const EdgeInsets.symmetric(vertical: 4.0),
+      //           child: Text('⚫ ' + recipeModel.ingredients![index]),
+      //         );
+      //       },
+      //       separatorBuilder: (BuildContext context, int index) {
+      //         return Divider(
+      //           color: Colors.black.withOpacity(0.3),
+      //         );
+      //       },
+      //       itemCount: recipeModel.ingredients!.length,
+      //       shrinkWrap: true,
+      //       physics: const ScrollPhysics(),
+      //     ),
+      //   ],
+      // ),
     );
   }
 }

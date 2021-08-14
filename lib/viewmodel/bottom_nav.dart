@@ -16,7 +16,6 @@ class BottomNav extends StatefulWidget {
 }
 
 class _BottomNavState extends State<BottomNav> {
-
   @override
   void initState() {
     Provider.of<FirebaseOperations>(context, listen: false)
