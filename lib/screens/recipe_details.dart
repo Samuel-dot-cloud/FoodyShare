@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/services/firebase_operations.dart';
+import 'package:food_share/widgets/ingredients_section.dart';
+import 'package:food_share/widgets/preparation_section.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
@@ -100,8 +102,9 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                 height: 10.0,
               ),
               Text(
-                '@' + Provider.of<FirebaseOperations>(context, listen: false)
-                    .getUsername,
+                '@' +
+                    Provider.of<FirebaseOperations>(context, listen: false)
+                        .getUsername,
                 style: _textTheme.caption,
               ),
               const SizedBox(
@@ -184,18 +187,16 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                       Divider(
                         color: Colors.black.withOpacity(0.3),
                       ),
-                      const Expanded(
+                      Expanded(
                         child: TabBarView(
                           children: [
-                            SizedBox(
-                              child: Text('Ingredients'),
+                            Ingredients(
+                              ingredientsDoc: widget.recipeDoc,
                             ),
-                            SizedBox(
-                              child: Text('Preparation'),
+                            PreparationSection(
+                              preparationDoc: widget.recipeDoc,
                             ),
-                            // Ingredients(recipeModel: recipeModel),
-                            // PreparationSection(recipeModel: recipeModel),
-                            SizedBox(
+                            const SizedBox(
                               child: Text('Review'),
                             ),
                           ],
