@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/models/recipe_model.dart';
 
-class Ingredients extends StatelessWidget {
+class IngredientsSection extends StatelessWidget {
   final DocumentSnapshot ingredientsDoc;
 
-  const Ingredients({Key? key, required this.ingredientsDoc}) : super(key: key);
+  const IngredientsSection({Key? key, required this.ingredientsDoc}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

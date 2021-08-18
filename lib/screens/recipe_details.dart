@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/post_functions.dart';
+import 'package:food_share/widgets/comments_section.dart';
 import 'package:food_share/widgets/ingredients_section.dart';
 import 'package:food_share/widgets/preparation_section.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
-import 'package:uuid/uuid.dart';
 
 class RecipeDetails extends StatefulWidget {
   final DocumentSnapshot recipeDoc;
@@ -20,12 +20,48 @@ class RecipeDetails extends StatefulWidget {
 }
 
 class _RecipeDetailsState extends State<RecipeDetails> {
+  bool saved = false;
+
+  int likeCount = 0;
+
+  CollectionReference recipesRef =
+      FirebaseFirestore.instance.collection('recipes');
+
   @override
   Widget build(BuildContext context) {
     Provider.of<FirebaseOperations>(context, listen: true)
         .getRecipeDetails(context, widget.recipeDoc['postId']);
     Provider.of<FirebaseOperations>(context, listen: true)
         .getAuthorData(context, widget.recipeDoc['authorId']);
+
+    Map likes = widget.recipeDoc['likes'];
+    final String currentUserId =
+        Provider.of<FirebaseOperations>(context, listen: false).getUserId;
+    bool liked = likes[currentUserId] == true;
+
+    handleLikePost() {
+      bool _isLiked = likes[currentUserId] == true;
+
+      if (_isLiked) {
+        recipesRef
+            .doc(widget.recipeDoc['postId'])
+            .update({'likes.$currentUserId': false});
+        setState(() {
+          likeCount -= 1;
+          liked = false;
+          likes[currentUserId] == false;
+        });
+      } else if (!_isLiked) {
+        recipesRef
+            .doc(widget.recipeDoc['postId'])
+            .update({'likes.$currentUserId': true});
+        setState(() {
+          likeCount += 1;
+          liked = true;
+          likes[currentUserId] == true;
+        });
+      }
+    }
 
     Size size = MediaQuery.of(context).size;
     final _textTheme = Theme.of(context).textTheme;
@@ -53,13 +89,22 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                   ),
                 ),
               ),
-              const Positioned(
+              Positioned(
                 top: 40.0,
                 right: 40.0,
-                child: FaIcon(
-                  FontAwesomeIcons.bookmark,
-                  color: Colors.white,
-                  size: 32.0,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      saved = !saved;
+                    });
+                  },
+                  child: FaIcon(
+                    !saved
+                        ? FontAwesomeIcons.bookmark
+                        : FontAwesomeIcons.solidBookmark,
+                    color: Colors.white,
+                    size: 32.0,
+                  ),
                 ),
               ),
               Positioned(
@@ -113,16 +158,31 @@ class _RecipeDetailsState extends State<RecipeDetails> {
               ),
               Row(
                 children: [
-                  const FaIcon(
-                    FontAwesomeIcons.gratipay,
-                    color: Colors.red,
+                  InkWell(
+                    onTap: () {
+                      handleLikePost();
+                      setState(() {
+                        liked = !liked;
+                      });
+                    },
+                    child: FaIcon(
+                      FontAwesomeIcons.gratipay,
+                      color: liked ? Colors.red : Colors.black,
+                    ),
                   ),
                   const SizedBox(
                     width: 5.0,
                   ),
-                  const Text('500'),
+                  Text(
+                    getLikeCount().toString(),
+                    style: const TextStyle(
+                      // color: Colors.black,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 15.0,
+                    ),
+                  ),
                   const SizedBox(
-                    width: 5.0,
+                    width: 7.0,
                   ),
                   const Icon(
                     Icons.timer,
@@ -191,13 +251,13 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                       Expanded(
                         child: TabBarView(
                           children: [
-                            Ingredients(
+                            IngredientsSection(
                               ingredientsDoc: widget.recipeDoc,
                             ),
                             PreparationSection(
                               preparationDoc: widget.recipeDoc,
                             ),
-                            Provider.of<PostFunctions>(context, listen: false).showCommentsSection(context, widget.recipeDoc, widget.recipeDoc['description']),
+                            CommentsSection(commentsDoc: widget.recipeDoc,)
                           ],
                         ),
                       ),
@@ -210,5 +270,20 @@ class _RecipeDetailsState extends State<RecipeDetails> {
         ),
       ),
     );
+  }
+
+  int getLikeCount() {
+    dynamic likes = widget.recipeDoc['likes'];
+    if (likes == null) {
+      return 0;
+    }
+    int count = 0;
+    likes.values.forEach((val) {
+      if (val == true) {
+        count += 1;
+      }
+    });
+
+    return count;
   }
 }
