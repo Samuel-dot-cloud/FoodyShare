@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/post_functions.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -127,6 +129,9 @@ class _RecipeCardState extends State<RecipeCard> {
                         setState(() {
                           liked = !liked;
                         });
+                        Provider.of<PostFunctions>(context, listen: false).addLike(context, widget.recipeDoc['postId'],
+                          Provider.of<FirebaseOperations>(context, listen: false).getUserId
+                        );
                       },
                       child: FaIcon(
                         FontAwesomeIcons.gratipay,

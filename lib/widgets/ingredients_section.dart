@@ -7,15 +7,12 @@ class Ingredients extends StatelessWidget {
 
   const Ingredients({Key? key, required this.ingredientsDoc}) : super(key: key);
 
-
-
   @override
   Widget build(BuildContext context) {
-    String ingredient = 'test';
+    // List ingredients = ingredientsDoc['ingredients'];
+    // ingredients.map((items) => items as Map).forEach((item) =>  item.values.forEach((string) => string.toString()));
     List ingredientsList =
-    ingredientsDoc['ingredients'].map((item) {
-      item.forEach((key, value) => value = ingredient);
-    })?.toList();
+    ingredientsDoc['ingredients'].map((item) => item as Map)?.toList();
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -23,7 +20,7 @@ class Ingredients extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Text('⚫ ' + ingredient),
+                child: Text('⚫ ' + ingredientsList[index].values.toString()),
               );
             },
             separatorBuilder: (BuildContext context, int index) {

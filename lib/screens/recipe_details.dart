@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/services/firebase_operations.dart';
+import 'package:food_share/utils/post_functions.dart';
 import 'package:food_share/widgets/ingredients_section.dart';
 import 'package:food_share/widgets/preparation_section.dart';
 import 'package:provider/provider.dart';
@@ -165,7 +166,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                             text: 'Preparation'.toUpperCase(),
                           ),
                           Tab(
-                            text: 'Reviews'.toUpperCase(),
+                            text: 'Comments'.toUpperCase(),
                           ),
                         ],
                         labelColor: Colors.black,
@@ -196,9 +197,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                             PreparationSection(
                               preparationDoc: widget.recipeDoc,
                             ),
-                            const SizedBox(
-                              child: Text('Review'),
-                            ),
+                            Provider.of<PostFunctions>(context, listen: false).showCommentsSection(context, widget.recipeDoc, widget.recipeDoc['description']),
                           ],
                         ),
                       ),

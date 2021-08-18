@@ -18,13 +18,13 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   List<bool> optionSelected = [true, false, false];
-  bool _searchState = false;
+  bool _searchState = true;
   var usersRef = FirebaseFirestore.instance.collection('users');
   Future<QuerySnapshot>? searchResultsFuture;
 
   TextEditingController searchController = TextEditingController();
 
-  handlesearch(String query) {
+  handleSearch(String query) {
     Future<QuerySnapshot> users = usersRef
         .where('displayName', isGreaterThanOrEqualTo: query)
         .get();
@@ -40,50 +40,51 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.grey[50],
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent,
-      //   systemOverlayStyle: SystemUiOverlayStyle.light,
-      //   elevation: 0.0,
-      //   leading: const Icon(
-      //     Icons.sort,
-      //     color: Colors.black,
-      //   ),
-      //   actions: [
-      //     Padding(
-      //       padding: const EdgeInsets.only(
-      //         right: 16.0,
-      //       ),
-      //       child: IconButton(
-      //         icon: const Icon(
-      //           Icons.search,
-      //           color: Colors.black,
-      //         ),
-      //         onPressed: () {
-      //           setState(() {
-      //             _searchState = !_searchState;
-      //           });
-      //         },
-      //       ),
-      //     ),
-      //   ],
-      //   title: Visibility(
-      //     visible: _searchState,
-      //     child: TextFormField(
-      //       controller: searchController,
-      //       decoration: InputDecoration(
-      //         hintText: 'Search here...',
-      //         filled: true,
-      //         suffixIcon: IconButton(
-      //           icon: const Icon(Icons.clear),
-      //           onPressed: clearSearch,
-      //         ),
-      //       ),
-      //       onFieldSubmitted: handlesearch,
-      //     ),
-      //   ),
-      // ),
-      // body: !_searchState
+      backgroundColor: Colors.grey[50],
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 0.0,
+        leading: const Icon(
+          Icons.sort,
+          color: Colors.black,
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(
+              right: 16.0,
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.search,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                setState(() {
+                  _searchState = !_searchState;
+                });
+              },
+            ),
+          ),
+        ],
+        title: Visibility(
+          visible: _searchState,
+          child: TextFormField(
+            controller: searchController,
+            decoration: InputDecoration(
+              hintText: 'Search here...',
+              filled: true,
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: clearSearch,
+              ),
+            ),
+            onFieldSubmitted: handleSearch,
+          ),
+        ),
+      ),
+      body:
+      // !_searchState
       //     ? SingleChildScrollView(
       //         physics: const BouncingScrollPhysics(),
       //         child: Column(
@@ -177,7 +178,7 @@ class _SearchPageState extends State<SearchPage> {
       //           ],
       //         ),
       //       )
-      //     : searchState(),
+          searchState(),
     );
   }
 
