@@ -24,11 +24,15 @@ class _RecipeCardState extends State<RecipeCard> {
       FirebaseFirestore.instance.collection('recipes');
 
   @override
+  void initState() {
+    getAuthorData(context, widget.recipeDoc['authorId']);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Provider.of<FirebaseOperations>(context, listen: true)
         .getRecipeDetails(context, widget.recipeDoc['postId']);
-    Provider.of<FirebaseOperations>(context, listen: false)
-        .getAuthorData(context, widget.recipeDoc['authorId']);
 
     Map likes = widget.recipeDoc['likes'];
     final String currentUserId =
@@ -112,9 +116,7 @@ class _RecipeCardState extends State<RecipeCard> {
                 child: CircleAvatar(
                   radius: 18.0,
                   backgroundColor: kBlue,
-                  backgroundImage: NetworkImage(
-                      Provider.of<FirebaseOperations>(context, listen: false)
-                          .getUserImage),
+                  backgroundImage: NetworkImage(authorUserImage),
                 ),
               ),
               Flexible(
@@ -131,9 +133,7 @@ class _RecipeCardState extends State<RecipeCard> {
                     ),
                     Text(
                       '@' +
-                          Provider.of<FirebaseOperations>(context,
-                                  listen: false)
-                              .getUsername,
+                          authorUsername,
                       style: Theme.of(context).textTheme.caption,
                     ),
                   ],
@@ -187,6 +187,28 @@ class _RecipeCardState extends State<RecipeCard> {
         ),
       ],
     );
+  }
+
+  String authorEmail = '',
+      authorUsername = '',
+      authorDisplayName = '',
+      authorUserImage = '',
+      authorBio = '';
+
+  Future getAuthorData(BuildContext context, String authorId) async {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(authorId)
+        .get()
+        .then((doc) {
+      authorUsername = doc.data()!['username'];
+      authorDisplayName = doc.data()!['displayName'];
+      authorEmail = doc.data()!['email'];
+      authorBio = doc.data()!['bio'];
+      authorUserImage = doc.data()!['photoUrl'];
+    });
+
+
   }
 
   int getLikeCount() {

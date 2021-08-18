@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/viewmodel/loading_animation.dart';
+import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -29,19 +32,38 @@ class _CommentsSectionState extends State<CommentsSection> {
           .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const CircularProgressIndicator();
-        } else if(snapshot.data == null){
-          return SizedBox(
-
+          return loadingAnimation('Loading comments...');
+        } else if (snapshot.data!.docs.isEmpty) {
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.30,
+                  width: MediaQuery.of(context).size.width * 0.80,
+                  child: Lottie.asset('assets/lottie/cooking.json'),
+                ),
+                const SizedBox(
+                  height: 20.0,
+                ),
+                const Text(
+                  'Be the first to leave a comment...',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20.0,
+                  ),
+                )
+              ],
+            ),
+          );
+        } else {
+          List<Comment> comments = [];
+          for (var doc in snapshot.data!.docs) {
+            comments.add(Comment.fromDocument(doc));
+          }
+          return ListView(
+            children: comments,
           );
         }
-        List<Comment> comments = [];
-        snapshot.data!.docs.forEach((doc) {
-          comments.add(Comment.fromDocument(doc));
-        });
-        return ListView(
-          children: comments,
-        );
       },
     );
   }
@@ -68,7 +90,7 @@ class _CommentsSectionState extends State<CommentsSection> {
           title: TextFormField(
             controller: _commentController,
             decoration: const InputDecoration(
-                filled: true, labelText: 'Write a comment...'),
+                filled: true, labelText: 'Leave a comment...'),
           ),
           trailing: MaterialButton(
             color: kBlue,
@@ -87,12 +109,12 @@ class _CommentsSectionState extends State<CommentsSection> {
   }
 }
 
-class Comment extends StatelessWidget {
+class Comment extends StatefulWidget {
   final String userUID;
   final String comment;
   final Timestamp timestamp;
 
-  const Comment(
+  Comment(
       {Key? key,
       required this.userUID,
       required this.comment,
@@ -108,19 +130,30 @@ class Comment extends StatelessWidget {
   }
 
   @override
+  State<Comment> createState() => _CommentState();
+}
+
+class _CommentState extends State<Comment> {
+
+  @override
+  void initState() {
+    getAuthorData(context, widget.userUID);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         ListTile(
-          title: Text('@test'),
-          leading: const CircleAvatar(
-            radius: 15.0,
+          title: Text('@' + authorUsername),
+          leading: CircleAvatar(
+            radius: 18.0,
             backgroundColor: kBlue,
-            backgroundImage: NetworkImage(
-                'https://thumbor.forbes.com/thumbor/960x0/https%3A%2F%2Fblogs-images.forbes.com%2Finsertcoin%2Ffiles%2F2016%2F01%2Fhorizon-zero-dawn2.jpg'),
+            backgroundImage: NetworkImage(authorUserImage),
           ),
-          subtitle: Text(comment),
-          trailing: Text(timeago.format(timestamp.toDate())),
+          subtitle: Text(widget.comment),
+          trailing: Text(timeago.format(widget.timestamp.toDate())),
         ),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -131,5 +164,27 @@ class Comment extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String authorEmail = '',
+      authorUsername = '',
+      authorDisplayName = '',
+      authorUserImage = '',
+      authorBio = '';
+
+  Future getAuthorData(BuildContext context, String authorId) async {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(authorId)
+        .get()
+        .then((doc) {
+      authorUsername = doc.data()!['username'];
+      authorDisplayName = doc.data()!['displayName'];
+      authorEmail = doc.data()!['email'];
+      authorBio = doc.data()!['bio'];
+      authorUserImage = doc.data()!['photoUrl'];
+    });
+
+
   }
 }
