@@ -22,13 +22,20 @@ class FirebaseOperations with ChangeNotifier {
       username = '',
       displayName = '',
       userImage = '',
-      userBio = '';
+      userBio = '',
+      userId = '';
 
   String get getUserEmail => userEmail;
+
   String get getUsername => username;
+
   String get getDisplayName => displayName;
+
   String get getUserImage => userImage;
+
   String get getUserBio => userBio;
+
+  String get getUserId => userId;
 
   ///User post variables
   String authorEmail = '',
@@ -38,24 +45,37 @@ class FirebaseOperations with ChangeNotifier {
       authorBio = '';
 
   String get getAuthorEmail => authorEmail;
+
   String get getAuthorUsername => authorUsername;
+
   String get getAuthorDisplayName => authorDisplayName;
+
   String get getAuthorUserImage => authorUserImage;
+
   String get getAuthorBio => authorBio;
 
   ///Recipe variables
-  String id = '', authorId = '', title = '', description = '', cookingTime = '', servings = '', mediaUrl = '';
+  String id = '',
+      authorId = '',
+      title = '',
+      description = '',
+      cookingTime = '',
+      servings = '',
+      mediaUrl = '';
 
   String get recipeId => id;
+
   String get getAuthorId => authorId;
+
   String get getRecipeTitle => title;
+
   String get getRecipeDescription => description;
+
   String get getRecipeCookingTime => cookingTime;
+
   String get getServings => servings;
+
   String get getMediaUrl => mediaUrl;
-
-
-
 
   Future uploadUserAvatar(BuildContext context) async {
     Reference imageReference =
@@ -95,6 +115,7 @@ class FirebaseOperations with ChangeNotifier {
         .doc(uid)
         .get()
         .then((doc) {
+      userId = doc.data()!['id'];
       username = doc.data()!['username'];
       displayName = doc.data()!['displayName'];
       userEmail = doc.data()!['email'];
@@ -104,7 +125,7 @@ class FirebaseOperations with ChangeNotifier {
     });
   }
 
-  Future getAuthorData (BuildContext context, String authorId) async {
+  Future getAuthorData(BuildContext context, String authorId) async {
     return FirebaseFirestore.instance
         .collection('users')
         .doc(authorId)
@@ -137,20 +158,20 @@ class FirebaseOperations with ChangeNotifier {
     });
   }
 
-  // Future getRecipes(RecipeNotifier recipeNotifier) async {
-  //   QuerySnapshot snapshot = await FirebaseFirestore.instance
-  //       .collection('recipes')
-  //       .orderBy('timestamp', descending: true)
-  //       .get();
-  //
-  //   List<RecipeModel> _recipeList = [];
-  //
-  //   for (var document in snapshot.docs) {
-  //     RecipeModel recipeModel =
-  //         RecipeModel.fromMap(document.data as Map<String, dynamic>);
-  //     _recipeList.add(recipeModel);
-  //
-  //     recipeNotifier.recipeList = _recipeList;
-  //   }
-  // }
+// Future getRecipes(RecipeNotifier recipeNotifier) async {
+//   QuerySnapshot snapshot = await FirebaseFirestore.instance
+//       .collection('recipes')
+//       .orderBy('timestamp', descending: true)
+//       .get();
+//
+//   List<RecipeModel> _recipeList = [];
+//
+//   for (var document in snapshot.docs) {
+//     RecipeModel recipeModel =
+//         RecipeModel.fromMap(document.data as Map<String, dynamic>);
+//     _recipeList.add(recipeModel);
+//
+//     recipeNotifier.recipeList = _recipeList;
+//   }
+// }
 }
