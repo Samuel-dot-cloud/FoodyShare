@@ -20,7 +20,11 @@ class RecipeCard extends StatefulWidget {
 
 class _RecipeCardState extends State<RecipeCard> {
   bool saved = false;
-  bool liked = false;
+
+  int likeCount = 0;
+
+  CollectionReference recipesRef =
+      FirebaseFirestore.instance.collection('recipes');
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +32,36 @@ class _RecipeCardState extends State<RecipeCard> {
         .getRecipeDetails(context, widget.recipeDoc['postId']);
     Provider.of<FirebaseOperations>(context, listen: false)
         .getAuthorData(context, widget.recipeDoc['authorId']);
+
+    Map likes = widget.recipeDoc['likes'];
+    final String currentUserId =
+        Provider.of<FirebaseOperations>(context, listen: false).getUserId;
+    bool liked = likes[currentUserId] == true;
+
+    handleLikePost() {
+      dynamic likes = widget.recipeDoc['likes'];
+      bool _isLiked = likes[currentUserId] == true;
+
+      if (_isLiked) {
+        recipesRef
+            .doc(widget.recipeDoc['postId'])
+            .update({'likes.$currentUserId': false});
+        setState(() {
+          likeCount -= 1;
+          liked = false;
+          likes[currentUserId] == false;
+        });
+      } else if (!_isLiked) {
+        recipesRef
+            .doc(widget.recipeDoc['postId'])
+            .update({'likes.$currentUserId': true});
+        setState(() {
+          likeCount += 1;
+          liked = true;
+          likes[currentUserId] == true;
+        });
+      }
+    }
 
     return Column(
       children: [
@@ -100,15 +134,17 @@ class _RecipeCardState extends State<RecipeCard> {
                       height: 8.0,
                     ),
                     Text(
-                      '@' + Provider.of<FirebaseOperations>(context, listen: false)
-                          .getUsername,
+                      '@' +
+                          Provider.of<FirebaseOperations>(context,
+                                  listen: false)
+                              .getUsername,
                       style: Theme.of(context).textTheme.caption,
                     ),
                   ],
                 ),
               ),
               Flexible(
-                flex: 2,
+                flex: 3,
                 child: Row(
                   children: [
                     const SizedBox(
@@ -126,16 +162,32 @@ class _RecipeCardState extends State<RecipeCard> {
                     const Spacer(),
                     InkWell(
                       onTap: () {
+                        handleLikePost();
                         setState(() {
                           liked = !liked;
                         });
-                        Provider.of<PostFunctions>(context, listen: false).addLike(context, widget.recipeDoc['postId'],
-                          Provider.of<FirebaseOperations>(context, listen: false).getUserId
-                        );
+                        Provider.of<PostFunctions>(context, listen: false)
+                            .addLike(
+                                context,
+                                widget.recipeDoc['postId'],
+                                Provider.of<FirebaseOperations>(context,
+                                        listen: false)
+                                    .getUserId);
                       },
                       child: FaIcon(
                         FontAwesomeIcons.gratipay,
                         color: liked ? Colors.red : Colors.black,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4.0),
+                      child: Text(
+                        getLikeCount().toString(),
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
+                        ),
                       ),
                     ),
                   ],
@@ -146,5 +198,20 @@ class _RecipeCardState extends State<RecipeCard> {
         ),
       ],
     );
+  }
+
+  int getLikeCount() {
+    dynamic likes = widget.recipeDoc['likes'];
+    if (likes == null) {
+      return 0;
+    }
+    int count = 0;
+    likes.values.forEach((val) {
+      if (val == true) {
+        count += 1;
+      }
+    });
+
+    return count;
   }
 }

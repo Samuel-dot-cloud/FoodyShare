@@ -7,9 +7,10 @@ import 'package:food_share/utils/pallete.dart';
 import 'package:provider/provider.dart';
 
 class PostFunctions with ChangeNotifier {
-  TextEditingController _commentController = TextEditingController();
+  final TextEditingController _commentController = TextEditingController();
 
   Future addLike(BuildContext context, String postId, subDocId) async {
+    final String currentUserId = Provider.of<FirebaseOperations>(context, listen: false).getUserId;
     return FirebaseFirestore.instance
         .collection('recipes')
         .doc(postId)
