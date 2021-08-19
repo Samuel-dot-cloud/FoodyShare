@@ -123,7 +123,7 @@ class Comment extends StatefulWidget {
   final String comment;
   final Timestamp timestamp;
 
-  Comment({Key? key,
+  const Comment({Key? key,
     required this.userUID,
     required this.comment,
     required this.timestamp})

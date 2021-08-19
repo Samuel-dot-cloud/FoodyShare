@@ -1,20 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class AltProfile extends StatefulWidget {
-  const AltProfile({Key? key, required this.userUID, required this.authorDisplayName, required this.authorUsername, required this.authorBio, required this.authorImage}) : super(key: key);
+  const AltProfile(
+      {Key? key,
+      required this.userUID,
+      required this.authorDisplayName,
+      required this.authorUsername,
+      required this.authorBio,
+      required this.authorImage})
+      : super(key: key);
 
-  final String userUID, authorDisplayName, authorUsername, authorBio, authorImage;
+  final String userUID,
+      authorDisplayName,
+      authorUsername,
+      authorBio,
+      authorImage;
 
   @override
   _AltProfileState createState() => _AltProfileState();
 }
 
 class _AltProfileState extends State<AltProfile> {
-
   // @override
   // void initState() {
   //   getAuthorData(context, widget.userUID);
@@ -31,7 +43,6 @@ class _AltProfileState extends State<AltProfile> {
     'assets/images/img-5.jpg',
     'assets/images/img-6.jpg',
   ];
-
 
   @override
   Widget build(BuildContext context) {
@@ -110,29 +121,6 @@ class _AltProfileState extends State<AltProfile> {
     );
   }
 
-  // /// Retrieving user data method
-  // String authorEmail = '',
-  //     authorUsername = '',
-  //     authorDisplayName = '',
-  //     authorUserImage = '',
-  //     authorBio = '';
-  //
-  // Future getAuthorData(BuildContext context, String authorId) async {
-  //   return FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(authorId)
-  //       .get()
-  //       .then((doc) {
-  //     authorUsername = doc.data()!['username'];
-  //     authorDisplayName = doc.data()!['displayName'];
-  //     authorEmail = doc.data()!['email'];
-  //     authorBio = doc.data()!['bio'];
-  //     authorUserImage = doc.data()!['photoUrl'];
-  //   });
-  //
-  //
-  // }
-
   ///Panel body
   SingleChildScrollView _panelBody(ScrollController controller) {
     double hPadding = 40.0;
@@ -157,29 +145,29 @@ class _AltProfileState extends State<AltProfile> {
           ),
           _imageList.isNotEmpty
               ? GridView.builder(
-            primary: false,
-            shrinkWrap: true,
-            padding: EdgeInsets.zero,
-            itemCount: _imageList.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 16.0,
-            ),
-            itemBuilder: (BuildContext context, int index) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 3.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(15.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(_imageList[index]),
-                      fit: BoxFit.cover,
+                  primary: false,
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  itemCount: _imageList.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 16.0,
+                  ),
+                  itemBuilder: (BuildContext context, int index) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 3.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(_imageList[index]),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ),
-          )
+                )
               : _defaultNoRecipes(),
         ],
       ),
@@ -229,14 +217,32 @@ class _AltProfileState extends State<AltProfile> {
                   : double.infinity,
               child: TextButton(
                 onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //       builder: (context) => const EditProfilePage()),
-                  // );
+                  Provider.of<FirebaseOperations>(context, listen: false)
+                      .followUser(
+                          widget.userUID,
+                          Provider.of<FirebaseOperations>(context,
+                                  listen: false)
+                              .getUserId,
+                          {
+                            'userUID': Provider.of<FirebaseOperations>(context,
+                                    listen: false)
+                                .getUserId,
+                            'timestamp': Timestamp.now(),
+                          },
+                          Provider.of<FirebaseOperations>(context,
+                                  listen: false)
+                              .getUserId,
+                          widget.userUID,
+                          {
+                            'userUID': widget.userUID,
+                            'timestamp': Timestamp.now(),
+                          })
+                      .whenComplete(() {
+                    followNotification(context, widget.authorUsername);
+                  });
                 },
                 child: const Text(
-                  'EDIT PROFILE',
+                  'FOLLOW',
                   style: TextStyle(
                     fontSize: 12.0,
                     fontWeight: FontWeight.w700,
@@ -245,7 +251,7 @@ class _AltProfileState extends State<AltProfile> {
                 ),
                 style: ButtonStyle(
                   foregroundColor:
-                  MaterialStateProperty.all<Color>(Colors.white),
+                      MaterialStateProperty.all<Color>(Colors.white),
                   backgroundColor: MaterialStateProperty.all<Color>(kBlue),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
@@ -273,13 +279,50 @@ class _AltProfileState extends State<AltProfile> {
           height: 40.0,
           color: Colors.grey,
         ),
-        _infoCell(title: 'Followers', value: '0'),
+        StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(widget.userUID)
+              .collection('followers')
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              return _infoCell(
+                title: 'Followers',
+                value: snapshot.data!.docs.length.toString(),
+              );
+            }
+          },
+        ),
+
         Container(
           width: 1.5,
           height: 40.0,
           color: Colors.grey,
         ),
-        _infoCell(title: 'Following', value: '0'),
+        StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(widget.userUID)
+              .collection('following')
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              return _infoCell(
+                title: 'Following',
+                value: snapshot.data!.docs.length.toString(),
+              );
+            }
+          },
+        ),
       ],
     );
   }
@@ -314,7 +357,7 @@ class _AltProfileState extends State<AltProfile> {
     return Column(
       children: [
         Text(
-      widget.authorDisplayName,
+          widget.authorDisplayName,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             fontWeight: FontWeight.w700,
@@ -325,8 +368,7 @@ class _AltProfileState extends State<AltProfile> {
           height: 8.0,
         ),
         Text(
-          '@' +
-           widget.authorUsername,
+          '@' + widget.authorUsername,
           style: const TextStyle(
             fontStyle: FontStyle.italic,
             fontSize: 22.0,
@@ -336,7 +378,7 @@ class _AltProfileState extends State<AltProfile> {
           height: 8.0,
         ),
         Text(
-    widget.authorBio,
+          widget.authorBio,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             color: Colors.grey,
@@ -371,5 +413,43 @@ class _AltProfileState extends State<AltProfile> {
         ],
       ),
     );
+  }
+
+  followNotification(BuildContext context, String name) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 150.0),
+                    child: Divider(
+                      thickness: 4.0,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  Text(
+                    'Followed @$name',
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            height: MediaQuery.of(context).size.height * 0.1,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+          );
+        });
   }
 }
