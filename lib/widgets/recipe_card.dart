@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:food_share/screens/profile/alt_profile.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:provider/provider.dart';
@@ -131,10 +132,22 @@ class _RecipeCardState extends State<RecipeCard> {
                     const SizedBox(
                       height: 8.0,
                     ),
-                    Text(
-                      '@' +
-                          authorUsername,
-                      style: Theme.of(context).textTheme.caption,
+                    GestureDetector(
+                      onTap: (){
+                        if(widget.recipeDoc['authorId'] != Provider.of<FirebaseOperations>(context, listen: false).getUserId){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AltProfile(userUID: widget.recipeDoc['authorId'],),
+                            ),
+                          );
+                        }
+                      },
+                      child: Text(
+                        '@' +
+                            authorUsername,
+                        style: Theme.of(context).textTheme.caption,
+                      ),
                     ),
                   ],
                 ),

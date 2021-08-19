@@ -2,13 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/services/firebase_operations.dart';
-import 'package:food_share/utils/post_functions.dart';
 import 'package:food_share/widgets/comments_section.dart';
 import 'package:food_share/widgets/ingredients_section.dart';
 import 'package:food_share/widgets/preparation_section.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class RecipeDetails extends StatefulWidget {
   final DocumentSnapshot recipeDoc;
@@ -26,6 +26,12 @@ class _RecipeDetailsState extends State<RecipeDetails> {
 
   CollectionReference recipesRef =
       FirebaseFirestore.instance.collection('recipes');
+
+  @override
+  void initState() {
+    getAuthorData(context, widget.recipeDoc['authorId']);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,21 +154,21 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                 height: 10.0,
               ),
               Text(
-                '@' +
-                    Provider.of<FirebaseOperations>(context, listen: false)
-                        .getUsername,
+                '@' + authorUsername,
                 style: _textTheme.caption,
               ),
               const SizedBox(
                 height: 10.0,
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   InkWell(
                     onTap: () {
                       handleLikePost();
                       setState(() {
-                        liked = !liked;
+                        liked =!liked;
                       });
                     },
                     child: FaIcon(
@@ -170,9 +176,9 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                       color: liked ? Colors.red : Colors.black,
                     ),
                   ),
-                  const SizedBox(
-                    width: 5.0,
-                  ),
+                  // const SizedBox(
+                  //   width: 5.0,
+                  // ),
                   Text(
                     getLikeCount().toString(),
                     style: const TextStyle(
@@ -181,27 +187,37 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                       fontSize: 15.0,
                     ),
                   ),
-                  const SizedBox(
-                    width: 7.0,
-                  ),
+                  // const SizedBox(
+                  //   width: 5.0,
+                  // ),
                   const Icon(
                     Icons.timer,
                   ),
-                  const SizedBox(
-                    width: 5.0,
-                  ),
+                  // const SizedBox(
+                  //   width: 5.0,
+                  // ),
                   Text(widget.recipeDoc['cookingTime'] + '\''),
-                  const SizedBox(
-                    width: 20.0,
+                  // const SizedBox(
+                  //   width: 5.0,
+                  // ),
+                  const Icon(
+                    Icons.mail_outline,
                   ),
+                  // const SizedBox(
+                  //   width: 5.0,
+                  // ),
+                  Text(timeago.format(widget.recipeDoc['timestamp'].toDate())),
+                  // const SizedBox(
+                  //   width: 10.0,
+                  // ),
                   Container(
                     color: Colors.black,
                     height: 30.0,
                     width: 2.0,
                   ),
-                  const SizedBox(
-                    width: 10.0,
-                  ),
+                  // const SizedBox(
+                  //   width: 10.0,
+                  // ),
                   Text(widget.recipeDoc['servings'] + ' servings'),
                 ],
               ),
@@ -271,6 +287,29 @@ class _RecipeDetailsState extends State<RecipeDetails> {
       ),
     );
   }
+
+  String authorEmail = '',
+      authorUsername = '',
+      authorDisplayName = '',
+      authorUserImage = '',
+      authorBio = '';
+
+  Future getAuthorData(BuildContext context, String authorId) async {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(authorId)
+        .get()
+        .then((doc) {
+      authorUsername = doc.data()!['username'];
+      authorDisplayName = doc.data()!['displayName'];
+      authorEmail = doc.data()!['email'];
+      authorBio = doc.data()!['bio'];
+      authorUserImage = doc.data()!['photoUrl'];
+    });
+
+
+  }
+
 
   int getLikeCount() {
     dynamic likes = widget.recipeDoc['likes'];

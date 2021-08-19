@@ -32,11 +32,11 @@ class _BottomNavState extends State<BottomNav> {
       backgroundColor: Colors.white,
       body: PageView(
         controller: _homepageController,
-        children: [
-          const HomePage(),
-          const SearchPage(),
-          const ImageUpload(),
-          UserProfile(profileId: currentUser?.id),
+        children: const [
+          HomePage(),
+          SearchPage(),
+          ImageUpload(),
+          UserProfile(),
         ],
         physics: const NeverScrollableScrollPhysics(),
         onPageChanged: (page) {

@@ -1,20 +1,26 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:food_share/screens/profile/edit_profile.dart';
-import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+class AltProfile extends StatefulWidget {
+  const AltProfile({Key? key, required this.userUID}) : super(key: key);
 
-class UserProfile extends StatefulWidget {
-  const UserProfile({Key? key}) : super(key: key);
+  final String userUID;
 
   @override
-  _UserProfileState createState() => _UserProfileState();
+  _AltProfileState createState() => _AltProfileState();
 }
 
-class _UserProfileState extends State<UserProfile> {
+class _AltProfileState extends State<AltProfile> {
+
+  @override
+  void initState() {
+    getAuthorData(context, widget.userUID);
+    super.initState();
+  }
+
   bool _isOpen = false;
   final PanelController _panelController = PanelController();
   final _imageList = [
@@ -25,6 +31,7 @@ class _UserProfileState extends State<UserProfile> {
     'assets/images/img-5.jpg',
     'assets/images/img-6.jpg',
   ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +46,7 @@ class _UserProfileState extends State<UserProfile> {
             child: Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(
-                      Provider.of<FirebaseOperations>(context, listen: false)
-                          .getUserImage),
+                  image: NetworkImage(authorUserImage),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -87,9 +92,45 @@ class _UserProfileState extends State<UserProfile> {
               });
             },
           ),
+
+          Positioned(
+            top: 40.0,
+            left: 20.0,
+            child: InkWell(
+              onTap: () => Navigator.pop(context),
+              child: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+                size: 32.0,
+              ),
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  /// Retrieving user data method
+  String authorEmail = '',
+      authorUsername = '',
+      authorDisplayName = '',
+      authorUserImage = '',
+      authorBio = '';
+
+  Future getAuthorData(BuildContext context, String authorId) async {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(authorId)
+        .get()
+        .then((doc) {
+      authorUsername = doc.data()!['username'];
+      authorDisplayName = doc.data()!['displayName'];
+      authorEmail = doc.data()!['email'];
+      authorBio = doc.data()!['bio'];
+      authorUserImage = doc.data()!['photoUrl'];
+    });
+
+
   }
 
   ///Panel body
@@ -116,29 +157,29 @@ class _UserProfileState extends State<UserProfile> {
           ),
           _imageList.isNotEmpty
               ? GridView.builder(
-                  primary: false,
-                  shrinkWrap: true,
-                  padding: EdgeInsets.zero,
-                  itemCount: _imageList.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 16.0,
-                  ),
-                  itemBuilder: (BuildContext context, int index) => Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 3.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage(_imageList[index]),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
+            primary: false,
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            itemCount: _imageList.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              mainAxisSpacing: 16.0,
+            ),
+            itemBuilder: (BuildContext context, int index) => Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 3.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(_imageList[index]),
+                      fit: BoxFit.cover,
                     ),
                   ),
-                )
+                ),
+              ),
+            ),
+          )
               : _defaultNoRecipes(),
         ],
       ),
@@ -188,11 +229,11 @@ class _UserProfileState extends State<UserProfile> {
                   : double.infinity,
               child: TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const EditProfilePage()),
-                  );
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //       builder: (context) => const EditProfilePage()),
+                  // );
                 },
                 child: const Text(
                   'EDIT PROFILE',
@@ -204,7 +245,7 @@ class _UserProfileState extends State<UserProfile> {
                 ),
                 style: ButtonStyle(
                   foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.white),
+                  MaterialStateProperty.all<Color>(Colors.white),
                   backgroundColor: MaterialStateProperty.all<Color>(kBlue),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
@@ -273,8 +314,7 @@ class _UserProfileState extends State<UserProfile> {
     return Column(
       children: [
         Text(
-          Provider.of<FirebaseOperations>(context, listen: false)
-              .getDisplayName,
+      authorDisplayName,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             fontWeight: FontWeight.w700,
@@ -286,8 +326,7 @@ class _UserProfileState extends State<UserProfile> {
         ),
         Text(
           '@' +
-              Provider.of<FirebaseOperations>(context, listen: false)
-                  .getUsername,
+           authorUsername,
           style: const TextStyle(
             fontStyle: FontStyle.italic,
             fontSize: 22.0,
@@ -297,7 +336,7 @@ class _UserProfileState extends State<UserProfile> {
           height: 8.0,
         ),
         Text(
-          Provider.of<FirebaseOperations>(context, listen: false).getUserBio,
+    authorBio,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             color: Colors.grey,
