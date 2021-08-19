@@ -10,6 +10,7 @@ import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/services/recipe_notifier.dart';
 import 'package:food_share/services/screens/discover_helper.dart';
+import 'package:food_share/services/screens/profile_helper.dart';
 import 'package:food_share/services/screens/sign_up_service.dart';
 import 'package:food_share/utils/post_functions.dart';
 import 'package:food_share/utils/sign_up_util.dart';
@@ -31,6 +32,9 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (context) => DiscoverHelper(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ProfileHelper(),
         ),
         ChangeNotifierProvider(create: (context) => FirebaseOperations(),
         ),

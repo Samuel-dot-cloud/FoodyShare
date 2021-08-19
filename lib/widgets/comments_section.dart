@@ -151,6 +151,8 @@ class _CommentState extends State<Comment> {
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<FirebaseOperations>(context, listen: true)
+        .getUserId;
     return Column(
       children: [
         ListTile(
