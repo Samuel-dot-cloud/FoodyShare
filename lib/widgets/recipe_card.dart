@@ -34,7 +34,7 @@ class _RecipeCardState extends State<RecipeCard> {
   @override
   Widget build(BuildContext context) {
     Provider.of<FirebaseOperations>(context, listen: true)
-        .getRecipeDetails(context, widget.recipeDoc['postId']);
+        .initUserData(context);
 
     Map likes = widget.recipeDoc['likes'];
     final String currentUserId =

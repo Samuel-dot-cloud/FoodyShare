@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/screens/profile/edit_profile.dart';
 import 'package:food_share/services/firebase_operations.dart';
+import 'package:food_share/services/screens/profile_helper.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -232,50 +233,68 @@ class _UserProfileState extends State<UserProfile> {
           height: 40.0,
           color: Colors.grey,
         ),
-        StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('users')
-              .doc(Provider.of<FirebaseOperations>(context, listen: false)
-                  .getUserId)
-              .collection('followers')
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else {
-              return _infoCell(
-                title: 'Followers',
-                value: snapshot.data!.docs.length.toString(),
-              );
-            }
+        GestureDetector(
+          onTap: (){
+            Provider.of<ProfileHelper>(context, listen: false).checkFollowerSheet(
+                context, Provider.of<FirebaseOperations>(context, listen: false)
+                .getUserId);
           },
+          child: SizedBox(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(Provider.of<FirebaseOperations>(context, listen: false)
+                      .getUserId)
+                  .collection('followers')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return _infoCell(
+                    title: 'Followers',
+                    value: snapshot.data!.docs.length.toString(),
+                  );
+                }
+              },
+            ),
+          ),
         ),
         Container(
           width: 1.5,
           height: 40.0,
           color: Colors.grey,
         ),
-        StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('users')
-              .doc(Provider.of<FirebaseOperations>(context, listen: false)
-                  .getUserId)
-              .collection('following')
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else {
-              return _infoCell(
-                title: 'Following',
-                value: snapshot.data!.docs.length.toString(),
-              );
-            }
+        GestureDetector(
+          onTap: (){
+            Provider.of<ProfileHelper>(context, listen: false).checkFollowingSheet(
+                context, Provider.of<FirebaseOperations>(context, listen: false)
+                .getUserId);
           },
+          child: SizedBox(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(Provider.of<FirebaseOperations>(context, listen: false)
+                      .getUserId)
+                  .collection('following')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return _infoCell(
+                    title: 'Following',
+                    value: snapshot.data!.docs.length.toString(),
+                  );
+                }
+              },
+            ),
+          ),
         ),
       ],
     );
