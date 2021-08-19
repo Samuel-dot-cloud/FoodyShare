@@ -5,9 +5,9 @@ import 'package:lottie/lottie.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class AltProfile extends StatefulWidget {
-  const AltProfile({Key? key, required this.userUID}) : super(key: key);
+  const AltProfile({Key? key, required this.userUID, required this.authorDisplayName, required this.authorUsername, required this.authorBio, required this.authorImage}) : super(key: key);
 
-  final String userUID;
+  final String userUID, authorDisplayName, authorUsername, authorBio, authorImage;
 
   @override
   _AltProfileState createState() => _AltProfileState();
@@ -15,11 +15,11 @@ class AltProfile extends StatefulWidget {
 
 class _AltProfileState extends State<AltProfile> {
 
-  @override
-  void initState() {
-    getAuthorData(context, widget.userUID);
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   getAuthorData(context, widget.userUID);
+  //   super.initState();
+  // }
 
   bool _isOpen = false;
   final PanelController _panelController = PanelController();
@@ -46,7 +46,7 @@ class _AltProfileState extends State<AltProfile> {
             child: Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(authorUserImage),
+                  image: NetworkImage(widget.authorImage),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -110,28 +110,28 @@ class _AltProfileState extends State<AltProfile> {
     );
   }
 
-  /// Retrieving user data method
-  String authorEmail = '',
-      authorUsername = '',
-      authorDisplayName = '',
-      authorUserImage = '',
-      authorBio = '';
-
-  Future getAuthorData(BuildContext context, String authorId) async {
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(authorId)
-        .get()
-        .then((doc) {
-      authorUsername = doc.data()!['username'];
-      authorDisplayName = doc.data()!['displayName'];
-      authorEmail = doc.data()!['email'];
-      authorBio = doc.data()!['bio'];
-      authorUserImage = doc.data()!['photoUrl'];
-    });
-
-
-  }
+  // /// Retrieving user data method
+  // String authorEmail = '',
+  //     authorUsername = '',
+  //     authorDisplayName = '',
+  //     authorUserImage = '',
+  //     authorBio = '';
+  //
+  // Future getAuthorData(BuildContext context, String authorId) async {
+  //   return FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(authorId)
+  //       .get()
+  //       .then((doc) {
+  //     authorUsername = doc.data()!['username'];
+  //     authorDisplayName = doc.data()!['displayName'];
+  //     authorEmail = doc.data()!['email'];
+  //     authorBio = doc.data()!['bio'];
+  //     authorUserImage = doc.data()!['photoUrl'];
+  //   });
+  //
+  //
+  // }
 
   ///Panel body
   SingleChildScrollView _panelBody(ScrollController controller) {
@@ -314,7 +314,7 @@ class _AltProfileState extends State<AltProfile> {
     return Column(
       children: [
         Text(
-      authorDisplayName,
+      widget.authorDisplayName,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             fontWeight: FontWeight.w700,
@@ -326,7 +326,7 @@ class _AltProfileState extends State<AltProfile> {
         ),
         Text(
           '@' +
-           authorUsername,
+           widget.authorUsername,
           style: const TextStyle(
             fontStyle: FontStyle.italic,
             fontSize: 22.0,
@@ -336,7 +336,7 @@ class _AltProfileState extends State<AltProfile> {
           height: 8.0,
         ),
         Text(
-    authorBio,
+    widget.authorBio,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             color: Colors.grey,

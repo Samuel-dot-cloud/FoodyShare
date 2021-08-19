@@ -47,17 +47,8 @@ class _NewRecipeState extends State<NewRecipe> {
                               horizontal: 12.0,
                               vertical: 12.0,
                             ),
-                            child: GestureDetector(
-                              onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => RecipeDetails(
-                                      recipeDoc: snapshot.data!.docs[index]),
-                                ),
-                              ),
-                              child: RecipeCard(
-                                  recipeDoc: snapshot.data!.docs[index]),
-                            ),
+                            child: RecipeCard(
+                                recipeDoc: snapshot.data!.docs[index]),
                           ));
                 }
                 return const Text('Loading ...');

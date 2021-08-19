@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:food_share/models/recipe_model.dart';
 
 class IngredientsSection extends StatelessWidget {
-  final DocumentSnapshot ingredientsDoc;
+  final List ingredients;
 
-  const IngredientsSection({Key? key, required this.ingredientsDoc}) : super(key: key);
+  const IngredientsSection({Key? key, required this.ingredients}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // List ingredients = ingredientsDoc['ingredients'];
     // ingredients.map((items) => items as Map).forEach((item) =>  item.values.forEach((string) => string.toString()));
-    List ingredientsList =
-    ingredientsDoc['ingredients'].map((item) => item as Map)?.toList();
+    List? ingredientsList =
+    ingredients.map((item) => item as Map).toList();
     return SingleChildScrollView(
       child: Column(
         children: [

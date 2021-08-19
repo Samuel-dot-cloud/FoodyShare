@@ -10,10 +10,10 @@ import 'package:timeago/timeago.dart' as timeago;
 final commentsRef = FirebaseFirestore.instance.collection('comments');
 
 class CommentsSection extends StatefulWidget {
-  const CommentsSection({Key? key, required this.commentsDoc})
+  const CommentsSection({Key? key, required this.postId})
       : super(key: key);
 
-  final DocumentSnapshot commentsDoc;
+  final String postId;
 
   @override
   State<CommentsSection> createState() => _CommentsSectionState();
@@ -25,7 +25,7 @@ class _CommentsSectionState extends State<CommentsSection> {
   displayComments() {
     return StreamBuilder<QuerySnapshot>(
       stream: commentsRef
-          .doc(widget.commentsDoc['postId'])
+          .doc(widget.postId)
           .collection('comments')
           .orderBy('timestamp', descending: false)
           .snapshots(),
@@ -74,7 +74,7 @@ class _CommentsSectionState extends State<CommentsSection> {
   }
 
   addComment() {
-    commentsRef.doc(widget.commentsDoc['postId']).collection('comments').add({
+    commentsRef.doc(widget.postId).collection('comments').add({
       'userUID':
       Provider
           .of<FirebaseOperations>(context, listen: false)

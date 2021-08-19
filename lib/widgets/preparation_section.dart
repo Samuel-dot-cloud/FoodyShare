@@ -2,15 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class PreparationSection extends StatelessWidget {
-  final DocumentSnapshot preparationDoc;
+  final List preparations;
 
-  const PreparationSection({Key? key, required this.preparationDoc})
+  const PreparationSection({Key? key, required this.preparations})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    List preparationList =
-    preparationDoc['preparation'].map((item) => item as Map)?.toList();
+    List? preparationList =
+    preparations.map((item) => item as Map).toList();
     return SingleChildScrollView(
       child: Column(
         children: [

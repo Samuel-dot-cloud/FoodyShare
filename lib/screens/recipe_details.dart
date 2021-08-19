@@ -11,9 +11,24 @@ import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class RecipeDetails extends StatefulWidget {
-  final DocumentSnapshot recipeDoc;
+  final String recipeName, authorUserName, authorUserUID, recipeImage, servings, cookingTime, postID;
+  final List ingredients, preparation;
+  final Map likes;
+  final Timestamp recipeTimestamp;
 
-  const RecipeDetails({Key? key, required this.recipeDoc}) : super(key: key);
+  const RecipeDetails({Key? key,
+    required this.recipeName,
+    required this.authorUserName,
+    required this.authorUserUID,
+    required this.recipeImage,
+    required this.recipeTimestamp,
+    required this.servings,
+    required this.cookingTime,
+    required this.postID,
+    required this.ingredients,
+    required this.preparation,
+    required this.likes,
+  }) : super(key: key);
 
   @override
   State<RecipeDetails> createState() => _RecipeDetailsState();
@@ -29,18 +44,18 @@ class _RecipeDetailsState extends State<RecipeDetails> {
 
   @override
   void initState() {
-    getAuthorData(context, widget.recipeDoc['authorId']);
+    // getAuthorData(context, widget.recipeDoc['authorId']);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<FirebaseOperations>(context, listen: true)
-        .getRecipeDetails(context, widget.recipeDoc['postId']);
-    Provider.of<FirebaseOperations>(context, listen: true)
-        .getAuthorData(context, widget.recipeDoc['authorId']);
+    // Provider.of<FirebaseOperations>(context, listen: true)
+    //     .getRecipeDetails(context, widget.recipeDoc['postId']);
+    // Provider.of<FirebaseOperations>(context, listen: true)
+    //     .getAuthorData(context, widget.recipeDoc['authorId']);
 
-    Map likes = widget.recipeDoc['likes'];
+    Map likes = widget.likes;
     final String currentUserId =
         Provider.of<FirebaseOperations>(context, listen: false).getUserId;
     bool liked = likes[currentUserId] == true;
@@ -50,7 +65,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
 
       if (_isLiked) {
         recipesRef
-            .doc(widget.recipeDoc['postId'])
+            .doc(widget.postID)
             .update({'likes.$currentUserId': false});
         setState(() {
           likeCount -= 1;
@@ -59,7 +74,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
         });
       } else if (!_isLiked) {
         recipesRef
-            .doc(widget.recipeDoc['postId'])
+            .doc(widget.postID)
             .update({'likes.$currentUserId': true});
         setState(() {
           likeCount += 1;
@@ -86,12 +101,12 @@ class _RecipeDetailsState extends State<RecipeDetails> {
               Align(
                 alignment: Alignment.topCenter,
                 child: Hero(
-                  tag: widget.recipeDoc['mediaUrl'],
+                  tag: widget.recipeImage,
                   child: Image(
                     height: (size.height / 2) + 50,
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    image: NetworkImage(widget.recipeDoc['mediaUrl']),
+                    image: NetworkImage(widget.recipeImage),
                   ),
                 ),
               ),
@@ -147,14 +162,14 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                 height: 30.0,
               ),
               Text(
-                widget.recipeDoc['name'],
+                widget.recipeName,
                 style: _textTheme.headline6,
               ),
               const SizedBox(
                 height: 10.0,
               ),
               Text(
-                '@' + authorUsername,
+                '@' + widget.authorUserName,
                 style: _textTheme.caption,
               ),
               const SizedBox(
@@ -196,7 +211,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                   // const SizedBox(
                   //   width: 5.0,
                   // ),
-                  Text(widget.recipeDoc['cookingTime'] + '\''),
+                  Text(widget.cookingTime + '\''),
                   // const SizedBox(
                   //   width: 5.0,
                   // ),
@@ -206,7 +221,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                   // const SizedBox(
                   //   width: 5.0,
                   // ),
-                  Text(timeago.format(widget.recipeDoc['timestamp'].toDate())),
+                  Text(timeago.format(widget.recipeTimestamp.toDate())),
                   // const SizedBox(
                   //   width: 10.0,
                   // ),
@@ -218,7 +233,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                   // const SizedBox(
                   //   width: 10.0,
                   // ),
-                  Text(widget.recipeDoc['servings'] + ' servings'),
+                  Text(widget.servings + ' servings'),
                 ],
               ),
               const SizedBox(
@@ -268,12 +283,12 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                         child: TabBarView(
                           children: [
                             IngredientsSection(
-                              ingredientsDoc: widget.recipeDoc,
+                              ingredients: widget.ingredients,
                             ),
                             PreparationSection(
-                              preparationDoc: widget.recipeDoc,
+                              preparations: widget.preparation,
                             ),
-                            CommentsSection(commentsDoc: widget.recipeDoc,)
+                            CommentsSection(postId: widget.postID,)
                           ],
                         ),
                       ),
@@ -288,31 +303,31 @@ class _RecipeDetailsState extends State<RecipeDetails> {
     );
   }
 
-  String authorEmail = '',
-      authorUsername = '',
-      authorDisplayName = '',
-      authorUserImage = '',
-      authorBio = '';
-
-  Future getAuthorData(BuildContext context, String authorId) async {
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(authorId)
-        .get()
-        .then((doc) {
-      authorUsername = doc.data()!['username'];
-      authorDisplayName = doc.data()!['displayName'];
-      authorEmail = doc.data()!['email'];
-      authorBio = doc.data()!['bio'];
-      authorUserImage = doc.data()!['photoUrl'];
-    });
-
-
-  }
+  // String authorEmail = '',
+  //     authorUsername = '',
+  //     authorDisplayName = '',
+  //     authorUserImage = '',
+  //     authorBio = '';
+  //
+  // Future getAuthorData(BuildContext context, String authorId) async {
+  //   return FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(authorId)
+  //       .get()
+  //       .then((doc) {
+  //     authorUsername = doc.data()!['username'];
+  //     authorDisplayName = doc.data()!['displayName'];
+  //     authorEmail = doc.data()!['email'];
+  //     authorBio = doc.data()!['bio'];
+  //     authorUserImage = doc.data()!['photoUrl'];
+  //   });
+  //
+  //
+  // }
 
 
   int getLikeCount() {
-    dynamic likes = widget.recipeDoc['likes'];
+    dynamic likes = widget.likes;
     if (likes == null) {
       return 0;
     }
