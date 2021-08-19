@@ -5,16 +5,15 @@ import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/loading_animation.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 final commentsRef = FirebaseFirestore.instance.collection('comments');
 
 class CommentsSection extends StatefulWidget {
-  const CommentsSection({Key? key, required this.commentsDoc})
+  const CommentsSection({Key? key, required this.postId})
       : super(key: key);
 
-  final DocumentSnapshot commentsDoc;
+  final String postId;
 
   @override
   State<CommentsSection> createState() => _CommentsSectionState();
@@ -26,7 +25,7 @@ class _CommentsSectionState extends State<CommentsSection> {
   displayComments() {
     return StreamBuilder<QuerySnapshot>(
       stream: commentsRef
-          .doc(widget.commentsDoc['postId'])
+          .doc(widget.postId)
           .collection('comments')
           .orderBy('timestamp', descending: false)
           .snapshots(),
@@ -38,8 +37,14 @@ class _CommentsSectionState extends State<CommentsSection> {
             child: Column(
               children: [
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.30,
-                  width: MediaQuery.of(context).size.width * 0.80,
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height * 0.30,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width * 0.80,
                   child: Lottie.asset('assets/lottie/cooking.json'),
                 ),
                 const SizedBox(
@@ -69,9 +74,11 @@ class _CommentsSectionState extends State<CommentsSection> {
   }
 
   addComment() {
-    commentsRef.doc(widget.commentsDoc['postId']).collection('comments').add({
+    commentsRef.doc(widget.postId).collection('comments').add({
       'userUID':
-          Provider.of<FirebaseOperations>(context, listen: false).getUserId,
+      Provider
+          .of<FirebaseOperations>(context, listen: false)
+          .getUserId,
       'comment': _commentController.text,
       'timestamp': Timestamp.now(),
     });
@@ -90,7 +97,9 @@ class _CommentsSectionState extends State<CommentsSection> {
           title: TextFormField(
             controller: _commentController,
             decoration: const InputDecoration(
-                filled: true, labelText: 'Leave a comment...'),
+                filled: true,
+                labelText: 'Leave a comment...',
+            ),
           ),
           trailing: MaterialButton(
             color: kBlue,
@@ -114,11 +123,10 @@ class Comment extends StatefulWidget {
   final String comment;
   final Timestamp timestamp;
 
-  Comment(
-      {Key? key,
-      required this.userUID,
-      required this.comment,
-      required this.timestamp})
+  const Comment({Key? key,
+    required this.userUID,
+    required this.comment,
+    required this.timestamp})
       : super(key: key);
 
   factory Comment.fromDocument(DocumentSnapshot doc) {
@@ -184,7 +192,5 @@ class _CommentState extends State<Comment> {
       authorBio = doc.data()!['bio'];
       authorUserImage = doc.data()!['photoUrl'];
     });
-
-
   }
 }

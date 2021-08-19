@@ -3,8 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:food_share/models/recipe_model.dart';
-import 'package:food_share/services/recipe_notifier.dart';
 import 'package:food_share/utils/sign_up_util.dart';
 import 'package:provider/provider.dart';
 
@@ -158,20 +156,26 @@ class FirebaseOperations with ChangeNotifier {
     });
   }
 
-// Future getRecipes(RecipeNotifier recipeNotifier) async {
-//   QuerySnapshot snapshot = await FirebaseFirestore.instance
-//       .collection('recipes')
-//       .orderBy('timestamp', descending: true)
-//       .get();
-//
-//   List<RecipeModel> _recipeList = [];
-//
-//   for (var document in snapshot.docs) {
-//     RecipeModel recipeModel =
-//         RecipeModel.fromMap(document.data as Map<String, dynamic>);
-//     _recipeList.add(recipeModel);
-//
-//     recipeNotifier.recipeList = _recipeList;
-//   }
-// }
+  Future followUser(
+      String followingUID,
+      String followingDocId,
+      dynamic followingData,
+      String followerUID,
+      followerDocId,
+      dynamic followerData) async {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(followingUID)
+        .collection('followers')
+        .doc(followingDocId)
+        .set(followingData)
+        .whenComplete(() async {
+      return FirebaseFirestore.instance
+          .collection('users')
+          .doc(followerUID)
+          .collection('following')
+          .doc(followerDocId)
+          .set(followerData);
+    });
+  }
 }

@@ -1,20 +1,38 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:food_share/screens/profile/edit_profile.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-class UserProfile extends StatefulWidget {
-  const UserProfile({Key? key}) : super(key: key);
+class AltProfile extends StatefulWidget {
+  const AltProfile(
+      {Key? key,
+      required this.userUID,
+      required this.authorDisplayName,
+      required this.authorUsername,
+      required this.authorBio,
+      required this.authorImage})
+      : super(key: key);
+
+  final String userUID,
+      authorDisplayName,
+      authorUsername,
+      authorBio,
+      authorImage;
 
   @override
-  _UserProfileState createState() => _UserProfileState();
+  _AltProfileState createState() => _AltProfileState();
 }
 
-class _UserProfileState extends State<UserProfile> {
+class _AltProfileState extends State<AltProfile> {
+  // @override
+  // void initState() {
+  //   getAuthorData(context, widget.userUID);
+  //   super.initState();
+  // }
+
   bool _isOpen = false;
   final PanelController _panelController = PanelController();
   final _imageList = [
@@ -39,9 +57,7 @@ class _UserProfileState extends State<UserProfile> {
             child: Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(
-                      Provider.of<FirebaseOperations>(context, listen: false)
-                          .getUserImage),
+                  image: NetworkImage(widget.authorImage),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -86,6 +102,19 @@ class _UserProfileState extends State<UserProfile> {
                 _isOpen = false;
               });
             },
+          ),
+
+          Positioned(
+            top: 40.0,
+            left: 20.0,
+            child: InkWell(
+              onTap: () => Navigator.pop(context),
+              child: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+                size: 32.0,
+              ),
+            ),
           ),
         ],
       ),
@@ -188,14 +217,32 @@ class _UserProfileState extends State<UserProfile> {
                   : double.infinity,
               child: TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const EditProfilePage()),
-                  );
+                  Provider.of<FirebaseOperations>(context, listen: false)
+                      .followUser(
+                          widget.userUID,
+                          Provider.of<FirebaseOperations>(context,
+                                  listen: false)
+                              .getUserId,
+                          {
+                            'userUID': Provider.of<FirebaseOperations>(context,
+                                    listen: false)
+                                .getUserId,
+                            'timestamp': Timestamp.now(),
+                          },
+                          Provider.of<FirebaseOperations>(context,
+                                  listen: false)
+                              .getUserId,
+                          widget.userUID,
+                          {
+                            'userUID': widget.userUID,
+                            'timestamp': Timestamp.now(),
+                          })
+                      .whenComplete(() {
+                    followNotification(context, widget.authorUsername);
+                  });
                 },
                 child: const Text(
-                  'EDIT PROFILE',
+                  'FOLLOW',
                   style: TextStyle(
                     fontSize: 12.0,
                     fontWeight: FontWeight.w700,
@@ -235,8 +282,7 @@ class _UserProfileState extends State<UserProfile> {
         StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('users')
-              .doc(Provider.of<FirebaseOperations>(context, listen: false)
-                  .getUserId)
+              .doc(widget.userUID)
               .collection('followers')
               .snapshots(),
           builder: (context, snapshot) {
@@ -252,6 +298,7 @@ class _UserProfileState extends State<UserProfile> {
             }
           },
         ),
+
         Container(
           width: 1.5,
           height: 40.0,
@@ -260,8 +307,7 @@ class _UserProfileState extends State<UserProfile> {
         StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('users')
-              .doc(Provider.of<FirebaseOperations>(context, listen: false)
-                  .getUserId)
+              .doc(widget.userUID)
               .collection('following')
               .snapshots(),
           builder: (context, snapshot) {
@@ -311,8 +357,7 @@ class _UserProfileState extends State<UserProfile> {
     return Column(
       children: [
         Text(
-          Provider.of<FirebaseOperations>(context, listen: false)
-              .getDisplayName,
+          widget.authorDisplayName,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             fontWeight: FontWeight.w700,
@@ -323,9 +368,7 @@ class _UserProfileState extends State<UserProfile> {
           height: 8.0,
         ),
         Text(
-          '@' +
-              Provider.of<FirebaseOperations>(context, listen: false)
-                  .getUsername,
+          '@' + widget.authorUsername,
           style: const TextStyle(
             fontStyle: FontStyle.italic,
             fontSize: 22.0,
@@ -335,7 +378,7 @@ class _UserProfileState extends State<UserProfile> {
           height: 8.0,
         ),
         Text(
-          Provider.of<FirebaseOperations>(context, listen: false).getUserBio,
+          widget.authorBio,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             color: Colors.grey,
@@ -370,5 +413,43 @@ class _UserProfileState extends State<UserProfile> {
         ],
       ),
     );
+  }
+
+  followNotification(BuildContext context, String name) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 150.0),
+                    child: Divider(
+                      thickness: 4.0,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  Text(
+                    'Followed @$name',
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            height: MediaQuery.of(context).size.height * 0.1,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+          );
+        });
   }
 }

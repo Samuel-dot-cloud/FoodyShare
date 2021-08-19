@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:food_share/screens/profile/alt_profile.dart';
+import 'package:food_share/screens/recipe_details.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:provider/provider.dart';
@@ -69,15 +71,35 @@ class _RecipeCardState extends State<RecipeCard> {
           children: [
             Align(
               alignment: Alignment.topCenter,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24.0),
-                child: Hero(
-                  tag: widget.recipeDoc['mediaUrl'],
-                  child: Image(
-                    height: 320.0,
-                    width: 320.0,
-                    fit: BoxFit.cover,
-                    image: NetworkImage(widget.recipeDoc['mediaUrl']),
+              child: GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RecipeDetails(
+                      cookingTime: widget.recipeDoc['cookingTime'],
+                      recipeName: widget.recipeDoc['name'],
+                      authorUserName: authorUsername,
+                      recipeImage: widget.recipeDoc['mediaUrl'],
+                      servings: widget.recipeDoc['servings'],
+                      likes: widget.recipeDoc['likes'],
+                      authorUserUID: widget.recipeDoc['authorId'],
+                      preparation: widget.recipeDoc['preparation'],
+                      recipeTimestamp: widget.recipeDoc['timestamp'],
+                      postID: widget.recipeDoc['postId'],
+                      ingredients: widget.recipeDoc['ingredients'],
+                    ),
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24.0),
+                  child: Hero(
+                    tag: widget.recipeDoc['mediaUrl'],
+                    child: Image(
+                      height: 320.0,
+                      width: 320.0,
+                      fit: BoxFit.cover,
+                      image: NetworkImage(widget.recipeDoc['mediaUrl']),
+                    ),
                   ),
                 ),
               ),
@@ -131,10 +153,30 @@ class _RecipeCardState extends State<RecipeCard> {
                     const SizedBox(
                       height: 8.0,
                     ),
-                    Text(
-                      '@' +
-                          authorUsername,
-                      style: Theme.of(context).textTheme.caption,
+                    GestureDetector(
+                      onTap: () {
+                        if (widget.recipeDoc['authorId'] !=
+                            Provider.of<FirebaseOperations>(context,
+                                    listen: false)
+                                .getUserId) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AltProfile(
+                                userUID: widget.recipeDoc['authorId'],
+                                authorImage: authorUserImage,
+                                authorUsername: authorUsername,
+                                authorDisplayName: authorDisplayName,
+                                authorBio: authorBio,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      child: Text(
+                        '@' + authorUsername,
+                        style: Theme.of(context).textTheme.caption,
+                      ),
                     ),
                   ],
                 ),
@@ -207,8 +249,6 @@ class _RecipeCardState extends State<RecipeCard> {
       authorBio = doc.data()!['bio'];
       authorUserImage = doc.data()!['photoUrl'];
     });
-
-
   }
 
   int getLikeCount() {
