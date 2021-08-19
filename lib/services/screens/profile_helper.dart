@@ -102,8 +102,9 @@ class ProfileHelper with ChangeNotifier {
                               horizontal: 12.0,
                               vertical: 12.0,
                             ),
-                            child: userTile(snapshot.data!.docs[index]['userUID']),
+                            child: userTile(snapshot.data!.docs[index]),
                           ));
+
                 }
               },
             ),
@@ -111,8 +112,8 @@ class ProfileHelper with ChangeNotifier {
         });
   }
 
-  Widget userTile(String doc) {
-    getAuthorData(doc);
+  Widget userTile(DocumentSnapshot doc) {
+    getAuthorData(doc['userUID']);
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: kBlue,
@@ -136,24 +137,24 @@ class ProfileHelper with ChangeNotifier {
       ),
     );
   }
+}
 
-  String authorEmail = '',
-      authorUsername = '',
-      authorDisplayName = '',
-      authorUserImage = '',
-      authorBio = '';
+String authorEmail = '',
+    authorUsername = '',
+    authorDisplayName = '',
+    authorUserImage = '',
+    authorBio = '';
 
-  Future getAuthorData(String authorId) async {
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(authorId)
-        .get()
-        .then((doc) {
-      authorUsername = doc.data()!['username'];
-      authorDisplayName = doc.data()!['displayName'];
-      authorEmail = doc.data()!['email'];
-      authorBio = doc.data()!['bio'];
-      authorUserImage = doc.data()!['photoUrl'];
-    });
-  }
+Future getAuthorData(String authorId) async {
+  return FirebaseFirestore.instance
+      .collection('users')
+      .doc(authorId)
+      .get()
+      .then((doc) {
+    authorUsername = doc.data()!['username'];
+    authorDisplayName = doc.data()!['displayName'];
+    authorEmail = doc.data()!['email'];
+    authorBio = doc.data()!['bio'];
+    authorUserImage = doc.data()!['photoUrl'];
+  });
 }
