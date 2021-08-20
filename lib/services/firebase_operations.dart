@@ -35,46 +35,6 @@ class FirebaseOperations with ChangeNotifier {
 
   String get getUserId => userId;
 
-  ///User post variables
-  String authorEmail = '',
-      authorUsername = '',
-      authorDisplayName = '',
-      authorUserImage = '',
-      authorBio = '';
-
-  String get getAuthorEmail => authorEmail;
-
-  String get getAuthorUsername => authorUsername;
-
-  String get getAuthorDisplayName => authorDisplayName;
-
-  String get getAuthorUserImage => authorUserImage;
-
-  String get getAuthorBio => authorBio;
-
-  ///Recipe variables
-  String id = '',
-      authorId = '',
-      title = '',
-      description = '',
-      cookingTime = '',
-      servings = '',
-      mediaUrl = '';
-
-  String get recipeId => id;
-
-  String get getAuthorId => authorId;
-
-  String get getRecipeTitle => title;
-
-  String get getRecipeDescription => description;
-
-  String get getRecipeCookingTime => cookingTime;
-
-  String get getServings => servings;
-
-  String get getMediaUrl => mediaUrl;
-
   Future uploadUserAvatar(BuildContext context) async {
     Reference imageReference =
         FirebaseStorage.instance.ref().child('userAvatar/${TimeOfDay.now()}');
@@ -119,39 +79,6 @@ class FirebaseOperations with ChangeNotifier {
       userEmail = doc.data()!['email'];
       userBio = doc.data()!['bio'];
       userImage = doc.data()!['photoUrl'];
-      notifyListeners();
-    });
-  }
-
-  Future getAuthorData(BuildContext context, String authorId) async {
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(authorId)
-        .get()
-        .then((doc) {
-      authorUsername = doc.data()!['username'];
-      authorDisplayName = doc.data()!['displayName'];
-      authorEmail = doc.data()!['email'];
-      authorBio = doc.data()!['bio'];
-      authorUserImage = doc.data()!['photoUrl'];
-      notifyListeners();
-    });
-  }
-
-  Future getRecipeDetails(BuildContext context, String recipeId) async {
-    return FirebaseFirestore.instance
-        .collection('recipes')
-        .doc(recipeId)
-        .get()
-        .then((doc) {
-      id = doc.data()!['postId'];
-      authorId = doc.data()!['authorId'];
-      title = doc.data()!['name'];
-      description = doc.data()!['description'];
-      cookingTime = doc.data()!['cookingTime'];
-      servings = doc.data()!['servings'];
-      mediaUrl = doc.data()!['mediaUrl'];
-      // t = doc.data()!['timestamp'];
       notifyListeners();
     });
   }

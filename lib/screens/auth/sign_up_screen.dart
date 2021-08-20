@@ -195,44 +195,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   isLoading = true;
                                 });
                                 if (_formKey.currentState!.validate()) {
-                                  // AuthService()
-                                  //     .createAccount(_emailController.text,
-                                  //         _passwordController.text)
-                                  //     .then((value) async {
-                                  //   createUserInFirestore();
-                                  //   if (value == 'Account created') {
-                                  //     setState(() {
-                                  //       isLoading = false;
-                                  //     });
-                                  //     Fluttertoast.showToast(
-                                  //         msg: value,
-                                  //         toastLength: Toast.LENGTH_SHORT,
-                                  //         gravity: ToastGravity.CENTER,
-                                  //         timeInSecForIosWeb: 1,
-                                  //         backgroundColor: Colors.red,
-                                  //         textColor: Colors.white,
-                                  //         fontSize: 16.0);
-                                  //
-                                  //     Navigator.pushAndRemoveUntil(
-                                  //         context,
-                                  //         MaterialPageRoute(
-                                  //             builder: (context) =>
-                                  //                 const BottomNav()),
-                                  //         (route) => false);
-                                  //   } else {
-                                  //     setState(() {
-                                  //       isLoading = false;
-                                  //     });
-                                  //     Fluttertoast.showToast(
-                                  //         msg: value,
-                                  //         toastLength: Toast.LENGTH_SHORT,
-                                  //         gravity: ToastGravity.CENTER,
-                                  //         timeInSecForIosWeb: 1,
-                                  //         backgroundColor: Colors.red,
-                                  //         textColor: Colors.white,
-                                  //         fontSize: 16.0);
-                                  //   }
-                                  // });
 
                                   Provider.of<AuthService>(context,
                                           listen: false)

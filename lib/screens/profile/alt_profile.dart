@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/services/firebase_operations.dart';
+import 'package:food_share/services/screens/profile_helper.dart';
 import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/viewmodel/loading_animation.dart';
+import 'package:food_share/widgets/profile_post_image.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -27,22 +30,8 @@ class AltProfile extends StatefulWidget {
 }
 
 class _AltProfileState extends State<AltProfile> {
-  // @override
-  // void initState() {
-  //   getAuthorData(context, widget.userUID);
-  //   super.initState();
-  // }
-
   bool _isOpen = false;
   final PanelController _panelController = PanelController();
-  final _imageList = [
-    'assets/images/img-1.jpg',
-    'assets/images/img-2.jpg',
-    'assets/images/img-3.jpg',
-    'assets/images/img-4.jpg',
-    'assets/images/img-5.jpg',
-    'assets/images/img-6.jpg',
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -143,32 +132,47 @@ class _AltProfileState extends State<AltProfile> {
               ],
             ),
           ),
-          _imageList.isNotEmpty
-              ? GridView.builder(
-                  primary: false,
-                  shrinkWrap: true,
-                  padding: EdgeInsets.zero,
-                  itemCount: _imageList.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 16.0,
-                  ),
-                  itemBuilder: (BuildContext context, int index) => Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 3.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage(_imageList[index]),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              : _defaultNoRecipes(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(widget.userUID)
+                    .collection('recipes')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return loadingAnimation('Loading user posts');
+                  } else {
+                    return snapshot.data!.docs.isNotEmpty
+                        ? GridView.builder(
+                            primary: false,
+                            shrinkWrap: true,
+                            padding: EdgeInsets.zero,
+                            itemCount: snapshot.data!.docs.length,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              mainAxisSpacing: 16.0,
+                            ),
+                            itemBuilder: (BuildContext context, int index) =>
+                                Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 3.0),
+                              child: ProfilePostImage(
+                                recipeDoc: snapshot.data!.docs[index],
+                                authorUserName: widget.authorUsername,
+                                userUID: widget.userUID,
+                              ),
+                            ),
+                          )
+                        : _defaultNoRecipes();
+                  }
+                },
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -273,55 +277,90 @@ class _AltProfileState extends State<AltProfile> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _infoCell(title: 'Posts', value: '0'),
+        SizedBox(
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('users')
+                .doc(widget.userUID)
+                .collection('recipes')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                return _infoCell(
+                  title: 'Posts',
+                  value: snapshot.data!.docs.length.toString(),
+                );
+              }
+            },
+          ),
+        ),
         Container(
           width: 1.5,
           height: 40.0,
           color: Colors.grey,
         ),
-        StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('users')
-              .doc(widget.userUID)
-              .collection('followers')
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else {
-              return _infoCell(
-                title: 'Followers',
-                value: snapshot.data!.docs.length.toString(),
-              );
-            }
+        GestureDetector(
+          onTap: () {
+            Provider.of<ProfileHelper>(context, listen: false)
+                .checkFollowerSheet(context, widget.userUID);
           },
+          child: SizedBox(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(widget.userUID)
+                  .collection('followers')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return _infoCell(
+                    title: 'Followers',
+                    value: snapshot.data!.docs.length.toString(),
+                  );
+                }
+              },
+            ),
+          ),
         ),
-
         Container(
           width: 1.5,
           height: 40.0,
           color: Colors.grey,
         ),
-        StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('users')
-              .doc(widget.userUID)
-              .collection('following')
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else {
-              return _infoCell(
-                title: 'Following',
-                value: snapshot.data!.docs.length.toString(),
-              );
-            }
+        GestureDetector(
+          onTap: () {
+            Provider.of<ProfileHelper>(context, listen: false)
+                .checkFollowingSheet(context, widget.userUID);
           },
+          child: SizedBox(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(widget.userUID)
+                  .collection('following')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return _infoCell(
+                    title: 'Following',
+                    value: snapshot.data!.docs.length.toString(),
+                  );
+                }
+              },
+            ),
+          ),
         ),
       ],
     );

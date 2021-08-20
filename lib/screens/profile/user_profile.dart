@@ -4,6 +4,8 @@ import 'package:food_share/screens/profile/edit_profile.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/services/screens/profile_helper.dart';
 import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/viewmodel/loading_animation.dart';
+import 'package:food_share/widgets/profile_post_image.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -115,32 +117,54 @@ class _UserProfileState extends State<UserProfile> {
               ],
             ),
           ),
-          _imageList.isNotEmpty
-              ? GridView.builder(
-                  primary: false,
-                  shrinkWrap: true,
-                  padding: EdgeInsets.zero,
-                  itemCount: _imageList.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 16.0,
-                  ),
-                  itemBuilder: (BuildContext context, int index) => Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 3.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage(_imageList[index]),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              : _defaultNoRecipes(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(Provider.of<FirebaseOperations>(context, listen: false)
+                        .getUserId)
+                    .collection('recipes')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return loadingAnimation('Loading user posts');
+                  } else {
+                    return snapshot.data!.docs.isNotEmpty
+                        ? GridView.builder(
+                            primary: false,
+                            shrinkWrap: true,
+                            padding: EdgeInsets.zero,
+                            itemCount: snapshot.data!.docs.length,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              mainAxisSpacing: 16.0,
+                            ),
+                            itemBuilder: (BuildContext context, int index) =>
+                                Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 3.0),
+                              child: ProfilePostImage(
+                                recipeDoc: snapshot.data!.docs[index],
+                                authorUserName: Provider.of<FirebaseOperations>(
+                                        context,
+                                        listen: false)
+                                    .getUsername,
+                                userUID: Provider.of<FirebaseOperations>(
+                                        context,
+                                        listen: false)
+                                    .getUserId,
+                              ),
+                            ),
+                          )
+                        : _defaultNoRecipes();
+                  }
+                },
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -227,17 +251,40 @@ class _UserProfileState extends State<UserProfile> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _infoCell(title: 'Posts', value: '0'),
+        SizedBox(
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('users')
+                .doc(Provider.of<FirebaseOperations>(context, listen: false)
+                .getUserId)
+                .collection('recipes')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                return _infoCell(
+                  title: 'Posts',
+                  value: snapshot.data!.docs.length.toString(),
+                );
+              }
+            },
+          ),
+        ),
         Container(
           width: 1.5,
           height: 40.0,
           color: Colors.grey,
         ),
         GestureDetector(
-          onTap: (){
-            Provider.of<ProfileHelper>(context, listen: false).checkFollowerSheet(
-                context, Provider.of<FirebaseOperations>(context, listen: false)
-                .getUserId);
+          onTap: () {
+            Provider.of<ProfileHelper>(context, listen: false)
+                .checkFollowerSheet(
+                    context,
+                    Provider.of<FirebaseOperations>(context, listen: false)
+                        .getUserId);
           },
           child: SizedBox(
             child: StreamBuilder<QuerySnapshot>(
@@ -268,10 +315,12 @@ class _UserProfileState extends State<UserProfile> {
           color: Colors.grey,
         ),
         GestureDetector(
-          onTap: (){
-            Provider.of<ProfileHelper>(context, listen: false).checkFollowingSheet(
-                context, Provider.of<FirebaseOperations>(context, listen: false)
-                .getUserId);
+          onTap: () {
+            Provider.of<ProfileHelper>(context, listen: false)
+                .checkFollowingSheet(
+                    context,
+                    Provider.of<FirebaseOperations>(context, listen: false)
+                        .getUserId);
           },
           child: SizedBox(
             child: StreamBuilder<QuerySnapshot>(
