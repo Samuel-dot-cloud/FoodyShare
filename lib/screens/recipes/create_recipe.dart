@@ -1,15 +1,18 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/form_values.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/create_recipe_page/recipe_form.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image/image.dart' as image_plugin;
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../auth/sign_up_screen.dart';
@@ -44,7 +47,8 @@ class _CreateRecipeState extends State<CreateRecipe> {
   Future<String> uploadImage(
       imageFile, firebase_storage.Reference reference) async {
     String urlString = '';
-    firebase_storage.UploadTask task = reference.child('recipe-images/$postId.jpg').putFile(imageFile);
+    firebase_storage.UploadTask task =
+        reference.child('recipe-images/$postId.jpg').putFile(imageFile);
     await (task.whenComplete(() async {
       urlString = await task.snapshot.ref.getDownloadURL();
     }).catchError((onError) {
@@ -61,30 +65,29 @@ class _CreateRecipeState extends State<CreateRecipe> {
     return urlString;
   }
 
-  createPostInFirestore(
+  createRecipePost(
       {required String mediaUrl,
       required String name,
       required String description,
       required String cookingTime,
       required String servings,
       required List<Map<String, String>> ingredients,
-        required List<Map<String, String>> preparation}) async {
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    final User? user = auth.currentUser;
-    final uid = user!.uid;
-      recipesRef.doc(postId).set({
-        'postId': postId,
-        'authorId': uid,
-        'mediaUrl': mediaUrl,
-        'description': description,
-        'name': name,
-        'cookingTime': cookingTime,
-        'servings': servings,
-        'ingredients': ingredients,
-        'preparation': preparation,
-        'timestamp': timestamp,
-        'likes': {},
-      });
+      required List<Map<String, String>> preparation}) async {
+    recipesRef.doc(postId).set({
+      'postId': postId,
+      'authorId':
+          Provider.of<FirebaseOperations>(context, listen: false).getUserId,
+      'mediaUrl': mediaUrl,
+      'description': description,
+      'name': name,
+      'cookingTime': cookingTime,
+      'servings': servings,
+      'ingredients': ingredients,
+      'preparation': preparation,
+      'timestamp': timestamp,
+      'likes': {},
+    });
+    addRecipeDetails();
     setState(() {
       photoFile = File('');
       isUploading = false;
@@ -100,13 +103,26 @@ class _CreateRecipeState extends State<CreateRecipe> {
     Navigator.pop(context);
   }
 
+  ///Adding recipe details to user collection to display in profile section
+  Future addRecipeDetails() async {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId)
+        .collection('recipes')
+        .doc(postId)
+        .set({
+      'postId': postId,
+      'timestamp': timestamp,
+    });
+  }
+
   void _addRecipe(BuildContext context, FormValues values) async {
     setState(() {
       isUploading = true;
     });
     await compressImage();
     String mediaUrl = await uploadImage(photoFile, reference);
-    createPostInFirestore(
+    createRecipePost(
       cookingTime: values.cookingTime.toString(),
       servings: values.servings.toString(),
       ingredients: values.ingredients!.toList(),

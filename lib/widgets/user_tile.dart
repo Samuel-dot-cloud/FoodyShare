@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:food_share/screens/profile/alt_profile.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +15,6 @@ class UserTile extends StatefulWidget {
 }
 
 class _UserTileState extends State<UserTile> {
-
   @override
   void initState() {
     getAuthorData(context, widget.userDoc['userUID']);
@@ -26,6 +26,23 @@ class _UserTileState extends State<UserTile> {
     Provider.of<FirebaseOperations>(context, listen: true)
         .initUserData(context);
     return ListTile(
+      onTap: () {
+        if (widget.userDoc['userUID'] !=
+            Provider.of<FirebaseOperations>(context, listen: false).getUserId) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AltProfile(
+                authorUsername: authorUsername,
+                authorImage: authorUserImage,
+                authorBio: authorBio,
+                userUID: widget.userDoc['userUID'],
+                authorDisplayName: authorDisplayName,
+              ),
+            ),
+          );
+        }
+      },
       leading: CircleAvatar(
         backgroundColor: kBlue,
         backgroundImage: NetworkImage(authorUserImage),
@@ -46,6 +63,23 @@ class _UserTileState extends State<UserTile> {
           fontSize: 12.0,
         ),
       ),
+      trailing: widget.userDoc['userUID'] ==
+              Provider.of<FirebaseOperations>(context, listen: false).getUserId
+          ? const SizedBox(
+              width: 0.0,
+              height: 0.0,
+            )
+          : MaterialButton(
+              color: kBlue,
+              onPressed: () {},
+              child: const Text(
+                'Unfollow',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
     );
   }
 
