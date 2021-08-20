@@ -132,7 +132,6 @@ class _AltProfileState extends State<AltProfile> {
               ],
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(
@@ -278,7 +277,27 @@ class _AltProfileState extends State<AltProfile> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _infoCell(title: 'Posts', value: '0'),
+        SizedBox(
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('users')
+                .doc(widget.userUID)
+                .collection('recipes')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                return _infoCell(
+                  title: 'Posts',
+                  value: snapshot.data!.docs.length.toString(),
+                );
+              }
+            },
+          ),
+        ),
         Container(
           width: 1.5,
           height: 40.0,

@@ -11,12 +11,19 @@ import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class RecipeDetails extends StatefulWidget {
-  final String recipeName, authorUserName, authorUserUID, recipeImage, servings, cookingTime, postID;
+  final String recipeName,
+      authorUserName,
+      authorUserUID,
+      recipeImage,
+      servings,
+      cookingTime,
+      postID;
   final List ingredients, preparation;
   final Map likes;
   final Timestamp recipeTimestamp;
 
-  const RecipeDetails({Key? key,
+  const RecipeDetails({
+    Key? key,
     required this.recipeName,
     required this.authorUserName,
     required this.authorUserUID,
@@ -43,18 +50,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
       FirebaseFirestore.instance.collection('recipes');
 
   @override
-  void initState() {
-    // getAuthorData(context, widget.recipeDoc['authorId']);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    // Provider.of<FirebaseOperations>(context, listen: true)
-    //     .getRecipeDetails(context, widget.recipeDoc['postId']);
-    // Provider.of<FirebaseOperations>(context, listen: true)
-    //     .getAuthorData(context, widget.recipeDoc['authorId']);
-
     Map likes = widget.likes;
     final String currentUserId =
         Provider.of<FirebaseOperations>(context, listen: false).getUserId;
@@ -64,18 +60,14 @@ class _RecipeDetailsState extends State<RecipeDetails> {
       bool _isLiked = likes[currentUserId] == true;
 
       if (_isLiked) {
-        recipesRef
-            .doc(widget.postID)
-            .update({'likes.$currentUserId': false});
+        recipesRef.doc(widget.postID).update({'likes.$currentUserId': false});
         setState(() {
           likeCount -= 1;
           liked = false;
           likes[currentUserId] == false;
         });
       } else if (!_isLiked) {
-        recipesRef
-            .doc(widget.postID)
-            .update({'likes.$currentUserId': true});
+        recipesRef.doc(widget.postID).update({'likes.$currentUserId': true});
         setState(() {
           likeCount += 1;
           liked = true;
@@ -183,7 +175,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                     onTap: () {
                       handleLikePost();
                       setState(() {
-                        liked =!liked;
+                        liked = !liked;
                       });
                     },
                     child: FaIcon(
@@ -288,7 +280,9 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                             PreparationSection(
                               preparations: widget.preparation,
                             ),
-                            CommentsSection(postId: widget.postID,)
+                            CommentsSection(
+                              postId: widget.postID,
+                            )
                           ],
                         ),
                       ),
@@ -302,29 +296,6 @@ class _RecipeDetailsState extends State<RecipeDetails> {
       ),
     );
   }
-
-  // String authorEmail = '',
-  //     authorUsername = '',
-  //     authorDisplayName = '',
-  //     authorUserImage = '',
-  //     authorBio = '';
-  //
-  // Future getAuthorData(BuildContext context, String authorId) async {
-  //   return FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(authorId)
-  //       .get()
-  //       .then((doc) {
-  //     authorUsername = doc.data()!['username'];
-  //     authorDisplayName = doc.data()!['displayName'];
-  //     authorEmail = doc.data()!['email'];
-  //     authorBio = doc.data()!['bio'];
-  //     authorUserImage = doc.data()!['photoUrl'];
-  //   });
-  //
-  //
-  // }
-
 
   int getLikeCount() {
     dynamic likes = widget.likes;

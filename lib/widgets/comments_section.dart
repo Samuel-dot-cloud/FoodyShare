@@ -11,8 +11,7 @@ import 'package:timeago/timeago.dart' as timeago;
 final commentsRef = FirebaseFirestore.instance.collection('comments');
 
 class CommentsSection extends StatefulWidget {
-  const CommentsSection({Key? key, required this.postId})
-      : super(key: key);
+  const CommentsSection({Key? key, required this.postId}) : super(key: key);
 
   final String postId;
 
@@ -38,14 +37,8 @@ class _CommentsSectionState extends State<CommentsSection> {
             child: Column(
               children: [
                 SizedBox(
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height * 0.30,
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width * 0.80,
+                  height: MediaQuery.of(context).size.height * 0.30,
+                  width: MediaQuery.of(context).size.width * 0.80,
                   child: Lottie.asset('assets/lottie/cooking.json'),
                 ),
                 const SizedBox(
@@ -77,9 +70,7 @@ class _CommentsSectionState extends State<CommentsSection> {
   addComment() {
     commentsRef.doc(widget.postId).collection('comments').add({
       'userUID':
-      Provider
-          .of<FirebaseOperations>(context, listen: false)
-          .getUserId,
+          Provider.of<FirebaseOperations>(context, listen: false).getUserId,
       'comment': _commentController.text,
       'timestamp': Timestamp.now(),
     });
@@ -98,14 +89,14 @@ class _CommentsSectionState extends State<CommentsSection> {
           title: TextFormField(
             controller: _commentController,
             decoration: const InputDecoration(
-                filled: true,
-                labelText: 'Leave a comment...',
+              filled: true,
+              labelText: 'Leave a comment...',
             ),
           ),
           trailing: MaterialButton(
             color: kBlue,
-            onPressed: (){
-              if(_commentController.text.trim().isEmpty){
+            onPressed: () {
+              if (_commentController.text.trim().isEmpty) {
                 Fluttertoast.showToast(
                     msg: 'Please enter a valid comment!!',
                     toastLength: Toast.LENGTH_SHORT,
@@ -114,7 +105,7 @@ class _CommentsSectionState extends State<CommentsSection> {
                     backgroundColor: Colors.red,
                     textColor: Colors.white,
                     fontSize: 16.0);
-              } else{
+              } else {
                 addComment();
               }
             },
@@ -137,10 +128,11 @@ class Comment extends StatefulWidget {
   final String comment;
   final Timestamp timestamp;
 
-  const Comment({Key? key,
-    required this.userUID,
-    required this.comment,
-    required this.timestamp})
+  const Comment(
+      {Key? key,
+      required this.userUID,
+      required this.comment,
+      required this.timestamp})
       : super(key: key);
 
   factory Comment.fromDocument(DocumentSnapshot doc) {
@@ -156,7 +148,6 @@ class Comment extends StatefulWidget {
 }
 
 class _CommentState extends State<Comment> {
-
   @override
   void initState() {
     getAuthorData(context, widget.userUID);
@@ -165,8 +156,7 @@ class _CommentState extends State<Comment> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<FirebaseOperations>(context, listen: true)
-        .getUserId;
+    Provider.of<FirebaseOperations>(context, listen: true).getUserId;
     return Column(
       children: [
         ListTile(

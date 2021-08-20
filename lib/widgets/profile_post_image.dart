@@ -5,7 +5,12 @@ import 'package:food_share/services/firebase_operations.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePostImage extends StatefulWidget {
-  const ProfilePostImage({Key? key, required this.recipeDoc, required this.authorUserName, required this.userUID}) : super(key: key);
+  const ProfilePostImage(
+      {Key? key,
+      required this.recipeDoc,
+      required this.authorUserName,
+      required this.userUID})
+      : super(key: key);
 
   final DocumentSnapshot recipeDoc;
   final String authorUserName;
@@ -16,7 +21,6 @@ class ProfilePostImage extends StatefulWidget {
 }
 
 class _ProfilePostImageState extends State<ProfilePostImage> {
-
   @override
   void initState() {
     getRecipeDetails(context, widget.recipeDoc['postId']);
@@ -71,11 +75,9 @@ class _ProfilePostImageState extends State<ProfilePostImage> {
 
   Map likes = {};
 
-  List preparation = [],
-  ingredients = [];
+  List preparation = [], ingredients = [];
 
   Timestamp timestamp = Timestamp.now();
-
 
   /// Method for retrieving specific recipe details
   Future getRecipeDetails(BuildContext context, String recipeId) async {
