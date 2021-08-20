@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/loading_animation.dart';
@@ -103,7 +104,20 @@ class _CommentsSectionState extends State<CommentsSection> {
           ),
           trailing: MaterialButton(
             color: kBlue,
-            onPressed: addComment,
+            onPressed: (){
+              if(_commentController.text.trim().isEmpty){
+                Fluttertoast.showToast(
+                    msg: 'Please enter a valid comment!!',
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
+              } else{
+                addComment();
+              }
+            },
             child: const Text(
               'Post',
               style: TextStyle(
