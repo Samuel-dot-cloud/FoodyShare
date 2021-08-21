@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -14,8 +13,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:image/image.dart' as image_plugin;
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-
-import '../auth/sign_up_screen.dart';
 
 class CreateRecipe extends StatefulWidget {
   CreateRecipe({Key? key, required this.file}) : super(key: key);
@@ -31,11 +28,10 @@ class _CreateRecipeState extends State<CreateRecipe> {
   late File photoFile;
   bool isUploading = false;
   String postId = const Uuid().v4();
+  final Timestamp timestamp = Timestamp.now();
+  final recipesRef = FirebaseFirestore.instance.collection('recipes');
   firebase_storage.Reference reference =
       firebase_storage.FirebaseStorage.instance.ref();
-
-  // User? user = FirebaseAuth.instance.currentUser;
-  //recipesRef.doc(user.uid).collection('userRecipes').doc(postId).set({
 
   @override
   void initState() {

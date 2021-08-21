@@ -30,8 +30,31 @@ class AltProfile extends StatefulWidget {
 }
 
 class _AltProfileState extends State<AltProfile> {
+  @override
+  void initState() {
+    checkIfFollowing();
+    super.initState();
+  }
+
   bool _isOpen = false;
+  bool _isFollowing = false;
   final PanelController _panelController = PanelController();
+
+  checkIfFollowing() async {
+    DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(
+          widget.userUID,
+        )
+        .collection('followers')
+        .doc(
+          Provider.of<FirebaseOperations>(context, listen: false).getUserId,
+        )
+        .get();
+    setState(() {
+      _isFollowing = doc.exists;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -140,6 +163,7 @@ class _AltProfileState extends State<AltProfile> {
                     .collection('users')
                     .doc(widget.userUID)
                     .collection('recipes')
+                    .orderBy('timestamp', descending: true)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -221,33 +245,57 @@ class _AltProfileState extends State<AltProfile> {
                   : double.infinity,
               child: TextButton(
                 onPressed: () {
-                  Provider.of<FirebaseOperations>(context, listen: false)
-                      .followUser(
+                  _isFollowing
+                      ? Provider.of<FirebaseOperations>(context, listen: false)
+                          .unfollowUser(
                           widget.userUID,
                           Provider.of<FirebaseOperations>(context,
                                   listen: false)
                               .getUserId,
-                          {
-                            'userUID': Provider.of<FirebaseOperations>(context,
-                                    listen: false)
-                                .getUserId,
-                            'timestamp': Timestamp.now(),
-                          },
                           Provider.of<FirebaseOperations>(context,
                                   listen: false)
                               .getUserId,
                           widget.userUID,
-                          {
-                            'userUID': widget.userUID,
-                            'timestamp': Timestamp.now(),
-                          })
-                      .whenComplete(() {
-                    followNotification(context, widget.authorUsername);
-                  });
+                        )
+                          .whenComplete(() {
+                    setState(() {
+                      _isFollowing = false;
+                    });
+                          followNotification(
+                              context, 'Unfollowed @' + widget.authorUsername);
+                        })
+                      : Provider.of<FirebaseOperations>(context, listen: false)
+                          .followUser(
+                              widget.userUID,
+                              Provider.of<FirebaseOperations>(context,
+                                      listen: false)
+                                  .getUserId,
+                              {
+                                'userUID': Provider.of<FirebaseOperations>(
+                                        context,
+                                        listen: false)
+                                    .getUserId,
+                                'timestamp': Timestamp.now(),
+                              },
+                              Provider.of<FirebaseOperations>(context,
+                                      listen: false)
+                                  .getUserId,
+                              widget.userUID,
+                              {
+                                'userUID': widget.userUID,
+                                'timestamp': Timestamp.now(),
+                              })
+                          .whenComplete(() {
+                    setState(() {
+                      _isFollowing = true;
+                    });
+                          followNotification(
+                              context, 'Followed @' + widget.authorUsername);
+                        });
                 },
-                child: const Text(
-                  'FOLLOW',
-                  style: TextStyle(
+                child: Text(
+                  _isFollowing ? 'UNFOLLOW' : 'FOLLOW',
+                  style: const TextStyle(
                     fontSize: 12.0,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
@@ -256,11 +304,13 @@ class _AltProfileState extends State<AltProfile> {
                 style: ButtonStyle(
                   foregroundColor:
                       MaterialStateProperty.all<Color>(Colors.white),
-                  backgroundColor: MaterialStateProperty.all<Color>(kBlue),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      _isFollowing ? Colors.red : kBlue),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
-                      side: const BorderSide(color: kBlue),
+                      side:
+                          BorderSide(color: _isFollowing ? Colors.red : kBlue),
                     ),
                   ),
                 ),
@@ -454,7 +504,7 @@ class _AltProfileState extends State<AltProfile> {
     );
   }
 
-  followNotification(BuildContext context, String name) {
+  followNotification(BuildContext context, String text) {
     return showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -472,7 +522,7 @@ class _AltProfileState extends State<AltProfile> {
                     ),
                   ),
                   Text(
-                    'Followed @$name',
+                    text,
                     style: const TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,

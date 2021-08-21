@@ -20,9 +20,8 @@ import 'package:provider/provider.dart';
 
 
 final usersRef = FirebaseFirestore.instance.collection('users');
-final recipesRef = FirebaseFirestore.instance.collection('recipes');
 CustomUser? currentUser;
-final DateTime timestamp = DateTime.now();
+final Timestamp timestamp = Timestamp.now();
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
