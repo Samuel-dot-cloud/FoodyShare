@@ -20,14 +20,6 @@ class UserProfile extends StatefulWidget {
 class _UserProfileState extends State<UserProfile> {
   bool _isOpen = false;
   final PanelController _panelController = PanelController();
-  final _imageList = [
-    'assets/images/img-1.jpg',
-    'assets/images/img-2.jpg',
-    'assets/images/img-3.jpg',
-    'assets/images/img-4.jpg',
-    'assets/images/img-5.jpg',
-    'assets/images/img-6.jpg',
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -258,6 +250,7 @@ class _UserProfileState extends State<UserProfile> {
                 .doc(Provider.of<FirebaseOperations>(context, listen: false)
                 .getUserId)
                 .collection('recipes')
+                .orderBy('timestamp', descending: true)
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {

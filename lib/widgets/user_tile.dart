@@ -63,23 +63,23 @@ class _UserTileState extends State<UserTile> {
           fontSize: 12.0,
         ),
       ),
-      trailing: widget.userDoc['userUID'] ==
-              Provider.of<FirebaseOperations>(context, listen: false).getUserId
-          ? const SizedBox(
-              width: 0.0,
-              height: 0.0,
-            )
-          : MaterialButton(
-              color: kBlue,
-              onPressed: () {},
-              child: const Text(
-                'Unfollow',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+      // trailing: widget.userDoc['userUID'] ==
+      //         Provider.of<FirebaseOperations>(context, listen: false).getUserId
+      //     ? const SizedBox(
+      //         width: 0.0,
+      //         height: 0.0,
+      //       )
+      //     : MaterialButton(
+      //         color: kBlue,
+      //         onPressed: () {},
+      //         child: const Text(
+      //           'Unfollow',
+      //           style: TextStyle(
+      //             color: Colors.white,
+      //             fontWeight: FontWeight.bold,
+      //           ),
+      //         ),
+      //       ),
     );
   }
 
