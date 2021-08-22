@@ -12,7 +12,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class RecipeDetails extends StatefulWidget {
   final String recipeName,
-      authorUserName,
+      description,
       authorUserUID,
       recipeImage,
       servings,
@@ -25,7 +25,7 @@ class RecipeDetails extends StatefulWidget {
   const RecipeDetails({
     Key? key,
     required this.recipeName,
-    required this.authorUserName,
+    required this.description,
     required this.authorUserUID,
     required this.recipeImage,
     required this.recipeTimestamp,
@@ -161,7 +161,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                 height: 10.0,
               ),
               Text(
-                '@' + widget.authorUserName,
+                widget.description,
                 style: _textTheme.caption,
               ),
               const SizedBox(
@@ -281,7 +281,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                               preparations: widget.preparation,
                             ),
                             CommentsSection(
-                              postId: widget.postID,
+                              postId: widget.postID, authorId: widget.authorUserUID,
                             )
                           ],
                         ),

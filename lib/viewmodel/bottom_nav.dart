@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_share/helpers/bottom_nav_helper.dart';
+import 'package:food_share/screens/activity_feed.dart';
 import 'package:food_share/screens/auth/sign_up_screen.dart';
 import 'package:food_share/screens/home_page.dart';
 import 'package:food_share/screens/search_page.dart';
@@ -36,6 +37,7 @@ class _BottomNavState extends State<BottomNav> {
           HomePage(),
           SearchPage(),
           ImageUpload(),
+          ActivityFeed(),
           UserProfile(),
         ],
         physics: const NeverScrollableScrollPhysics(),

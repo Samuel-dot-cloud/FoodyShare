@@ -11,9 +11,12 @@ import 'package:timeago/timeago.dart' as timeago;
 final commentsRef = FirebaseFirestore.instance.collection('comments');
 
 class CommentsSection extends StatefulWidget {
-  const CommentsSection({Key? key, required this.postId}) : super(key: key);
+  const CommentsSection(
+      {Key? key, required this.postId, required this.authorId})
+      : super(key: key);
 
   final String postId;
+  final String authorId;
 
   @override
   State<CommentsSection> createState() => _CommentsSectionState();
@@ -68,12 +71,28 @@ class _CommentsSectionState extends State<CommentsSection> {
   }
 
   addComment() {
+    bool _isNotPostOwner =
+        Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
+            widget.authorId;
     commentsRef.doc(widget.postId).collection('comments').add({
       'userUID':
           Provider.of<FirebaseOperations>(context, listen: false).getUserId,
       'comment': _commentController.text,
       'timestamp': Timestamp.now(),
     });
+    if (_isNotPostOwner) {
+      Provider.of<FirebaseOperations>(context, listen: false)
+          .addCommentToActivityFeed(
+        widget.authorId,
+        {
+          'type': 'comment',
+          'postId': widget.postId,
+          'userUID':
+              Provider.of<FirebaseOperations>(context, listen: false).getUserId,
+          'timestamp': Timestamp.now(),
+        },
+      );
+    }
     _commentController.clear();
   }
 
