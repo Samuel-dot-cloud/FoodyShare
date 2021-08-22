@@ -38,7 +38,7 @@ class _ProfilePostImageState extends State<ProfilePostImage> {
           builder: (context) => RecipeDetails(
             cookingTime: cookingTime,
             recipeName: title,
-            authorUserName: widget.authorUserName,
+            description: description,
             recipeImage: mediaUrl,
             servings: servings,
             likes: likes,

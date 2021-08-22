@@ -16,7 +16,6 @@ class ActivityFeed extends StatefulWidget {
 }
 
 class _ActivityFeedState extends State<ActivityFeed> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,25 +33,14 @@ class _ActivityFeedState extends State<ActivityFeed> {
         centerTitle: true,
       ),
       body: SizedBox(
-        child: 
-        // FutureBuilder(
-        //   future: Provider.of<FirebaseOperations>(context, listen: false).getActivityFeed(),
-        //     builder: (context, snapshot) {
-        //     if(!snapshot.hasData){
-        //       return const CircularProgressIndicator();
-        //     }
-        //     return ListView.builder(
-        //       itemBuilder: snapshot.data!.length,
-        //     );
-        //     }
-        // ),
-        StreamBuilder<QuerySnapshot>(
-          stream:
-          activityFeedRef
-              .doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId)
+        child: StreamBuilder<QuerySnapshot>(
+          stream: activityFeedRef
+              .doc(Provider.of<FirebaseOperations>(context, listen: false)
+                  .getUserId)
               .collection('feedItems')
               .orderBy('timestamp', descending: true)
-              .limit(50).snapshots(),
+              .limit(50)
+              .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return const Text('Error');
@@ -66,14 +54,14 @@ class _ActivityFeedState extends State<ActivityFeed> {
                   shrinkWrap: true,
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (BuildContext context, int index) => Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12.0,
-                      vertical: 12.0,
-                    ),
-                    child: ActivityFeedItem(
-                      feedDoc: snapshot.data!.docs[index],
-                    ),
-                  ));
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12.0,
+                          vertical: 12.0,
+                        ),
+                        child: ActivityFeedItem(
+                          feedDoc: snapshot.data!.docs[index],
+                        ),
+                      ));
             }
             return const Text('Loading ...');
           },

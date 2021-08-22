@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:food_share/screens/profile/alt_profile.dart';
 import 'package:food_share/screens/recipe_details.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
@@ -25,7 +26,7 @@ class ActivityFeedItem extends StatelessWidget {
               preparation: preparation,
               recipeTimestamp: timestamp,
               ingredients: ingredients,
-              authorUserName: description,
+              description: description,
               cookingTime: cookingTime,
               authorUserUID: authorId,
               postID: feedDoc['postId'],
@@ -76,15 +77,24 @@ class ActivityFeedItem extends StatelessWidget {
     getRecipeDetails(context, feedDoc['postId']);
     Provider.of<FirebaseOperations>(context, listen: true)
         .initUserData(context);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 2.0),
-      child: Container(
-        color: Colors.white54,
-        child: ListTile(
+    return Column(
+      children: [
+        ListTile(
           title: GestureDetector(
-            onTap: () => print('Show profile'),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AltProfile(
+                  userUID: feedDoc['userUID'],
+                  authorImage: authorUserImage,
+                  authorUsername: authorUsername,
+                  authorDisplayName: authorDisplayName,
+                  authorBio: authorBio,
+                ),
+              ),
+            ),
             child: RichText(
-              overflow: TextOverflow.ellipsis,
+              overflow: TextOverflow.fade,
               text: TextSpan(
                 style: GoogleFonts.josefinSans(
                   textStyle: const TextStyle(
@@ -118,7 +128,14 @@ class ActivityFeedItem extends StatelessWidget {
           ),
           trailing: mediaPreview,
         ),
-      ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          child: Divider(
+            thickness: 0.5,
+            color: Colors.grey,
+          ),
+        ),
+      ],
     );
   }
 

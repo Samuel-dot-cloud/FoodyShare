@@ -102,7 +102,7 @@ class _RecipeCardState extends State<RecipeCard> {
                     builder: (context) => RecipeDetails(
                       cookingTime: widget.recipeDoc['cookingTime'],
                       recipeName: widget.recipeDoc['name'],
-                      authorUserName: authorUsername,
+                      description: widget.recipeDoc['description'],
                       recipeImage: widget.recipeDoc['mediaUrl'],
                       servings: widget.recipeDoc['servings'],
                       likes: widget.recipeDoc['likes'],
