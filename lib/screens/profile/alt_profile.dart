@@ -163,7 +163,6 @@ class _AltProfileState extends State<AltProfile> {
                     .collection('users')
                     .doc(widget.userUID)
                     .collection('recipes')
-                    .orderBy('timestamp', descending: true)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {

@@ -36,6 +36,11 @@ class BottomNavHelper with ChangeNotifier {
           color: Colors.black,
           size: 20.0,
         ),
+        const FaIcon(
+          FontAwesomeIcons.solidBell,
+          color: Colors.black,
+          size: 20.0,
+        ),
         CircleAvatar(
           radius: 16.0,
           backgroundColor: kBlue,

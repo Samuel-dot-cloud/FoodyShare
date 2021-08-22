@@ -43,11 +43,21 @@ class _RecipeCardState extends State<RecipeCard> {
 
     handleLikePost() {
       bool _isLiked = likes[currentUserId] == true;
+      bool _isNotPostOwner =
+          Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
+              widget.recipeDoc['authorId'];
 
       if (_isLiked) {
         recipesRef
             .doc(widget.recipeDoc['postId'])
             .update({'likes.$currentUserId': false});
+        if(_isNotPostOwner){
+          Provider.of<FirebaseOperations>(context, listen: false)
+              .removeFromActivityFeed(
+            widget.recipeDoc['authorId'],
+            widget.recipeDoc['postId'],
+          );
+        }
         setState(() {
           likeCount -= 1;
           liked = false;
@@ -57,6 +67,20 @@ class _RecipeCardState extends State<RecipeCard> {
         recipesRef
             .doc(widget.recipeDoc['postId'])
             .update({'likes.$currentUserId': true});
+        if (_isNotPostOwner) {
+          Provider.of<FirebaseOperations>(context, listen: false)
+              .addLikeToActivityFeed(
+            widget.recipeDoc['authorId'],
+            widget.recipeDoc['postId'],
+            {
+              'type': 'like',
+              'userUID': Provider.of<FirebaseOperations>(context, listen: false)
+                  .getUserId,
+              'postId': widget.recipeDoc['postId'],
+              'timestamp': Timestamp.now(),
+            },
+          );
+        }
         setState(() {
           likeCount += 1;
           liked = true;

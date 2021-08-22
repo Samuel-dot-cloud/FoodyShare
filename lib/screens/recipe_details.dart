@@ -281,7 +281,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                               preparations: widget.preparation,
                             ),
                             CommentsSection(
-                              postId: widget.postID,
+                              postId: widget.postID, authorId: widget.authorUserUID,
                             )
                           ],
                         ),
