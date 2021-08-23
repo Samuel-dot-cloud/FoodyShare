@@ -257,9 +257,17 @@ class _AltProfileState extends State<AltProfile> {
                           widget.userUID,
                         )
                           .whenComplete(() {
-                    setState(() {
-                      _isFollowing = false;
-                    });
+                          Provider.of<FirebaseOperations>(context,
+                                  listen: false)
+                              .removeFromActivityFeed(
+                            widget.userUID,
+                            Provider.of<FirebaseOperations>(context,
+                                    listen: false)
+                                .getUserId,
+                          );
+                          setState(() {
+                            _isFollowing = false;
+                          });
                           followNotification(
                               context, 'Unfollowed @' + widget.authorUsername);
                         })
@@ -285,9 +293,27 @@ class _AltProfileState extends State<AltProfile> {
                                 'timestamp': Timestamp.now(),
                               })
                           .whenComplete(() {
-                    setState(() {
-                      _isFollowing = true;
-                    });
+                          Provider.of<FirebaseOperations>(context,
+                                  listen: false)
+                              .addToActivityFeed(
+                            widget.userUID,
+                            Provider.of<FirebaseOperations>(context,
+                                    listen: false)
+                                .getUserId,
+                            {
+                              'type': 'follow',
+                              'postId': '',
+                              'profileId': widget.userUID,
+                              'userUID': Provider.of<FirebaseOperations>(
+                                      context,
+                                      listen: false)
+                                  .getUserId,
+                              'timestamp': Timestamp.now(),
+                            },
+                          );
+                          setState(() {
+                            _isFollowing = true;
+                          });
                           followNotification(
                               context, 'Followed @' + widget.authorUsername);
                         });

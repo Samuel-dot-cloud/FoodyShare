@@ -69,7 +69,7 @@ class _RecipeCardState extends State<RecipeCard> {
             .update({'likes.$currentUserId': true});
         if (_isNotPostOwner) {
           Provider.of<FirebaseOperations>(context, listen: false)
-              .addLikeToActivityFeed(
+              .addToActivityFeed(
             widget.recipeDoc['authorId'],
             widget.recipeDoc['postId'],
             {
