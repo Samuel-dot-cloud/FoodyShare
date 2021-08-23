@@ -39,7 +39,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
                   .getUserId)
               .collection('feedItems')
               .orderBy('timestamp', descending: true)
-              .limit(50)
+              .limit(10)
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {

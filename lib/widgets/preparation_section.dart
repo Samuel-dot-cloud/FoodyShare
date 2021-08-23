@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class PreparationSection extends StatelessWidget {
   final List preparations;
@@ -9,8 +10,7 @@ class PreparationSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List? preparationList =
-    preparations.map((item) => item as Map).toList();
+    List? preparationList = preparations.map((item) => item as Map).toList();
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -20,20 +20,26 @@ class PreparationSection extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: RichText(
+                  overflow: TextOverflow.fade,
                   text: TextSpan(
-                    text: '$preparationNo. ',
-                    style: const TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14.0,
+                    style: GoogleFonts.josefinSans(
+                      textStyle: const TextStyle(
+                        fontSize: 15.0,
+                      ),
                     ),
                     children: [
+                      TextSpan(
+                        text: '$preparationNo. ',
+                        style: const TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       TextSpan(
                         text: preparationList[index].values.toString(),
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.normal,
-                          fontSize: 14.0,
                         ),
                       ),
                     ],
