@@ -98,7 +98,7 @@ class ActivityFeedItem extends StatelessWidget {
               text: TextSpan(
                 style: GoogleFonts.josefinSans(
                   textStyle: const TextStyle(
-                    fontSize: 14.0,
+                    fontSize: 15.0,
                     color: Colors.black,
                   ),
                 ),

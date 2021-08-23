@@ -130,7 +130,7 @@ class FirebaseOperations with ChangeNotifier {
     });
   }
 
-  Future addLikeToActivityFeed(
+  Future addToActivityFeed(
       String authorId, String postId, dynamic data) async {
     activityFeedRef.doc(authorId).collection('feedItems').doc(postId).set(data);
   }
@@ -143,6 +143,8 @@ class FirebaseOperations with ChangeNotifier {
     activityFeedRef.doc(authorId).collection('feedItems').add(data);
   }
 
+
+
   Future getActivityFeed() async {
     await activityFeedRef
         .doc(getUserId)
@@ -150,11 +152,5 @@ class FirebaseOperations with ChangeNotifier {
         .orderBy('timestamp', descending: true)
         .limit(50)
         .get();
-
-    // List<ActivityFeedItem> feedItems = [];
-    // for (var doc in snapshot.docs) {
-    //  feedItems.add(ActivityFeedItem.fromDocument(doc));
-    // }
-    // return feedItems;
   }
 }
