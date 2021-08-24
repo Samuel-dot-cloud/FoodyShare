@@ -4,6 +4,7 @@ import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/loading_animation.dart';
 import 'package:food_share/widgets/activity_feed/activity_feed_item.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 final activityFeedRef = FirebaseFirestore.instance.collection('feed');
@@ -35,8 +36,9 @@ class _ActivityFeedState extends State<ActivityFeed> {
       body: SizedBox(
         child: StreamBuilder<QuerySnapshot>(
           stream: activityFeedRef
-              .doc(Provider.of<FirebaseOperations>(context, listen: false)
-                  .getUserId)
+              .doc(Provider
+              .of<FirebaseOperations>(context, listen: false)
+              .getUserId)
               .collection('feedItems')
               .orderBy('timestamp', descending: true)
               .limit(10)
@@ -49,11 +51,12 @@ class _ActivityFeedState extends State<ActivityFeed> {
               return loadingAnimation('Loading activity feed notifications...');
             }
             if (snapshot.hasData) {
-              return ListView.builder(
+              return snapshot.data!.docs.isNotEmpty ? ListView.builder(
                   physics: const ScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (BuildContext context, int index) => Padding(
+                  itemBuilder: (BuildContext context, int index) =>
+                      Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12.0,
                           vertical: 12.0,
@@ -61,10 +64,43 @@ class _ActivityFeedState extends State<ActivityFeed> {
                         child: ActivityFeedItem(
                           feedDoc: snapshot.data!.docs[index],
                         ),
-                      ));
+                      )) : _defaultNoNotification();
             }
             return const Text('Loading ...');
           },
+        ),
+      ),
+    );
+  }
+
+  _defaultNoNotification() {
+    return SingleChildScrollView(
+      child: Center(
+        child: Column(
+          children: [
+            SizedBox(
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .height * 0.70,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width * 0.80,
+              child: Lottie.asset('assets/lottie/no-feed.json'),
+            ),
+            const SizedBox(
+              height: 20.0,
+            ),
+            const Text(
+              'No notifications here yet...',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 23.0,
+                fontWeight: FontWeight.w600,
+              ),
+            )
+          ],
         ),
       ),
     );

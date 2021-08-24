@@ -41,6 +41,9 @@ class _RecipeCardState extends State<RecipeCard> {
     final String currentUserId =
         Provider.of<FirebaseOperations>(context, listen: false).getUserId;
     bool liked = likes[currentUserId] == true;
+    bool _isNotPostOwner =
+        Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
+            widget.recipeDoc['authorId'];
 
     ///Variables for dealing with favorites
     Map favorites = widget.recipeDoc['favorites'];
@@ -49,9 +52,6 @@ class _RecipeCardState extends State<RecipeCard> {
     ///Method for handling liking of posts
     handleLikePost() {
       bool _isLiked = likes[currentUserId] == true;
-      bool _isNotPostOwner =
-          Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
-              widget.recipeDoc['authorId'];
 
       if (_isLiked) {
         recipesRef
@@ -166,12 +166,15 @@ class _RecipeCardState extends State<RecipeCard> {
                     addedToFavorites = !addedToFavorites;
                   });
                 },
-                child: FaIcon(
+                child: _isNotPostOwner ? FaIcon(
                   !addedToFavorites
                       ? FontAwesomeIcons.bookmark
                       : FontAwesomeIcons.solidBookmark,
                   color: Colors.white,
                   size: 28.0,
+                ) : const SizedBox(
+                  height: 0.0,
+                  width: 0.0,
                 ),
               ),
             ),
@@ -208,10 +211,7 @@ class _RecipeCardState extends State<RecipeCard> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        if (widget.recipeDoc['authorId'] !=
-                            Provider.of<FirebaseOperations>(context,
-                                    listen: false)
-                                .getUserId) {
+                        if (_isNotPostOwner) {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -227,7 +227,7 @@ class _RecipeCardState extends State<RecipeCard> {
                         }
                       },
                       child: Text(
-                        '@' + authorUsername,
+                        _isNotPostOwner ? '@' + authorUsername : 'You',
                         style: Theme.of(context).textTheme.caption,
                       ),
                     ),

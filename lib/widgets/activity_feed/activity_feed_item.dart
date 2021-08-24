@@ -62,9 +62,9 @@ class ActivityFeedItem extends StatelessWidget {
     if (type == 'like') {
       activityItemText = 'liked your post';
     } else if (type == 'follow') {
-      activityItemText = 'is following you';
+      activityItemText = 'started following you';
     } else if (type == 'comment') {
-      activityItemText = 'replied to your post';
+      activityItemText = 'commented on your post';
     } else {
       activityItemText = "Error: Unknown type '$type'";
     }

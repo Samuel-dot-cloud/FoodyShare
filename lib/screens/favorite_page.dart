@@ -3,14 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/viewmodel/loading_animation.dart';
 import 'package:food_share/widgets/recipe_card.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 CollectionReference recipesRef =
     FirebaseFirestore.instance.collection('recipes');
 
-class FavoriteRecipes extends StatelessWidget {
+class FavoriteRecipes extends StatefulWidget {
   const FavoriteRecipes({Key? key}) : super(key: key);
 
+  @override
+  State<FavoriteRecipes> createState() => _FavoriteRecipesState();
+}
+
+class _FavoriteRecipesState extends State<FavoriteRecipes> {
   @override
   Widget build(BuildContext context) {
     final String currentUserId =
@@ -35,7 +41,7 @@ class FavoriteRecipes extends StatelessWidget {
                   return loadingAnimation('Loading recipe card...');
                 }
                 if (snapshot.hasData) {
-                  return ListView.builder(
+                  return snapshot.data!.docs.isNotEmpty ? ListView.builder(
                       physics: const ScrollPhysics(),
                       shrinkWrap: true,
                       itemCount: snapshot.data!.docs.length,
@@ -46,13 +52,38 @@ class FavoriteRecipes extends StatelessWidget {
                             ),
                             child: RecipeCard(
                                 recipeDoc: snapshot.data!.docs[index]),
-                          ));
+                          )) : _defaultNoFavorites();
                 }
                 return const Text('Loading ...');
               },
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Center _defaultNoFavorites() {
+    return Center(
+      child: Column(
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.60,
+            width: MediaQuery.of(context).size.width * 0.80,
+            child: Lottie.asset('assets/lottie/no-favorite.json'),
+          ),
+          const SizedBox(
+            height: 20.0,
+          ),
+          const Text(
+            'No favorites list yet...',
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 23.0,
+              fontWeight: FontWeight.w600,
+            ),
+          )
+        ],
       ),
     );
   }
