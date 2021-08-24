@@ -1,20 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:food_share/screens/recipe_details.dart';
-import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/widgets/recipe_card.dart';
-import 'package:provider/provider.dart';
 
 import 'loading_animation.dart';
 
-class NewRecipe extends StatefulWidget {
-  const NewRecipe({Key? key}) : super(key: key);
+class DiscoverRecipe extends StatefulWidget {
+  const DiscoverRecipe({Key? key}) : super(key: key);
 
   @override
-  State<NewRecipe> createState() => _NewRecipeState();
+  State<DiscoverRecipe> createState() => _DiscoverRecipeState();
 }
 
-class _NewRecipeState extends State<NewRecipe> {
+class _DiscoverRecipeState extends State<DiscoverRecipe> {
   CollectionReference recipesRef =
       FirebaseFirestore.instance.collection('recipes');
 

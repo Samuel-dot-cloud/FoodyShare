@@ -82,6 +82,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
       'preparation': preparation,
       'timestamp': timestamp,
       'likes': {},
+      'favorites': {},
     });
     addRecipeDetails();
     setState(() {

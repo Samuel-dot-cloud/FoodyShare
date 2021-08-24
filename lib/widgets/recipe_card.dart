@@ -36,11 +36,17 @@ class _RecipeCardState extends State<RecipeCard> {
     Provider.of<FirebaseOperations>(context, listen: true)
         .initUserData(context);
 
+    /// Variables for dealing with liking posts
     Map likes = widget.recipeDoc['likes'];
     final String currentUserId =
         Provider.of<FirebaseOperations>(context, listen: false).getUserId;
     bool liked = likes[currentUserId] == true;
 
+    ///Variables for dealing with favorites
+    Map favorites = widget.recipeDoc['favorites'];
+    bool addedToFavorites = favorites[currentUserId] == true;
+
+    ///Method for handling liking of posts
     handleLikePost() {
       bool _isLiked = likes[currentUserId] == true;
       bool _isNotPostOwner =
@@ -51,7 +57,7 @@ class _RecipeCardState extends State<RecipeCard> {
         recipesRef
             .doc(widget.recipeDoc['postId'])
             .update({'likes.$currentUserId': false});
-        if(_isNotPostOwner){
+        if (_isNotPostOwner) {
           Provider.of<FirebaseOperations>(context, listen: false)
               .removeFromActivityFeed(
             widget.recipeDoc['authorId'],
@@ -85,6 +91,28 @@ class _RecipeCardState extends State<RecipeCard> {
           likeCount += 1;
           liked = true;
           likes[currentUserId] == true;
+        });
+      }
+    }
+
+    ///Method for handling adding posts to favorites
+    handleFavoritePost() {
+      bool _isFavorite = favorites[currentUserId] == true;
+      if (_isFavorite) {
+        recipesRef
+            .doc(widget.recipeDoc['postId'])
+            .update({'favorites.$currentUserId': false});
+        setState(() {
+          addedToFavorites = false;
+          favorites[currentUserId] == false;
+        });
+      } else if (!_isFavorite) {
+        recipesRef
+            .doc(widget.recipeDoc['postId'])
+            .update({'favorites.$currentUserId': true});
+        setState(() {
+          addedToFavorites = true;
+          favorites[currentUserId] == true;
         });
       }
     }
@@ -133,12 +161,13 @@ class _RecipeCardState extends State<RecipeCard> {
               right: 40.0,
               child: InkWell(
                 onTap: () {
+                  handleFavoritePost();
                   setState(() {
-                    saved = !saved;
+                    addedToFavorites = !addedToFavorites;
                   });
                 },
                 child: FaIcon(
-                  !saved
+                  !addedToFavorites
                       ? FontAwesomeIcons.bookmark
                       : FontAwesomeIcons.solidBookmark,
                   color: Colors.white,
