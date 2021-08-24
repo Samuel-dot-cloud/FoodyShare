@@ -176,10 +176,15 @@ class _CommentState extends State<Comment> {
   @override
   Widget build(BuildContext context) {
     Provider.of<FirebaseOperations>(context, listen: true).getUserId;
+
     return Column(
       children: [
         ListTile(
-          title: Text('@' + authorUsername),
+          title: Text('@' + authorUsername,
+            style: const TextStyle(
+              color: Colors.black,
+            ),
+          ),
           leading: CircleAvatar(
             radius: 18.0,
             backgroundColor: kBlue,

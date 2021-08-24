@@ -36,22 +36,28 @@ class _RecipeCardState extends State<RecipeCard> {
     Provider.of<FirebaseOperations>(context, listen: true)
         .initUserData(context);
 
+    /// Variables for dealing with liking posts
     Map likes = widget.recipeDoc['likes'];
     final String currentUserId =
         Provider.of<FirebaseOperations>(context, listen: false).getUserId;
     bool liked = likes[currentUserId] == true;
+    bool _isNotPostOwner =
+        Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
+            widget.recipeDoc['authorId'];
 
+    ///Variables for dealing with favorites
+    Map favorites = widget.recipeDoc['favorites'];
+    bool addedToFavorites = favorites[currentUserId] == true;
+
+    ///Method for handling liking of posts
     handleLikePost() {
       bool _isLiked = likes[currentUserId] == true;
-      bool _isNotPostOwner =
-          Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
-              widget.recipeDoc['authorId'];
 
       if (_isLiked) {
         recipesRef
             .doc(widget.recipeDoc['postId'])
             .update({'likes.$currentUserId': false});
-        if(_isNotPostOwner){
+        if (_isNotPostOwner) {
           Provider.of<FirebaseOperations>(context, listen: false)
               .removeFromActivityFeed(
             widget.recipeDoc['authorId'],
@@ -85,6 +91,28 @@ class _RecipeCardState extends State<RecipeCard> {
           likeCount += 1;
           liked = true;
           likes[currentUserId] == true;
+        });
+      }
+    }
+
+    ///Method for handling adding posts to favorites
+    handleFavoritePost() {
+      bool _isFavorite = favorites[currentUserId] == true;
+      if (_isFavorite) {
+        recipesRef
+            .doc(widget.recipeDoc['postId'])
+            .update({'favorites.$currentUserId': false});
+        setState(() {
+          addedToFavorites = false;
+          favorites[currentUserId] == false;
+        });
+      } else if (!_isFavorite) {
+        recipesRef
+            .doc(widget.recipeDoc['postId'])
+            .update({'favorites.$currentUserId': true});
+        setState(() {
+          addedToFavorites = true;
+          favorites[currentUserId] == true;
         });
       }
     }
@@ -133,16 +161,20 @@ class _RecipeCardState extends State<RecipeCard> {
               right: 40.0,
               child: InkWell(
                 onTap: () {
+                  handleFavoritePost();
                   setState(() {
-                    saved = !saved;
+                    addedToFavorites = !addedToFavorites;
                   });
                 },
-                child: FaIcon(
-                  !saved
+                child: _isNotPostOwner ? FaIcon(
+                  !addedToFavorites
                       ? FontAwesomeIcons.bookmark
                       : FontAwesomeIcons.solidBookmark,
                   color: Colors.white,
                   size: 28.0,
+                ) : const SizedBox(
+                  height: 0.0,
+                  width: 0.0,
                 ),
               ),
             ),
@@ -179,10 +211,7 @@ class _RecipeCardState extends State<RecipeCard> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        if (widget.recipeDoc['authorId'] !=
-                            Provider.of<FirebaseOperations>(context,
-                                    listen: false)
-                                .getUserId) {
+                        if (_isNotPostOwner) {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -198,7 +227,7 @@ class _RecipeCardState extends State<RecipeCard> {
                         }
                       },
                       child: Text(
-                        '@' + authorUsername,
+                        _isNotPostOwner ? '@' + authorUsername : 'You',
                         style: Theme.of(context).textTheme.caption,
                       ),
                     ),

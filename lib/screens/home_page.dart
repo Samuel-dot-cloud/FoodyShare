@@ -1,12 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:food_share/Viewmodel/new_recipe_page.dart';
-import 'package:food_share/screens/search_page.dart';
-import 'package:food_share/screens/profile/user_profile.dart';
-import 'package:food_share/services/recipe_notifier.dart';
-import 'package:provider/provider.dart';
+import 'package:food_share/screens/favorite_page.dart';
+import 'package:food_share/viewmodel/discover_page.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,7 +16,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: SafeArea(
         child: DefaultTabController(
-          length: 3,
+          length: 2,
           initialIndex: 0,
           child: Column(
             children: [
@@ -36,20 +30,23 @@ class _HomePageState extends State<HomePage> {
                     text: 'Discover'.toUpperCase(),
                   ),
                   Tab(
-                    text: 'Following'.toUpperCase(),
-                  ),
-                  Tab(
                     text: 'Favorites'.toUpperCase(),
                   ),
+                  // Tab(
+                  //   text: 'Favorites'.toUpperCase(),
+                  // ),
                 ],
-                labelColor: Colors.black,
-                indicator: DotIndicator(
+                labelColor: Colors.white,
+                indicator: RectangularIndicator(
                   color: Colors.black,
-                  distanceFromCenter: 16.0,
-                  radius: 3.0,
                   paintingStyle: PaintingStyle.fill,
+                  topLeftRadius: 100.0,
+                  topRightRadius: 100.0,
+                  bottomLeftRadius: 100.0,
+                  bottomRightRadius: 100.0,
+                  verticalPadding: 2.0,
                 ),
-                unselectedLabelColor: Colors.black.withOpacity(0.3),
+                unselectedLabelColor: Colors.black.withOpacity(0.5),
                 labelPadding: const EdgeInsets.symmetric(
                   horizontal: 24.0,
                 ),
@@ -57,17 +54,8 @@ class _HomePageState extends State<HomePage> {
               const Expanded(
                 child: TabBarView(
                   children: [
-                    NewRecipe(),
-                    SizedBox(
-                      child: Center(
-                        child: Text('Following'),
-                      ),
-                    ),
-                    SizedBox(
-                      child: Center(
-                        child: Text('Favorites'),
-                      ),
-                    ),
+                    DiscoverRecipe(),
+                    FavoriteRecipes(),
                   ],
                 ),
               ),
