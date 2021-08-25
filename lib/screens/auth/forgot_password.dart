@@ -18,16 +18,65 @@ class ForgotPassword extends StatefulWidget {
 
 class _ForgotPasswordState extends State<ForgotPassword> {
   final _emailController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  bool _emailValid = true;
 
   bool isLoading = false;
+
+  resetPassword() {
+    setState(() {
+      _emailController.text.trim().isEmpty
+          ? _emailValid = false
+          : _emailValid = true;
+    });
+
+    if (_emailValid) {
+      setState(() {
+        isLoading = true;
+      });
+      AuthService()
+          .resetPassword(_emailController.text)
+          .then((value) {
+        if (value == 'Reset email sent') {
+          setState(() {
+            isLoading = false;
+          });
+          Fluttertoast.showToast(
+              msg: value,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                  const LoginScreen()),
+                  (route) => false);
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+          Fluttertoast.showToast(
+              msg: value,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Stack(
       children: [
-        const BackgroundImage(image: 'assets/images/img-3.jpg'),
+        const BackgroundImage(image: 'assets/images/img-2.jpg'),
         Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
@@ -53,89 +102,43 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   child: Column(
                     children: [
                       Center(
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: size.height * 0.1,
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: size.height * 0.1,
+                            ),
+                            SizedBox(
+                              width: size.width * 0.8,
+                              child: const Text(
+                                'Enter your email address for which instructions to '
+                                'reset your password shall be sent.',
+                                style: kBodyText,
                               ),
-                              SizedBox(
-                                width: size.width * 0.8,
-                                child: const Text(
-                                  'Enter your email address for which instructions to '
-                                  'reset your password shall be sent.',
-                                  style: kBodyText,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 20.0,
-                              ),
-                              TextInputField(
-                                icon: FontAwesomeIcons.envelope,
-                                hint: 'Email',
-                                obscure: false,
-                                inputType: TextInputType.emailAddress,
-                                action: TextInputAction.done,
-                                controller: _emailController,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please input your email address';
-                                  }
-                                  return null;
-                                },
-                                autovalidateMode: AutovalidateMode.onUserInteraction,
-                              ),
-                              const SizedBox(
-                                height: 20.0,
-                              ),
-                              RoundedButton(
-                                buttonName: 'Send',
-                                onPressed: () async {
-                                  setState(() {
-                                    isLoading = true;
-                                  });
-                                  if (_formKey.currentState!.validate()) {
-                                    AuthService()
-                                        .resetPassword(_emailController.text)
-                                        .then((value) {
-                                      if (value == 'Reset email sent') {
-                                        setState(() {
-                                          isLoading = false;
-                                        });
-                                        Fluttertoast.showToast(
-                                            msg: value,
-                                            toastLength: Toast.LENGTH_SHORT,
-                                            gravity: ToastGravity.BOTTOM,
-                                            timeInSecForIosWeb: 1,
-                                            backgroundColor: Colors.green,
-                                            textColor: Colors.white,
-                                            fontSize: 16.0);
-                                        Navigator.pushAndRemoveUntil(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const LoginScreen()),
-                                            (route) => false);
-                                      } else {
-                                        setState(() {
-                                          isLoading = false;
-                                        });
-                                        Fluttertoast.showToast(
-                                            msg: value,
-                                            toastLength: Toast.LENGTH_SHORT,
-                                            gravity: ToastGravity.BOTTOM,
-                                            timeInSecForIosWeb: 1,
-                                            backgroundColor: Colors.red,
-                                            textColor: Colors.white,
-                                            fontSize: 16.0);
-                                      }
-                                    });
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(
+                              height: 20.0,
+                            ),
+                            TextInputField(
+                              icon: FontAwesomeIcons.envelope,
+                              label: 'Email',
+                              obscure: false,
+                              inputType: TextInputType.emailAddress,
+                              action: TextInputAction.done,
+                              controller: _emailController,
+                              errorText: _emailValid
+                                ? ''
+                                : 'Please input an email address',
+                            ),
+                            const SizedBox(
+                              height: 20.0,
+                            ),
+                            RoundedButton(
+                              buttonName: 'Send',
+                              onPressed: () {
+                                resetPassword();
+                              },
+                            ),
+                          ],
                         ),
                       ),
                     ],

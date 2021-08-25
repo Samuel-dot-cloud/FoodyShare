@@ -41,10 +41,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     setState(() {
       _isLoading = true;
     });
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    User? user = auth.currentUser;
-    final uid = user!.uid;
-    DocumentSnapshot doc = await usersRef.doc(uid).get();
+    DocumentSnapshot doc = await usersRef.doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId).get();
     currentUser = CustomUser.fromDocument(doc);
     _usernameController.text = currentUser!.username;
     _displayNameController.text = currentUser!.displayName;
@@ -55,12 +52,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   updateProfileData() {
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    User? user = auth.currentUser;
-    final uid = user!.uid;
     setState(() {
       _usernameController.text.trim().length < 3 ||
-              _usernameController.text.trim().length > 12 ||
+              _usernameController.text.trim().length > 14 ||
               _usernameController.text.isEmpty
           ? _usernameValid = false
           : _usernameValid = true;
@@ -74,7 +68,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     });
 
     if (_usernameValid && _displayNameValid && _bioValid) {
-      usersRef.doc(uid).update({
+      usersRef.doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId).update({
         'bio': _bioController.text,
         'displayName': _displayNameController.text,
         'username': _usernameController.text,
@@ -194,7 +188,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       controller: _usernameController,
                       errorText: _usernameValid
                           ? ''
-                          : 'Username should be 3 to 12 characters long',
+                          : 'Username should be 3 to 14 characters long',
                     ),
                     buildTextField(
                       labelText: 'Display Name',
