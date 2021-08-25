@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/models/user_model.dart';
@@ -42,7 +43,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _displayNameValid = true;
   bool _usernameValid = true;
 
-  registerUser()  async {
+  registerUser() async {
     setState(() {
       _emailController.text.trim().isEmpty
           ? _emailValid = false
@@ -62,11 +63,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
           : _displayNameValid = true;
     });
 
-    if (_emailValid && _passwordValid && _usernameValid && _displayNameValid){
+    if (_emailValid && _passwordValid && _usernameValid && _displayNameValid) {
       setState(() {
         isLoading = true;
       });
-      final DocumentSnapshot result = await Future.value(FirebaseFirestore.instance
+      final DocumentSnapshot result = await Future.value(FirebaseFirestore
+          .instance
           .collection('usernames')
           .doc(_usernameController.text.trim())
           .get());
@@ -99,12 +101,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 .createUserCollection(
               context,
               {
-                'id': Provider.of<AuthService>(context, listen: false).getuserUID,
+                'id':
+                    Provider.of<AuthService>(context, listen: false).getuserUID,
                 'username': _usernameController.text.trim(),
                 'email': _emailController.text,
                 'photoUrl':
-                Provider.of<FirebaseOperations>(context, listen: false)
-                    .getUserAvatarUrl,
+                    Provider.of<FirebaseOperations>(context, listen: false)
+                        .getUserAvatarUrl,
                 'displayName': _displayNameController.text,
                 'bio': '',
                 'timestamp': timestamp
@@ -125,7 +128,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => const BottomNav()),
-                    (route) => false);
+                (route) => false);
           } else {
             setState(() {
               isLoading = false;
@@ -226,6 +229,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               errorText: _usernameValid
                                   ? ''
                                   : 'Username should be 3 to 14 characters long',
+                              inputFormatters: [
+                                FilteringTextInputFormatter.deny(
+                                    RegExp("[@]")),
+                              ],
                             ),
                             TextInputField(
                               icon: FontAwesomeIcons.user,
@@ -237,6 +244,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               errorText: _displayNameValid
                                   ? ''
                                   : 'Display name too short',
+                              inputFormatters: const [],
                             ),
                             TextInputField(
                               icon: FontAwesomeIcons.envelope,
@@ -248,6 +256,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               errorText: _emailValid
                                   ? ''
                                   : 'Please input a valid email address',
+                              inputFormatters: const [],
                             ),
                             TextInputField(
                               icon: FontAwesomeIcons.lock,
@@ -259,6 +268,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               errorText: _passwordValid
                                   ? ''
                                   : 'Password should be more than 6 characters long',
+                              inputFormatters: const [],
                             ),
                             const SizedBox(
                               height: 25.0,

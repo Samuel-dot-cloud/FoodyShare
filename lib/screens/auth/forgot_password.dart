@@ -33,9 +33,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       setState(() {
         isLoading = true;
       });
-      AuthService()
-          .resetPassword(_emailController.text)
-          .then((value) {
+      AuthService().resetPassword(_emailController.text).then((value) {
         if (value == 'Reset email sent') {
           setState(() {
             isLoading = false;
@@ -50,10 +48,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               fontSize: 16.0);
           Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                  const LoginScreen()),
-                  (route) => false);
+              MaterialPageRoute(builder: (context) => const LoginScreen()),
+              (route) => false);
         } else {
           setState(() {
             isLoading = false;
@@ -126,8 +122,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                               action: TextInputAction.done,
                               controller: _emailController,
                               errorText: _emailValid
-                                ? ''
-                                : 'Please input an email address',
+                                  ? ''
+                                  : 'Please input an email address',
+                              inputFormatters: const [],
                             ),
                             const SizedBox(
                               height: 20.0,

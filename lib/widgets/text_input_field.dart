@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:food_share/utils/pallete.dart';
 
 class TextInputField extends StatefulWidget {
   final IconData icon;
   final String label;
   final String errorText;
+  final List<TextInputFormatter> inputFormatters;
   final bool obscure;
   final TextInputType inputType;
   final TextInputAction action;
@@ -19,6 +21,7 @@ class TextInputField extends StatefulWidget {
     required this.action,
     required this.controller,
     required this.errorText,
+    required this.inputFormatters,
   }) : super(key: key);
 
   @override
@@ -63,6 +66,7 @@ class _TextInputFieldState extends State<TextInputField> {
                 fontSize: 15.0,
               ),
             ),
+            inputFormatters: widget.inputFormatters,
             obscureText: widget.obscure,
             controller: widget.controller,
             style: const TextStyle(

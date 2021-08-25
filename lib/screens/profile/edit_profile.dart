@@ -27,7 +27,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   bool _isLoading = false;
   bool _displayNameValid = true;
   bool _bioValid = true;
-  bool _usernameValid = true;
 
   CustomUser? currentUser;
 
@@ -45,7 +44,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         .doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId)
         .get();
     currentUser = CustomUser.fromDocument(doc);
-    _usernameController.text = currentUser!.username;
     _displayNameController.text = currentUser!.displayName;
     _bioController.text = currentUser!.bio;
     setState(() {
@@ -55,11 +53,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   updateProfileData() {
     setState(() {
-      _usernameController.text.trim().length < 3 ||
-              _usernameController.text.trim().length > 14 ||
-              _usernameController.text.isEmpty
-          ? _usernameValid = false
-          : _usernameValid = true;
       _displayNameController.text.trim().length < 3 ||
               _displayNameController.text.isEmpty
           ? _displayNameValid = false
@@ -69,14 +62,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
           : _bioValid = true;
     });
 
-    if (_usernameValid && _displayNameValid && _bioValid) {
+    if (_displayNameValid && _bioValid) {
       usersRef
           .doc(
               Provider.of<FirebaseOperations>(context, listen: false).getUserId)
           .update({
         'bio': _bioController.text,
         'displayName': _displayNameController.text,
-        'username': _usernameController.text,
       });
 
       SnackBar snackBar = const SnackBar(
@@ -188,14 +180,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       height: 30.0,
                     ),
                     buildTextField(
-                      labelText: 'Username',
-                      isPasswordTextField: false,
-                      controller: _usernameController,
-                      errorText: _usernameValid
-                          ? ''
-                          : 'Username should be 3 to 14 characters long',
-                    ),
-                    buildTextField(
                       labelText: 'Display Name',
                       isPasswordTextField: false,
                       controller: _displayNameController,
@@ -300,12 +284,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
           labelText: labelText,
           errorText: errorText,
           floatingLabelBehavior: FloatingLabelBehavior.always,
-          // hintText: placeholder,
-          // hintStyle: const TextStyle(
-          //   fontSize: 16.0,
-          //   fontWeight: FontWeight.bold,
-          //   color: Colors.grey,
-          // ),
         ),
       ),
     );
