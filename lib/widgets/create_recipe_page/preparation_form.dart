@@ -74,7 +74,7 @@ class _PreparationFormState extends State<PreparationForm> {
                 },
                 icon: const Icon(
                   FontAwesomeIcons.minusCircle,
-                  color: kBlue,
+                  color: Colors.red,
                 ),
               ),
             ],

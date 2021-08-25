@@ -227,7 +227,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               controller: _passwordController,
                               errorText: _passwordValid
                                   ? ''
-                                  : 'Password should be more than six characters long',
+                                  : 'Password should be more than 6 characters long',
                             ),
                             const SizedBox(
                               height: 25.0,
