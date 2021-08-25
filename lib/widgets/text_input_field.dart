@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:food_share/utils/pallete.dart';
 
 class TextInputField extends StatefulWidget {
-  final FormFieldValidator validator;
-  final AutovalidateMode autovalidateMode;
   final IconData icon;
-  final String hint;
+  final String label;
+  final String errorText;
   final bool obscure;
   final TextInputType inputType;
   final TextInputAction action;
@@ -13,14 +12,13 @@ class TextInputField extends StatefulWidget {
 
   const TextInputField({
     Key? key,
-    required this.validator,
-    required this.autovalidateMode,
     required this.icon,
-    required this.hint,
+    required this.label,
     required this.obscure,
     required this.inputType,
     required this.action,
     required this.controller,
+    required this.errorText,
   }) : super(key: key);
 
   @override
@@ -44,14 +42,13 @@ class _TextInputFieldState extends State<TextInputField> {
           borderRadius: BorderRadius.circular(16.0),
         ),
         child: Center(
-          child: TextFormField(
-            validator: widget.validator,
-            autovalidateMode: widget.autovalidateMode,
+          child: TextField(
             decoration: InputDecoration(
               border: InputBorder.none,
               prefixIcon: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20.0,
+                  vertical: 20.0,
                 ),
                 child: Icon(
                   widget.icon,
@@ -59,12 +56,19 @@ class _TextInputFieldState extends State<TextInputField> {
                   color: kWhite,
                 ),
               ),
-              hintText: widget.hint,
-              hintStyle: kBodyText,
+              labelText: widget.label,
+              labelStyle: kBodyText,
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+              errorText: widget.errorText,
+              errorStyle: const TextStyle(
+                fontSize: 15.0,
+              ),
             ),
             obscureText: widget.obscure,
             controller: widget.controller,
-            style: kBodyText,
+            style: const TextStyle(
+              color: Colors.white,
+            ),
             keyboardType: widget.inputType,
             textInputAction: widget.action,
           ),

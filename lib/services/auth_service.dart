@@ -19,15 +19,10 @@ class AuthService with ChangeNotifier {
       userUID = user?.uid;
       notifyListeners();
 
-      //Create a new document for user with the uid
-      // await DatabaseService(uid: user!.uid).updateUserData(
-      // )
-
       return 'Account created';
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        return 'The password provided is too weak. '
-            'Should be more than 6 characters long.';
+        return 'The password provided is too weak.';
       } else if (e.code == 'email-already-in-use') {
         return 'The account already exists for that email.';
       }

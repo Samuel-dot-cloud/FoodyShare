@@ -18,7 +18,6 @@ import 'package:food_share/widgets/rounded_button.dart';
 import 'package:food_share/widgets/text_input_field.dart';
 import 'package:provider/provider.dart';
 
-
 final usersRef = FirebaseFirestore.instance.collection('users');
 CustomUser? currentUser;
 final Timestamp timestamp = Timestamp.now();
@@ -38,6 +37,81 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
 
   bool isLoading = false;
+  bool _emailValid = true;
+  bool _passwordValid = true;
+  bool _displayNameValid = true;
+  bool _usernameValid = true;
+
+  registerUser() {
+    setState(() {
+      _emailController.text.trim().isEmpty
+          ? _emailValid = false
+          : _emailValid = true;
+      _passwordController.text.trim().length < 6 ||
+              _passwordController.text.isEmpty
+          ? _passwordValid = false
+          : _passwordValid = true;
+      _usernameController.text.trim().length < 3 ||
+              _usernameController.text.trim().length > 14 ||
+              _usernameController.text.isEmpty
+          ? _usernameValid = false
+          : _usernameValid = true;
+      _displayNameController.text.trim().length < 3 ||
+              _displayNameController.text.isEmpty
+          ? _displayNameValid = false
+          : _displayNameValid = true;
+    });
+
+    if (_emailValid && _passwordValid && _usernameValid && _displayNameValid) {
+      setState(() {
+        isLoading = true;
+      });
+      AuthService()
+          .createAccount(_emailController.text, _passwordController.text)
+          .then((value) {
+        if (value == 'Account created') {
+          Provider.of<FirebaseOperations>(context, listen: false)
+              .createUserCollection(context, {
+            'id': Provider.of<AuthService>(context, listen: false).getuserUID,
+            'username': _usernameController.text,
+            'email': _emailController.text,
+            'photoUrl': Provider.of<FirebaseOperations>(context, listen: false)
+                .getUserAvatarUrl,
+            'displayName': _displayNameController.text,
+            'bio': '',
+            'timestamp': timestamp
+          });
+          setState(() {
+            isLoading = false;
+          });
+          Fluttertoast.showToast(
+              msg: value,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const BottomNav()),
+              (route) => false);
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+          Fluttertoast.showToast(
+              msg: value,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,13 +142,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       Provider.of<SignUpUtils>(context,
                                               listen: false)
                                           .getUserAvatar),
-                                  // backgroundColor:
-                                  //    Colors.grey[400]!.withOpacity(0.4),
                                   radius: size.width * 0.14,
-                                  // child: Icon(
-                                  //   FontAwesomeIcons.user,
-                                  //   color: kWhite,
-                                  //   size: size.width * 0.1,
                                   // ),
                                 ),
                               ),
@@ -119,115 +187,55 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           children: [
                             TextInputField(
                               icon: FontAwesomeIcons.at,
-                              hint: 'Username',
+                              label: 'Username',
                               obscure: false,
                               inputType: TextInputType.name,
                               action: TextInputAction.next,
                               controller: _usernameController,
-                              validator: (value) {
-                                if (value.trim().length < 3 || value.isEmpty) {
-                                  return 'Username too short';
-                                } else if (value.trim().length > 12) {
-                                  return 'Username too long';
-                                } else {
-                                  return null;
-                                }
-                              },
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
+                              errorText: _usernameValid
+                                  ? ''
+                                  : 'Username should be 3 to 14 characters long',
                             ),
                             TextInputField(
                               icon: FontAwesomeIcons.user,
-                              hint: 'Display name',
+                              label: 'Display name',
                               obscure: false,
                               inputType: TextInputType.name,
                               action: TextInputAction.next,
                               controller: _displayNameController,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please input your display name';
-                                }
-                                return null;
-                              },
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
+                              errorText: _displayNameValid
+                                  ? ''
+                                  : 'Display name too short',
                             ),
                             TextInputField(
                               icon: FontAwesomeIcons.envelope,
-                              hint: 'Email',
+                              label: 'Email',
                               obscure: false,
                               inputType: TextInputType.emailAddress,
                               action: TextInputAction.next,
                               controller: _emailController,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please input your email address';
-                                }
-                                return null;
-                              },
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
+                              errorText: _emailValid
+                                  ? ''
+                                  : 'Please input a valid email address',
                             ),
                             TextInputField(
                               icon: FontAwesomeIcons.lock,
-                              hint: 'Password',
+                              label: 'Password',
                               obscure: true,
                               inputType: TextInputType.name,
                               action: TextInputAction.next,
                               controller: _passwordController,
-                              validator: (value) {
-                                if (value.trim().length < 6 || value.isEmpty) {
-                                  return 'Please input password that is more than 6 characters long';
-                                }
-                                return null;
-                              },
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
+                              errorText: _passwordValid
+                                  ? ''
+                                  : 'Password should be more than six characters long',
                             ),
                             const SizedBox(
                               height: 25.0,
                             ),
                             RoundedButton(
                               buttonName: 'Register',
-                              onPressed: () async {
-                                setState(() {
-                                  isLoading = true;
-                                });
-                                if (_formKey.currentState!.validate()) {
-
-                                  Provider.of<AuthService>(context,
-                                          listen: false)
-                                      .createAccount(_emailController.text,
-                                          _passwordController.text)
-                                      .whenComplete(() {
-                                        Provider.of<FirebaseOperations>(context, listen: false).createUserCollection(context, {
-                                          'id': Provider.of<AuthService>(context, listen: false).getuserUID,
-                                          'username': _usernameController.text,
-                                          'email': _emailController.text,
-                                          'photoUrl': Provider.of<FirebaseOperations>(context, listen: false).getUserAvatarUrl,
-                                          'displayName': _displayNameController.text,
-                                          'bio': '',
-                                          'timestamp': timestamp
-                                        });
-                                  })
-                                      .whenComplete(() {
-                                    Navigator.pushAndRemoveUntil(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const BottomNav()),
-                                        (route) => false);
-                                  });
-                                } else {
-                                  Fluttertoast.showToast(
-                                      msg: 'Fill all the fields',
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.CENTER,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor: Colors.red,
-                                      textColor: Colors.white,
-                                      fontSize: 16.0);
-                                }
+                              onPressed: () {
+                                registerUser();
                               },
                             ),
                             const SizedBox(
@@ -271,31 +279,5 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ],
     );
-  }
-
-  createUserInFirestore() async {
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    final User? user = auth.currentUser;
-    final uid = user!.uid;
-
-    DocumentSnapshot doc = await usersRef.doc(uid).get();
-    if (!doc.exists) {
-      final String username = _usernameController.text;
-      final String displayName = _displayNameController.text;
-      final String email = _emailController.text;
-      usersRef.doc(uid).set({
-        'id': uid,
-        'username': username,
-        'email': email,
-        'photoUrl': '',
-        'displayName': displayName,
-        'bio': '',
-        'timestamp': timestamp
-      });
-
-      doc = await usersRef.doc(uid).get();
-    }
-
-    currentUser = CustomUser.fromDocument(doc);
   }
 }
