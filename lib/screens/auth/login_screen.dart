@@ -109,6 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           errorText: _emailValid
                               ? ''
                               : 'Please input a valid email address',
+                          inputFormatters: const [],
                         ),
                         TextInputField(
                           label: 'Password',
@@ -120,6 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           errorText: _passwordValid
                               ? ''
                               : 'Password should be more than six characters long',
+                          inputFormatters: const [],
                         ),
                         GestureDetector(
                           onTap: () =>
