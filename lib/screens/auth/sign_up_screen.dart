@@ -42,7 +42,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _displayNameValid = true;
   bool _usernameValid = true;
 
-  registerUser() {
+  registerUser()  async {
     setState(() {
       _emailController.text.trim().isEmpty
           ? _emailValid = false
@@ -62,54 +62,85 @@ class _SignUpScreenState extends State<SignUpScreen> {
           : _displayNameValid = true;
     });
 
-    if (_emailValid && _passwordValid && _usernameValid && _displayNameValid) {
+    if (_emailValid && _passwordValid && _usernameValid && _displayNameValid){
       setState(() {
         isLoading = true;
       });
-      AuthService()
-          .createAccount(_emailController.text, _passwordController.text)
-          .then((value) {
-        if (value == 'Account created') {
-          Provider.of<FirebaseOperations>(context, listen: false)
-              .createUserCollection(context, {
-            'id': Provider.of<AuthService>(context, listen: false).getuserUID,
-            'username': _usernameController.text,
-            'email': _emailController.text,
-            'photoUrl': Provider.of<FirebaseOperations>(context, listen: false)
-                .getUserAvatarUrl,
-            'displayName': _displayNameController.text,
-            'bio': '',
-            'timestamp': timestamp
-          });
-          setState(() {
-            isLoading = false;
-          });
-          Fluttertoast.showToast(
-              msg: value,
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.green,
-              textColor: Colors.white,
-              fontSize: 16.0);
-          Navigator.pushAndRemoveUntil(
+      final DocumentSnapshot result = await Future.value(FirebaseFirestore.instance
+          .collection('usernames')
+          .doc(_usernameController.text.trim())
+          .get());
+      if (result.exists) {
+        Fluttertoast.showToast(
+            msg: '@${_usernameController.text.trim()} already exists',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        setState(() {
+          isLoading = false;
+        });
+      } else {
+        Fluttertoast.showToast(
+            msg: 'Username is available',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        AuthService()
+            .createAccount(_emailController.text, _passwordController.text)
+            .then((value) {
+          if (value == 'Account created') {
+            Provider.of<FirebaseOperations>(context, listen: false)
+                .createUserCollection(
               context,
-              MaterialPageRoute(builder: (context) => const BottomNav()),
-              (route) => false);
-        } else {
-          setState(() {
-            isLoading = false;
-          });
-          Fluttertoast.showToast(
-              msg: value,
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 16.0);
-        }
-      });
+              {
+                'id': Provider.of<AuthService>(context, listen: false).getuserUID,
+                'username': _usernameController.text.trim(),
+                'email': _emailController.text,
+                'photoUrl':
+                Provider.of<FirebaseOperations>(context, listen: false)
+                    .getUserAvatarUrl,
+                'displayName': _displayNameController.text,
+                'bio': '',
+                'timestamp': timestamp
+              },
+              _usernameController.text.trim(),
+            );
+            setState(() {
+              isLoading = false;
+            });
+            Fluttertoast.showToast(
+                msg: value,
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.green,
+                textColor: Colors.white,
+                fontSize: 16.0);
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const BottomNav()),
+                    (route) => false);
+          } else {
+            setState(() {
+              isLoading = false;
+            });
+            Fluttertoast.showToast(
+                msg: value,
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+                fontSize: 16.0);
+          }
+        });
+      }
     }
   }
 

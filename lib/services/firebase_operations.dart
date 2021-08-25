@@ -58,11 +58,20 @@ class FirebaseOperations with ChangeNotifier {
     });
   }
 
-  Future createUserCollection(BuildContext context, dynamic data) async {
+  Future createUserCollection(
+      BuildContext context, dynamic data, String username) async {
     return FirebaseFirestore.instance
         .collection('users')
         .doc(Provider.of<AuthService>(context, listen: false).getuserUID)
-        .set(data);
+        .set(data)
+        .whenComplete(() async {
+      return FirebaseFirestore.instance
+          .collection('usernames')
+          .doc(username)
+          .set({
+        'userUID': Provider.of<AuthService>(context, listen: false).getuserUID,
+      });
+    });
   }
 
   Future initUserData(BuildContext context) async {
@@ -130,8 +139,7 @@ class FirebaseOperations with ChangeNotifier {
     });
   }
 
-  Future addToActivityFeed(
-      String authorId, String postId, dynamic data) async {
+  Future addToActivityFeed(String authorId, String postId, dynamic data) async {
     activityFeedRef.doc(authorId).collection('feedItems').doc(postId).set(data);
   }
 
@@ -142,8 +150,6 @@ class FirebaseOperations with ChangeNotifier {
   Future addCommentToActivityFeed(String authorId, dynamic data) async {
     activityFeedRef.doc(authorId).collection('feedItems').add(data);
   }
-
-
 
   Future getActivityFeed() async {
     await activityFeedRef
