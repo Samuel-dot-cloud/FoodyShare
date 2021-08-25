@@ -26,7 +26,6 @@ class TextInputField extends StatefulWidget {
 }
 
 class _TextInputFieldState extends State<TextInputField> {
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;

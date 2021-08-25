@@ -41,7 +41,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     setState(() {
       _isLoading = true;
     });
-    DocumentSnapshot doc = await usersRef.doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId).get();
+    DocumentSnapshot doc = await usersRef
+        .doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId)
+        .get();
     currentUser = CustomUser.fromDocument(doc);
     _usernameController.text = currentUser!.username;
     _displayNameController.text = currentUser!.displayName;
@@ -68,7 +70,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
     });
 
     if (_usernameValid && _displayNameValid && _bioValid) {
-      usersRef.doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId).update({
+      usersRef
+          .doc(
+              Provider.of<FirebaseOperations>(context, listen: false).getUserId)
+          .update({
         'bio': _bioController.text,
         'displayName': _displayNameController.text,
         'username': _usernameController.text,

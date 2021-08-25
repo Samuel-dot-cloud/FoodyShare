@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/utils/form_values.dart';
 import 'package:food_share/viewmodel/loading_animation.dart';
 import 'package:food_share/widgets/create_recipe_page/ingredients_form.dart';
 import 'package:food_share/widgets/create_recipe_page/preparation_form.dart';
 import 'package:food_share/widgets/rounded_button.dart';
+import 'package:flutter/services.dart';
 
 class RecipeForm extends StatefulWidget {
   const RecipeForm({Key? key, required this.onSubmit}) : super(key: key);
@@ -17,6 +19,27 @@ class RecipeForm extends StatefulWidget {
 class _RecipeFormState extends State<RecipeForm> {
   final values = FormValues();
   bool _isUploading = false;
+
+  submitRecipeValues(){
+    if(values.name!.isNotEmpty && values.description!.isNotEmpty && values.cookingTime!.isNotEmpty && values.servings!.isNotEmpty && values.ingredients!.isNotEmpty && values.preparation!.isNotEmpty){
+      setState(() {
+        _isUploading = true;
+      });
+      widget.onSubmit(values);
+    } else{
+      setState(() {
+        _isUploading = false;
+      });
+      Fluttertoast.showToast(
+          msg: 'Please fill all recipe form fields!!',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +75,9 @@ class _RecipeFormState extends State<RecipeForm> {
                     filled: true,
                   ),
                   keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                  ],
                   onChanged: (value) {
                     values.cookingTime = value;
                   },
@@ -63,6 +89,9 @@ class _RecipeFormState extends State<RecipeForm> {
                     filled: true,
                   ),
                   keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                  ],
                   onChanged: (value) {
                     values.servings = value;
                   },
@@ -83,10 +112,7 @@ class _RecipeFormState extends State<RecipeForm> {
                 RoundedButton(
                   buttonName: 'Submit',
                   onPressed: () {
-                    setState(() {
-                      _isUploading = true;
-                    });
-                    widget.onSubmit(values);
+                    submitRecipeValues();
                   },
                 ),
                 const SizedBox(height: 40.0),
