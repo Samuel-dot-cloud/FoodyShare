@@ -140,14 +140,6 @@ class _UserProfileState extends State<UserProfile> {
                                   const EdgeInsets.symmetric(horizontal: 3.0),
                               child: ProfilePostImage(
                                 recipeDoc: snapshot.data!.docs[index],
-                                authorUserName: Provider.of<FirebaseOperations>(
-                                        context,
-                                        listen: false)
-                                    .getUsername,
-                                userUID: Provider.of<FirebaseOperations>(
-                                        context,
-                                        listen: false)
-                                    .getUserId,
                               ),
                             ),
                           )

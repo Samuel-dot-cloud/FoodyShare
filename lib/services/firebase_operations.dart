@@ -151,12 +151,16 @@ class FirebaseOperations with ChangeNotifier {
     activityFeedRef.doc(authorId).collection('feedItems').add(data);
   }
 
-  Future getActivityFeed() async {
-    await activityFeedRef
-        .doc(getUserId)
-        .collection('feedItems')
-        .orderBy('timestamp', descending: true)
-        .limit(50)
-        .get();
+  Future addLike(BuildContext context, String postId, String userUID) async {
+    return FirebaseFirestore.instance
+        .collection('recipes')
+        .doc(postId)
+        .collection('likes')
+        .doc(userUID)
+        .set({
+      'liked': FieldValue.increment(1),
+      'userUID': userUID,
+      'timestamp': Timestamp.now(),
+    });
   }
 }

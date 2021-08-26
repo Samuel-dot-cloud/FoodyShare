@@ -185,8 +185,6 @@ class _AltProfileState extends State<AltProfile> {
                                   const EdgeInsets.symmetric(horizontal: 3.0),
                               child: ProfilePostImage(
                                 recipeDoc: snapshot.data!.docs[index],
-                                authorUserName: widget.authorUsername,
-                                userUID: widget.userUID,
                               ),
                             ),
                           )

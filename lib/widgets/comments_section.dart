@@ -168,30 +168,38 @@ class Comment extends StatefulWidget {
 
 class _CommentState extends State<Comment> {
   @override
-  void initState() {
-    getAuthorData(context, widget.userUID);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    Provider.of<FirebaseOperations>(context, listen: true).getUserId;
-
     return Column(
       children: [
-        ListTile(
-          title: Text('@' + authorUsername,
-            style: const TextStyle(
-              color: Colors.black,
-            ),
-          ),
-          leading: CircleAvatar(
-            radius: 18.0,
-            backgroundColor: kBlue,
-            backgroundImage: NetworkImage(authorUserImage),
-          ),
-          subtitle: Text(widget.comment),
-          trailing: Text(timeago.format(widget.timestamp.toDate())),
+        StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(widget.userUID)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              return ListTile(
+                title: Text(
+                  '@' + snapshot.data!['username'],
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                leading: CircleAvatar(
+                  radius: 18.0,
+                  backgroundColor: kBlue,
+                  backgroundImage: NetworkImage(snapshot.data!['photoUrl']),
+                ),
+                subtitle: Text(widget.comment),
+                trailing: Text(timeago.format(widget.timestamp.toDate())),
+              );
+            }
+          },
         ),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -202,25 +210,5 @@ class _CommentState extends State<Comment> {
         ),
       ],
     );
-  }
-
-  String authorEmail = '',
-      authorUsername = '',
-      authorDisplayName = '',
-      authorUserImage = '',
-      authorBio = '';
-
-  Future getAuthorData(BuildContext context, String authorId) async {
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(authorId)
-        .get()
-        .then((doc) {
-      authorUsername = doc.data()!['username'];
-      authorDisplayName = doc.data()!['displayName'];
-      authorEmail = doc.data()!['email'];
-      authorBio = doc.data()!['bio'];
-      authorUserImage = doc.data()!['photoUrl'];
-    });
   }
 }

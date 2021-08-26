@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 class RecipeCard extends StatefulWidget {
   const RecipeCard({Key? key, required this.recipeDoc}) : super(key: key);
 
-  // final RecipeModel recipeModel;
   final DocumentSnapshot recipeDoc;
 
   @override
@@ -26,15 +25,7 @@ class _RecipeCardState extends State<RecipeCard> {
       FirebaseFirestore.instance.collection('recipes');
 
   @override
-  void initState() {
-    getAuthorData(context, widget.recipeDoc['authorId']);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    Provider.of<FirebaseOperations>(context, listen: true)
-        .initUserData(context);
 
     /// Variables for dealing with liking posts
     Map likes = widget.recipeDoc['likes'];
@@ -166,16 +157,18 @@ class _RecipeCardState extends State<RecipeCard> {
                     addedToFavorites = !addedToFavorites;
                   });
                 },
-                child: _isNotPostOwner ? FaIcon(
-                  !addedToFavorites
-                      ? FontAwesomeIcons.bookmark
-                      : FontAwesomeIcons.solidBookmark,
-                  color: Colors.white,
-                  size: 28.0,
-                ) : const SizedBox(
-                  height: 0.0,
-                  width: 0.0,
-                ),
+                child: _isNotPostOwner
+                    ? FaIcon(
+                        !addedToFavorites
+                            ? FontAwesomeIcons.bookmark
+                            : FontAwesomeIcons.solidBookmark,
+                        color: Colors.white,
+                        size: 28.0,
+                      )
+                    : const SizedBox(
+                        height: 0.0,
+                        width: 0.0,
+                      ),
               ),
             ),
           ],
@@ -183,125 +176,144 @@ class _RecipeCardState extends State<RecipeCard> {
         const SizedBox(
           height: 20.0,
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 24.0,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                child: CircleAvatar(
-                  radius: 18.0,
-                  backgroundColor: kBlue,
-                  backgroundImage: NetworkImage(authorUserImage),
+        StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(widget.recipeDoc['authorId'])
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
                 ),
-              ),
-              Flexible(
-                flex: 2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.recipeDoc['name'],
-                      style: Theme.of(context).textTheme.subtitle1,
-                    ),
-                    const SizedBox(
-                      height: 8.0,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        if (_isNotPostOwner) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AltProfile(
-                                userUID: widget.recipeDoc['authorId'],
-                                authorImage: authorUserImage,
-                                authorUsername: authorUsername,
-                                authorDisplayName: authorDisplayName,
-                                authorBio: authorBio,
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                      child: Text(
-                        _isNotPostOwner ? '@' + authorUsername : 'You',
-                        style: Theme.of(context).textTheme.caption,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Flexible(
-                flex: 3,
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const SizedBox(
-                      width: 20.0,
-                    ),
-                    const Icon(
-                      Icons.timer,
-                    ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      widget.recipeDoc['cookingTime'] + '\'',
-                    ),
-                    const Spacer(),
-                    InkWell(
-                      onTap: () {
-                        handleLikePost();
-                        setState(() {
-                          liked = !liked;
-                        });
-                      },
-                      child: FaIcon(
-                        FontAwesomeIcons.gratipay,
-                        color: liked ? Colors.red : Colors.black,
+                    Flexible(
+                      child: CircleAvatar(
+                        radius: 18.0,
+                        backgroundColor: kBlue,
+                        backgroundImage: NetworkImage(snapshot.data!['photoUrl']),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4.0),
-                      child: Text(
-                        getLikeCount().toString(),
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0,
-                        ),
+                    Flexible(
+                      flex: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.recipeDoc['name'],
+                            style: Theme.of(context).textTheme.subtitle1,
+                          ),
+                          const SizedBox(
+                            height: 8.0,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              if (_isNotPostOwner) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AltProfile(
+                                      userUID: widget.recipeDoc['authorId'],
+                                      authorImage: snapshot.data!['photoUrl'],
+                                      authorUsername: snapshot.data!['username'],
+                                      authorDisplayName: snapshot.data!['displayName'],
+                                      authorBio: snapshot.data!['bio'],
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                            child: Text(
+                              _isNotPostOwner ? '@' + snapshot.data!['username'] : 'You',
+                              style: Theme.of(context).textTheme.caption,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      flex: 3,
+                      child: Row(
+                        children: [
+                          const SizedBox(
+                            width: 20.0,
+                          ),
+                          const Icon(
+                            Icons.timer,
+                          ),
+                          const SizedBox(
+                            width: 4,
+                          ),
+                          Text(
+                            widget.recipeDoc['cookingTime'] + '\'',
+                          ),
+                          const Spacer(),
+                          InkWell(
+                            onTap: () {
+                              Provider.of<FirebaseOperations>(context,
+                                      listen: false)
+                                  .addLike(
+                                context,
+                                widget.recipeDoc['postId'],
+                                Provider.of<FirebaseOperations>(context,
+                                        listen: false)
+                                    .getUserId,
+                              );
+                              // handleLikePost();
+                              // setState(() {
+                              //   liked = !liked;
+                              // });
+                            },
+                            child: const FaIcon(
+                              FontAwesomeIcons.gratipay,
+                              color: Colors.red,
+                            ),
+                          ),
+                          StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('recipes')
+                                .doc(widget.recipeDoc['postId'])
+                                .collection('likes')
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              } else {
+                                return Padding(
+                                  padding: const EdgeInsets.only(left: 4.0),
+                                  child: Text(
+                                    snapshot.data!.docs.length.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16.0,
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
+              );
+            }
+          },
         ),
       ],
     );
-  }
-
-  String authorEmail = '',
-      authorUsername = '',
-      authorDisplayName = '',
-      authorUserImage = '',
-      authorBio = '';
-
-  Future getAuthorData(BuildContext context, String authorId) async {
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(authorId)
-        .get()
-        .then((doc) {
-      authorUsername = doc.data()!['username'];
-      authorDisplayName = doc.data()!['displayName'];
-      authorEmail = doc.data()!['email'];
-      authorBio = doc.data()!['bio'];
-      authorUserImage = doc.data()!['photoUrl'];
-    });
   }
 
   int getLikeCount() {

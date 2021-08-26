@@ -1,8 +1,6 @@
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -35,7 +33,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _displayNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
 
   bool isLoading = false;
   bool _emailValid = true;
@@ -215,98 +212,95 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       SizedBox(
                         height: size.width * 0.1,
                       ),
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            TextInputField(
-                              icon: FontAwesomeIcons.at,
-                              label: 'Username',
-                              obscure: false,
-                              inputType: TextInputType.name,
-                              action: TextInputAction.next,
-                              controller: _usernameController,
-                              errorText: _usernameValid
-                                  ? ''
-                                  : 'Username should be 3 to 14 characters long',
-                              inputFormatters: [
-                                FilteringTextInputFormatter.deny(
-                                    RegExp("[@]")),
-                              ],
-                            ),
-                            TextInputField(
-                              icon: FontAwesomeIcons.user,
-                              label: 'Display name',
-                              obscure: false,
-                              inputType: TextInputType.name,
-                              action: TextInputAction.next,
-                              controller: _displayNameController,
-                              errorText: _displayNameValid
-                                  ? ''
-                                  : 'Display name too short',
-                              inputFormatters: const [],
-                            ),
-                            TextInputField(
-                              icon: FontAwesomeIcons.envelope,
-                              label: 'Email',
-                              obscure: false,
-                              inputType: TextInputType.emailAddress,
-                              action: TextInputAction.next,
-                              controller: _emailController,
-                              errorText: _emailValid
-                                  ? ''
-                                  : 'Please input a valid email address',
-                              inputFormatters: const [],
-                            ),
-                            TextInputField(
-                              icon: FontAwesomeIcons.lock,
-                              label: 'Password',
-                              obscure: true,
-                              inputType: TextInputType.name,
-                              action: TextInputAction.next,
-                              controller: _passwordController,
-                              errorText: _passwordValid
-                                  ? ''
-                                  : 'Password should be more than 6 characters long',
-                              inputFormatters: const [],
-                            ),
-                            const SizedBox(
-                              height: 25.0,
-                            ),
-                            RoundedButton(
-                              buttonName: 'Register',
-                              onPressed: () {
-                                registerUser();
-                              },
-                            ),
-                            const SizedBox(
-                              height: 30.0,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  'Already have an account? ',
-                                  style: kBodyText,
-                                ),
-                                GestureDetector(
-                                  onTap: () =>
-                                      Navigator.pushNamed(context, 'login'),
-                                  child: Text(
-                                    'Login',
-                                    style: kBodyText.copyWith(
-                                      color: kBlue,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                      Column(
+                        children: [
+                          TextInputField(
+                            icon: FontAwesomeIcons.at,
+                            label: 'Username',
+                            obscure: false,
+                            inputType: TextInputType.name,
+                            action: TextInputAction.next,
+                            controller: _usernameController,
+                            errorText: _usernameValid
+                                ? ''
+                                : 'Username should be 3 to 14 characters long',
+                            inputFormatters: [
+                              FilteringTextInputFormatter.deny(
+                                  RegExp("[@]")),
+                            ],
+                          ),
+                          TextInputField(
+                            icon: FontAwesomeIcons.user,
+                            label: 'Display name',
+                            obscure: false,
+                            inputType: TextInputType.name,
+                            action: TextInputAction.next,
+                            controller: _displayNameController,
+                            errorText: _displayNameValid
+                                ? ''
+                                : 'Display name too short',
+                            inputFormatters: const [],
+                          ),
+                          TextInputField(
+                            icon: FontAwesomeIcons.envelope,
+                            label: 'Email',
+                            obscure: false,
+                            inputType: TextInputType.emailAddress,
+                            action: TextInputAction.next,
+                            controller: _emailController,
+                            errorText: _emailValid
+                                ? ''
+                                : 'Please input a valid email address',
+                            inputFormatters: const [],
+                          ),
+                          TextInputField(
+                            icon: FontAwesomeIcons.lock,
+                            label: 'Password',
+                            obscure: true,
+                            inputType: TextInputType.name,
+                            action: TextInputAction.next,
+                            controller: _passwordController,
+                            errorText: _passwordValid
+                                ? ''
+                                : 'Password should be more than 6 characters long',
+                            inputFormatters: const [],
+                          ),
+                          const SizedBox(
+                            height: 25.0,
+                          ),
+                          RoundedButton(
+                            buttonName: 'Register',
+                            onPressed: () {
+                              registerUser();
+                            },
+                          ),
+                          const SizedBox(
+                            height: 30.0,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Already have an account? ',
+                                style: kBodyText,
+                              ),
+                              GestureDetector(
+                                onTap: () =>
+                                    Navigator.pushNamed(context, 'login'),
+                                child: Text(
+                                  'Login',
+                                  style: kBodyText.copyWith(
+                                    color: kBlue,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 20.0,
-                            ),
-                          ],
-                        ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 20.0,
+                          ),
+                        ],
                       ),
                     ],
                   ),
