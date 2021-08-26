@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_share/screens/profile/alt_profile.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/loading_animation.dart';
@@ -151,7 +152,7 @@ class Comment extends StatefulWidget {
       {Key? key,
       required this.userUID,
       required this.comment,
-      required this.timestamp})
+      required this.timestamp,})
       : super(key: key);
 
   factory Comment.fromDocument(DocumentSnapshot doc) {
@@ -168,30 +169,57 @@ class Comment extends StatefulWidget {
 
 class _CommentState extends State<Comment> {
   @override
-  void initState() {
-    getAuthorData(context, widget.userUID);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    Provider.of<FirebaseOperations>(context, listen: true).getUserId;
-
+    bool _isNotPostOwner =
+        Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
+            widget.userUID;
     return Column(
       children: [
-        ListTile(
-          title: Text('@' + authorUsername,
-            style: const TextStyle(
-              color: Colors.black,
-            ),
-          ),
-          leading: CircleAvatar(
-            radius: 18.0,
-            backgroundColor: kBlue,
-            backgroundImage: NetworkImage(authorUserImage),
-          ),
-          subtitle: Text(widget.comment),
-          trailing: Text(timeago.format(widget.timestamp.toDate())),
+        StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(widget.userUID)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              return ListTile(
+                onTap: () {
+                  if (_isNotPostOwner) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AltProfile(
+                          userUID: widget.userUID,
+                          authorImage: snapshot.data!['photoUrl'],
+                          authorUsername: snapshot.data!['username'],
+                          authorDisplayName: snapshot.data!['displayName'],
+                          authorBio: snapshot.data!['bio'],
+                        ),
+                      ),
+                    );
+                  }
+                },
+                title: Text(
+                  _isNotPostOwner ? '@' + snapshot.data!['username'] : 'You',
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                leading: CircleAvatar(
+                  radius: 18.0,
+                  backgroundColor: kBlue,
+                  backgroundImage: NetworkImage(snapshot.data!['photoUrl']),
+                ),
+                subtitle: Text(widget.comment),
+                trailing: Text(timeago.format(widget.timestamp.toDate())),
+              );
+            }
+          },
         ),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -202,25 +230,5 @@ class _CommentState extends State<Comment> {
         ),
       ],
     );
-  }
-
-  String authorEmail = '',
-      authorUsername = '',
-      authorDisplayName = '',
-      authorUserImage = '',
-      authorBio = '';
-
-  Future getAuthorData(BuildContext context, String authorId) async {
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(authorId)
-        .get()
-        .then((doc) {
-      authorUsername = doc.data()!['username'];
-      authorDisplayName = doc.data()!['displayName'];
-      authorEmail = doc.data()!['email'];
-      authorBio = doc.data()!['bio'];
-      authorUserImage = doc.data()!['photoUrl'];
-    });
   }
 }

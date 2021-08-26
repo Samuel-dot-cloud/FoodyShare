@@ -42,39 +42,25 @@ class RecipeDetails extends StatefulWidget {
 }
 
 class _RecipeDetailsState extends State<RecipeDetails> {
-  bool saved = false;
+  @override
+  void initState() {
+    checkIfAddedToFavorites();
+    super.initState();
+  }
 
-  int likeCount = 0;
+  bool _isAdded = false;
 
   CollectionReference recipesRef =
       FirebaseFirestore.instance.collection('recipes');
 
   @override
   Widget build(BuildContext context) {
-    Map likes = widget.likes;
+    bool _isNotPostOwner =
+        Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
+            widget.authorUserUID;
+
     final String currentUserId =
         Provider.of<FirebaseOperations>(context, listen: false).getUserId;
-    bool liked = likes[currentUserId] == true;
-
-    handleLikePost() {
-      bool _isLiked = likes[currentUserId] == true;
-
-      if (_isLiked) {
-        recipesRef.doc(widget.postID).update({'likes.$currentUserId': false});
-        setState(() {
-          likeCount -= 1;
-          liked = false;
-          likes[currentUserId] == false;
-        });
-      } else if (!_isLiked) {
-        recipesRef.doc(widget.postID).update({'likes.$currentUserId': true});
-        setState(() {
-          likeCount += 1;
-          liked = true;
-          likes[currentUserId] == true;
-        });
-      }
-    }
 
     Size size = MediaQuery.of(context).size;
     final _textTheme = Theme.of(context).textTheme;
@@ -107,17 +93,41 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                 right: 40.0,
                 child: InkWell(
                   onTap: () {
-                    setState(() {
-                      saved = !saved;
+                    _isAdded
+                        ? Provider.of<FirebaseOperations>(context,
+                                listen: false)
+                            .removeFromFavorites(currentUserId, widget.postID).whenComplete(() {
+                      setState(() {
+                        _isAdded = false;
+                      });
+                    })
+                        : Provider.of<FirebaseOperations>(context,
+                                listen: false)
+                            .addToFavorites(
+                            currentUserId,
+                            widget.postID,
+                            {
+                              'postId': widget.postID,
+                              'timestamp': Timestamp.now(),
+                            },
+                          ).whenComplete(() {
+                      setState(() {
+                        _isAdded = true;
+                      });
                     });
                   },
-                  child: FaIcon(
-                    !saved
-                        ? FontAwesomeIcons.bookmark
-                        : FontAwesomeIcons.solidBookmark,
-                    color: Colors.white,
-                    size: 32.0,
-                  ),
+                  child: _isNotPostOwner
+                      ? FaIcon(
+                          !_isAdded
+                              ? FontAwesomeIcons.bookmark
+                              : FontAwesomeIcons.solidBookmark,
+                          color: Colors.white,
+                          size: 28.0,
+                        )
+                      : const SizedBox(
+                          height: 0.0,
+                          width: 0.0,
+                        ),
                 ),
               ),
               Positioned(
@@ -173,27 +183,61 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                 children: [
                   InkWell(
                     onTap: () {
-                      handleLikePost();
-                      setState(() {
-                        liked = !liked;
-                      });
+                      Provider.of<FirebaseOperations>(context, listen: false)
+                          .addLike(
+                        context,
+                        widget.postID,
+                        Provider.of<FirebaseOperations>(context, listen: false)
+                            .getUserId,
+                      );
+                      if (_isNotPostOwner) {
+                        Provider.of<FirebaseOperations>(context, listen: false)
+                            .addToActivityFeed(
+                          widget.authorUserUID,
+                          widget.postID,
+                          {
+                            'type': 'like',
+                            'userUID': Provider.of<FirebaseOperations>(context,
+                                    listen: false)
+                                .getUserId,
+                            'postId': widget.postID,
+                            'timestamp': Timestamp.now(),
+                          },
+                        );
+                      }
                     },
-                    child: FaIcon(
-                      FontAwesomeIcons.gratipay,
-                      color: liked ? Colors.red : Colors.black,
+                    child: const FaIcon(
+                      FontAwesomeIcons.heart,
+                      color: Colors.red,
                     ),
                   ),
                   // const SizedBox(
                   //   width: 5.0,
                   // ),
-                  Text(
-                    getLikeCount().toString(),
-                    style: const TextStyle(
-                      // color: Colors.black,
-                      fontWeight: FontWeight.normal,
-                      fontSize: 15.0,
-                    ),
+                  StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('recipes')
+                        .doc(widget.postID)
+                        .collection('likes')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        return Text(
+                          snapshot.data!.docs.length.toString(),
+                          style: const TextStyle(
+                            // color: Colors.black,
+                            fontWeight: FontWeight.normal,
+                            fontSize: 15.0,
+                          ),
+                        );
+                      }
+                    },
                   ),
+
                   // const SizedBox(
                   //   width: 5.0,
                   // ),
@@ -281,7 +325,8 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                               preparations: widget.preparation,
                             ),
                             CommentsSection(
-                              postId: widget.postID, authorId: widget.authorUserUID,
+                              postId: widget.postID,
+                              authorId: widget.authorUserUID,
                             )
                           ],
                         ),
@@ -297,18 +342,16 @@ class _RecipeDetailsState extends State<RecipeDetails> {
     );
   }
 
-  int getLikeCount() {
-    dynamic likes = widget.likes;
-    if (likes == null) {
-      return 0;
-    }
-    int count = 0;
-    likes.values.forEach((val) {
-      if (val == true) {
-        count += 1;
-      }
+  ///Checking if post is already added to favorites
+  checkIfAddedToFavorites() async {
+    DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId)
+        .collection('favorites')
+        .doc(widget.postID)
+        .get();
+    setState(() {
+      _isAdded = doc.exists;
     });
-
-    return count;
   }
 }

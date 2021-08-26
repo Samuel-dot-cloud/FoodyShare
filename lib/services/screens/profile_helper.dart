@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/user_tile.dart';
-import 'package:lottie/lottie.dart';
 
 class ProfileHelper with ChangeNotifier {
   checkFollowingSheet(BuildContext context, String userId) {

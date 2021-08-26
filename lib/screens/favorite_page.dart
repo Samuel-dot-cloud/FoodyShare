@@ -2,12 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/viewmodel/loading_animation.dart';
-import 'package:food_share/widgets/recipe_card.dart';
+import 'package:food_share/widgets/favorite_post_image.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-CollectionReference recipesRef =
-    FirebaseFirestore.instance.collection('recipes');
+CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
 
 class FavoriteRecipes extends StatefulWidget {
   const FavoriteRecipes({Key? key}) : super(key: key);
@@ -29,10 +29,11 @@ class _FavoriteRecipesState extends State<FavoriteRecipes> {
               height: 20,
             ),
             StreamBuilder<QuerySnapshot>(
-              stream:
-                  recipesRef
-                  .where('favorites.' + currentUserId, isEqualTo: true)
-                      .snapshots(),
+              stream: usersRef
+                  .doc(Provider.of<FirebaseOperations>(context, listen: false)
+                      .getUserId)
+                  .collection('favorites')
+                  .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return const Text('Error');
@@ -41,18 +42,29 @@ class _FavoriteRecipesState extends State<FavoriteRecipes> {
                   return loadingAnimation('Loading recipe card...');
                 }
                 if (snapshot.hasData) {
-                  return snapshot.data!.docs.isNotEmpty ? ListView.builder(
-                      physics: const ScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (BuildContext context, int index) => Padding(
+                  return snapshot.data!.docs.isNotEmpty
+                      ? StaggeredGridView.countBuilder(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 12,
+                          staggeredTileBuilder: (int index) {
+                            return StaggeredTile.count(
+                                1, index.isEven ? 1.2 : 1.8);
+                          },
+                          physics: const ScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (BuildContext context, int index) =>
+                              Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 12.0,
                               vertical: 12.0,
                             ),
-                            child: RecipeCard(
+                            child: FavoritePostImage(
                                 recipeDoc: snapshot.data!.docs[index]),
-                          )) : _defaultNoFavorites();
+                          ),
+                        )
+                      : _defaultNoFavorites();
                 }
                 return const Text('Loading ...');
               },
@@ -76,10 +88,10 @@ class _FavoriteRecipesState extends State<FavoriteRecipes> {
             height: 20.0,
           ),
           const Text(
-            'No favorites list yet...',
+            'Nothing in favorites...',
             style: TextStyle(
-                color: Colors.black,
-                fontSize: 23.0,
+              color: Colors.black,
+              fontSize: 23.0,
               fontWeight: FontWeight.w600,
             ),
           )
