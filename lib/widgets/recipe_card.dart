@@ -26,87 +26,9 @@ class _RecipeCardState extends State<RecipeCard> {
 
   @override
   Widget build(BuildContext context) {
-
-    /// Variables for dealing with liking posts
-    Map likes = widget.recipeDoc['likes'];
-    final String currentUserId =
-        Provider.of<FirebaseOperations>(context, listen: false).getUserId;
-    bool liked = likes[currentUserId] == true;
     bool _isNotPostOwner =
         Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
             widget.recipeDoc['authorId'];
-
-    ///Variables for dealing with favorites
-    Map favorites = widget.recipeDoc['favorites'];
-    bool addedToFavorites = favorites[currentUserId] == true;
-
-    ///Method for handling liking of posts
-    handleLikePost() {
-      bool _isLiked = likes[currentUserId] == true;
-
-      if (_isLiked) {
-        recipesRef
-            .doc(widget.recipeDoc['postId'])
-            .update({'likes.$currentUserId': false});
-        if (_isNotPostOwner) {
-          Provider.of<FirebaseOperations>(context, listen: false)
-              .removeFromActivityFeed(
-            widget.recipeDoc['authorId'],
-            widget.recipeDoc['postId'],
-          );
-        }
-        setState(() {
-          likeCount -= 1;
-          liked = false;
-          likes[currentUserId] == false;
-        });
-      } else if (!_isLiked) {
-        recipesRef
-            .doc(widget.recipeDoc['postId'])
-            .update({'likes.$currentUserId': true});
-        if (_isNotPostOwner) {
-          Provider.of<FirebaseOperations>(context, listen: false)
-              .addToActivityFeed(
-            widget.recipeDoc['authorId'],
-            widget.recipeDoc['postId'],
-            {
-              'type': 'like',
-              'userUID': Provider.of<FirebaseOperations>(context, listen: false)
-                  .getUserId,
-              'postId': widget.recipeDoc['postId'],
-              'timestamp': Timestamp.now(),
-            },
-          );
-        }
-        setState(() {
-          likeCount += 1;
-          liked = true;
-          likes[currentUserId] == true;
-        });
-      }
-    }
-
-    ///Method for handling adding posts to favorites
-    handleFavoritePost() {
-      bool _isFavorite = favorites[currentUserId] == true;
-      if (_isFavorite) {
-        recipesRef
-            .doc(widget.recipeDoc['postId'])
-            .update({'favorites.$currentUserId': false});
-        setState(() {
-          addedToFavorites = false;
-          favorites[currentUserId] == false;
-        });
-      } else if (!_isFavorite) {
-        recipesRef
-            .doc(widget.recipeDoc['postId'])
-            .update({'favorites.$currentUserId': true});
-        setState(() {
-          addedToFavorites = true;
-          favorites[currentUserId] == true;
-        });
-      }
-    }
 
     return Column(
       children: [
@@ -147,30 +69,6 @@ class _RecipeCardState extends State<RecipeCard> {
                 ),
               ),
             ),
-            Positioned(
-              top: 20.0,
-              right: 40.0,
-              child: InkWell(
-                onTap: () {
-                  handleFavoritePost();
-                  setState(() {
-                    addedToFavorites = !addedToFavorites;
-                  });
-                },
-                child: _isNotPostOwner
-                    ? FaIcon(
-                        !addedToFavorites
-                            ? FontAwesomeIcons.bookmark
-                            : FontAwesomeIcons.solidBookmark,
-                        color: Colors.white,
-                        size: 28.0,
-                      )
-                    : const SizedBox(
-                        height: 0.0,
-                        width: 0.0,
-                      ),
-              ),
-            ),
           ],
         ),
         const SizedBox(
@@ -198,7 +96,8 @@ class _RecipeCardState extends State<RecipeCard> {
                       child: CircleAvatar(
                         radius: 18.0,
                         backgroundColor: kBlue,
-                        backgroundImage: NetworkImage(snapshot.data!['photoUrl']),
+                        backgroundImage:
+                            NetworkImage(snapshot.data!['photoUrl']),
                       ),
                     ),
                     Flexible(
@@ -222,8 +121,10 @@ class _RecipeCardState extends State<RecipeCard> {
                                     builder: (context) => AltProfile(
                                       userUID: widget.recipeDoc['authorId'],
                                       authorImage: snapshot.data!['photoUrl'],
-                                      authorUsername: snapshot.data!['username'],
-                                      authorDisplayName: snapshot.data!['displayName'],
+                                      authorUsername:
+                                          snapshot.data!['username'],
+                                      authorDisplayName:
+                                          snapshot.data!['displayName'],
                                       authorBio: snapshot.data!['bio'],
                                     ),
                                   ),
@@ -231,7 +132,9 @@ class _RecipeCardState extends State<RecipeCard> {
                               }
                             },
                             child: Text(
-                              _isNotPostOwner ? '@' + snapshot.data!['username'] : 'You',
+                              _isNotPostOwner
+                                  ? '@' + snapshot.data!['username']
+                                  : 'You',
                               style: Theme.of(context).textTheme.caption,
                             ),
                           ),
@@ -266,13 +169,26 @@ class _RecipeCardState extends State<RecipeCard> {
                                         listen: false)
                                     .getUserId,
                               );
-                              // handleLikePost();
-                              // setState(() {
-                              //   liked = !liked;
-                              // });
+                              if (_isNotPostOwner) {
+                                Provider.of<FirebaseOperations>(context,
+                                        listen: false)
+                                    .addToActivityFeed(
+                                  widget.recipeDoc['authorId'],
+                                  widget.recipeDoc['postId'],
+                                  {
+                                    'type': 'like',
+                                    'userUID': Provider.of<FirebaseOperations>(
+                                            context,
+                                            listen: false)
+                                        .getUserId,
+                                    'postId': widget.recipeDoc['postId'],
+                                    'timestamp': Timestamp.now(),
+                                  },
+                                );
+                              }
                             },
                             child: const FaIcon(
-                              FontAwesomeIcons.gratipay,
+                              FontAwesomeIcons.heart,
                               color: Colors.red,
                             ),
                           ),

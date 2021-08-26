@@ -163,4 +163,23 @@ class FirebaseOperations with ChangeNotifier {
       'timestamp': Timestamp.now(),
     });
   }
+
+  Future addToFavorites(
+      String currentUserId, String postId, dynamic recipeData) async {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUserId)
+        .collection('favorites')
+        .doc(postId)
+        .set(recipeData);
+  }
+
+  Future removeFromFavorites(String currentUserId, String postId) async {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUserId)
+        .collection('favorites')
+        .doc(postId)
+        .delete();
+  }
 }

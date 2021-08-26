@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_share/screens/profile/alt_profile.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/loading_animation.dart';
@@ -151,7 +152,7 @@ class Comment extends StatefulWidget {
       {Key? key,
       required this.userUID,
       required this.comment,
-      required this.timestamp})
+      required this.timestamp,})
       : super(key: key);
 
   factory Comment.fromDocument(DocumentSnapshot doc) {
@@ -169,6 +170,9 @@ class Comment extends StatefulWidget {
 class _CommentState extends State<Comment> {
   @override
   Widget build(BuildContext context) {
+    bool _isNotPostOwner =
+        Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
+            widget.userUID;
     return Column(
       children: [
         StreamBuilder<DocumentSnapshot>(
@@ -183,11 +187,27 @@ class _CommentState extends State<Comment> {
               );
             } else {
               return ListTile(
+                onTap: () {
+                  if (_isNotPostOwner) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AltProfile(
+                          userUID: widget.userUID,
+                          authorImage: snapshot.data!['photoUrl'],
+                          authorUsername: snapshot.data!['username'],
+                          authorDisplayName: snapshot.data!['displayName'],
+                          authorBio: snapshot.data!['bio'],
+                        ),
+                      ),
+                    );
+                  }
+                },
                 title: Text(
-                  '@' + snapshot.data!['username'],
+                  _isNotPostOwner ? '@' + snapshot.data!['username'] : 'You',
                   style: const TextStyle(
                     color: Colors.black,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 leading: CircleAvatar(
