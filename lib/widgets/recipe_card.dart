@@ -6,6 +6,7 @@ import 'package:food_share/screens/recipe_details.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:provider/provider.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class RecipeCard extends StatefulWidget {
   const RecipeCard({Key? key, required this.recipeDoc}) : super(key: key);
@@ -59,11 +60,12 @@ class _RecipeCardState extends State<RecipeCard> {
                   borderRadius: BorderRadius.circular(24.0),
                   child: Hero(
                     tag: widget.recipeDoc['mediaUrl'],
-                    child: Image(
+                    child: FadeInImage.memoryNetwork(
                       height: 320.0,
                       width: 320.0,
+                      placeholder: kTransparentImage,
+                      image: widget.recipeDoc['mediaUrl'],
                       fit: BoxFit.cover,
-                      image: NetworkImage(widget.recipeDoc['mediaUrl']),
                     ),
                   ),
                 ),
