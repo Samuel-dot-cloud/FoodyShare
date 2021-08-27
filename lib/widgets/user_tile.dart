@@ -23,12 +23,13 @@ class _UserTileState extends State<UserTile> {
 
   @override
   Widget build(BuildContext context) {
+    bool _isNotProfileOwner = widget.userDoc['userUID'] !=
+        Provider.of<FirebaseOperations>(context, listen: false).getUserId;
     Provider.of<FirebaseOperations>(context, listen: true)
         .initUserData(context);
     return ListTile(
       onTap: () {
-        if (widget.userDoc['userUID'] !=
-            Provider.of<FirebaseOperations>(context, listen: false).getUserId) {
+        if (_isNotProfileOwner) {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -56,11 +57,11 @@ class _UserTileState extends State<UserTile> {
         ),
       ),
       subtitle: Text(
-        '@' + authorUsername,
+        _isNotProfileOwner ? '@' + authorUsername : 'You',
         style: const TextStyle(
           color: Colors.yellow,
           fontWeight: FontWeight.bold,
-          fontSize: 12.0,
+          fontSize: 14.5,
         ),
       ),
       // trailing: widget.userDoc['userUID'] ==

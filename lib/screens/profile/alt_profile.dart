@@ -5,6 +5,7 @@ import 'package:food_share/services/screens/profile_helper.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/loading_animation.dart';
 import 'package:food_share/widgets/profile_post_image.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -482,21 +483,22 @@ class _AltProfileState extends State<AltProfile> {
         Text(
           '@' + widget.authorUsername,
           style: const TextStyle(
-            fontStyle: FontStyle.italic,
+            fontStyle: FontStyle.normal,
             fontSize: 22.0,
+            color: Colors.grey,
           ),
         ),
         const SizedBox(
           height: 8.0,
         ),
         Text(
-          widget.authorBio,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            color: Colors.grey,
-            fontStyle: FontStyle.normal,
-            fontWeight: FontWeight.w500,
-            fontSize: 17.0,
+          "\"" + widget.authorBio + "\"",
+          style: GoogleFonts.robotoMono(
+            textStyle: const TextStyle(
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w300,
+              fontSize: 15.0,
+            ),
           ),
         ),
       ],

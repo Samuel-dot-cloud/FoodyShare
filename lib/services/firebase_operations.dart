@@ -3,14 +3,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/utils/sign_up_util.dart';
-import 'package:food_share/widgets/activity_feed/activity_feed_item.dart';
 import 'package:provider/provider.dart';
 
 import 'auth_service.dart';
 
 class FirebaseOperations with ChangeNotifier {
   final activityFeedRef = FirebaseFirestore.instance.collection('feed');
+  final usersRef = FirebaseFirestore.instance.collection('users');
   late UploadTask imageUploadTask;
 
   late String userAvatarUrl;
@@ -38,8 +39,9 @@ class FirebaseOperations with ChangeNotifier {
   String get getUserId => userId;
 
   Future uploadUserAvatar(BuildContext context) async {
-    Reference imageReference =
-        FirebaseStorage.instance.ref().child('userAvatar/${TimeOfDay.now()}');
+    Reference imageReference = FirebaseStorage.instance
+        .ref()
+        .child('user-avatars/${DateTime.now()}.jpg');
     imageUploadTask = imageReference.putFile(
         Provider.of<SignUpUtils>(context, listen: false).getUserAvatar);
     await imageUploadTask.whenComplete(() {
@@ -58,18 +60,50 @@ class FirebaseOperations with ChangeNotifier {
     });
   }
 
+  Future updateUserAvatar(BuildContext context, String uid) async {
+    Reference imageReference =
+        FirebaseStorage.instance.ref().child('user-avatars/$uid.jpg');
+    imageUploadTask = imageReference.putFile(
+        Provider.of<SignUpUtils>(context, listen: false).getUserAvatar);
+    await imageUploadTask.whenComplete(() {
+      Fluttertoast.showToast(
+          msg: 'Image uploaded successfully',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    });
+    imageReference.getDownloadURL().then((url) {
+      updateUserRef(context, url.toString());
+      notifyListeners();
+    });
+  }
+
+  updateUserRef(BuildContext context, String url) {
+    usersRef.doc(getUserId).update({
+      'photoUrl': url,
+    }).whenComplete(() {
+      Fluttertoast.showToast(
+          msg: 'Image updated successfully. \nYou may need to restart the application to notice the changes made.',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: kBlue,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    });
+  }
+
   Future createUserCollection(
-      BuildContext context, dynamic data, String username) async {
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(Provider.of<AuthService>(context, listen: false).getuserUID)
-        .set(data)
-        .whenComplete(() async {
+      BuildContext context, String uid, dynamic data, String username) async {
+    return usersRef.doc(uid).set(data).whenComplete(() async {
       return FirebaseFirestore.instance
           .collection('usernames')
           .doc(username)
           .set({
-        'userUID': Provider.of<AuthService>(context, listen: false).getuserUID,
+        'userUID': uid,
       });
     });
   }
@@ -79,11 +113,7 @@ class FirebaseOperations with ChangeNotifier {
     final User? user = auth.currentUser;
     final uid = user!.uid;
 
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .get()
-        .then((doc) {
+    return usersRef.doc(uid).get().then((doc) {
       userId = doc.data()!['id'];
       username = doc.data()!['username'];
       displayName = doc.data()!['displayName'];
@@ -101,15 +131,13 @@ class FirebaseOperations with ChangeNotifier {
       String followerUID,
       followerDocId,
       dynamic followerData) async {
-    return FirebaseFirestore.instance
-        .collection('users')
+    return usersRef
         .doc(followingUID)
         .collection('followers')
         .doc(followingDocId)
         .set(followingData)
         .whenComplete(() async {
-      return FirebaseFirestore.instance
-          .collection('users')
+      return usersRef
           .doc(followerUID)
           .collection('following')
           .doc(followerDocId)
@@ -123,15 +151,13 @@ class FirebaseOperations with ChangeNotifier {
     String followerUID,
     followerDocId,
   ) async {
-    return FirebaseFirestore.instance
-        .collection('users')
+    return usersRef
         .doc(followingUID)
         .collection('followers')
         .doc(followingDocId)
         .delete()
         .whenComplete(() async {
-      return FirebaseFirestore.instance
-          .collection('users')
+      return usersRef
           .doc(followerUID)
           .collection('following')
           .doc(followerDocId)

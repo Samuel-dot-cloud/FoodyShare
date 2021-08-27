@@ -67,11 +67,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
       final DocumentSnapshot result = await Future.value(FirebaseFirestore
           .instance
           .collection('usernames')
-          .doc(_usernameController.text.trim())
+          .doc(_usernameController.text.toLowerCase())
           .get());
       if (result.exists) {
         Fluttertoast.showToast(
-            msg: '@${_usernameController.text.trim()} already exists',
+            msg: '@${_usernameController.text.toLowerCase()} already exists',
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
@@ -91,26 +91,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
             textColor: Colors.white,
             fontSize: 16.0);
         AuthService()
-            .createAccount(_emailController.text, _passwordController.text)
+            .createAccount(
+                context,
+                _emailController.text,
+                _passwordController.text,
+                _usernameController.text.toLowerCase(),
+                _displayNameController.text)
             .then((value) {
           if (value == 'Account created') {
-            Provider.of<FirebaseOperations>(context, listen: false)
-                .createUserCollection(
-              context,
-              {
-                'id':
-                    Provider.of<AuthService>(context, listen: false).getuserUID,
-                'username': _usernameController.text.trim(),
-                'email': _emailController.text,
-                'photoUrl':
-                    Provider.of<FirebaseOperations>(context, listen: false)
-                        .getUserAvatarUrl,
-                'displayName': _displayNameController.text,
-                'bio': '',
-                'timestamp': timestamp
-              },
-              _usernameController.text.trim(),
-            );
             setState(() {
               isLoading = false;
             });
@@ -200,7 +188,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                 ),
                                 child: Icon(
-                                  FontAwesomeIcons.arrowUp,
+                                  FontAwesomeIcons.upload,
                                   color: kWhite,
                                   size: size.width * 0.06,
                                 ),
@@ -225,8 +213,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ? ''
                                 : 'Username should be 3 to 14 characters long',
                             inputFormatters: [
-                              FilteringTextInputFormatter.deny(
-                                  RegExp("[@]")),
+                              FilteringTextInputFormatter.deny(RegExp("[@]")),
                             ],
                           ),
                           TextInputField(

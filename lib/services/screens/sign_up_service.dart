@@ -28,7 +28,7 @@ class SignUpService with ChangeNotifier {
                   backgroundColor: Colors.grey,
                   backgroundImage: FileImage(
                       Provider.of<SignUpUtils>(context, listen: false)
-                          .userAvatar)),
+                          .userAvatar),),
               SizedBox(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
