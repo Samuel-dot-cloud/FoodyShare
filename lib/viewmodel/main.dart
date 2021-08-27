@@ -7,11 +7,13 @@ import 'package:food_share/screens/auth/startup_view.dart';
 import 'package:food_share/screens/auth/login_screen.dart';
 import 'package:food_share/screens/auth/sign_up_screen.dart';
 import 'package:food_share/services/auth_service.dart';
+import 'package:food_share/services/connectivity_provider.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/services/recipe_notifier.dart';
 import 'package:food_share/services/screens/discover_helper.dart';
 import 'package:food_share/services/screens/profile_helper.dart';
 import 'package:food_share/services/screens/sign_up_service.dart';
+import 'package:food_share/utils/no_internet.dart';
 import 'package:food_share/utils/post_functions.dart';
 import 'package:food_share/utils/sign_up_util.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,8 +24,8 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await FirebaseAppCheck.instance.activate(
-      webRecaptchaSiteKey: 'recaptcha-v3-site-key');
+  await FirebaseAppCheck.instance
+      .activate(webRecaptchaSiteKey: 'recaptcha-v3-site-key');
   runApp(
     MultiProvider(
       providers: [
@@ -36,16 +38,24 @@ void main() async {
         ChangeNotifierProvider(
           create: (context) => ProfileHelper(),
         ),
-        ChangeNotifierProvider(create: (context) => FirebaseOperations(),
+        ChangeNotifierProvider(
+          create: (context) => FirebaseOperations(),
         ),
         ChangeNotifierProvider(
           create: (context) => AuthService(),
         ),
-        ChangeNotifierProvider(create: (context) => SignUpUtils(),
+        ChangeNotifierProvider(
+          create: (context) => SignUpUtils(),
         ),
-        ChangeNotifierProvider(create: (context) => SignUpService(),
+        ChangeNotifierProvider(
+          create: (context) => SignUpService(),
         ),
-        ChangeNotifierProvider(create: (context) => BottomNavHelper(),
+        ChangeNotifierProvider(
+          create: (context) => BottomNavHelper(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ConnectivityProvider(),
+          child: const MyApp(),
         ),
       ],
       child: const MyApp(),
@@ -65,9 +75,7 @@ class MyApp extends StatelessWidget {
       title: 'FoodyShare',
       theme: ThemeData(
         textTheme:
-        GoogleFonts.josefinSansTextTheme(Theme
-            .of(context)
-            .textTheme),
+            GoogleFonts.josefinSansTextTheme(Theme.of(context).textTheme),
       ),
       initialRoute: '/',
       routes: {
@@ -89,6 +97,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<ConnectivityProvider>(context, listen: false).startMonitoring();
+  }
+
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
   @override
