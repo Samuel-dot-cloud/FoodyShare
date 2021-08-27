@@ -35,7 +35,7 @@ class _UserProfileState extends State<UserProfile> {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: NetworkImage(
-                      Provider.of<FirebaseOperations>(context, listen: false)
+                      Provider.of<FirebaseOperations>(context, listen: true)
                           .getUserImage),
                   fit: BoxFit.cover,
                 ),

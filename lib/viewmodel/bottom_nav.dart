@@ -34,31 +34,34 @@ class _BottomNavState extends State<BottomNav> {
     return appUI();
   }
 
-  Widget appUI(){
+  Widget appUI() {
     return Consumer<ConnectivityProvider>(
-
       builder: (context, model, child) {
-        return model.isOnline  ? Scaffold(
-          backgroundColor: Colors.white,
-          body: PageView(
-            controller: _homepageController,
-            children: const [
-              HomePage(),
-              SearchPage(),
-              ImageUpload(),
-              ActivityFeed(),
-              UserProfile(),
-            ],
-            physics: const NeverScrollableScrollPhysics(),
-            onPageChanged: (page) {
-              setState(() {
-                _pageIndex = page;
-              });
-            },
-          ),
-          bottomNavigationBar: Provider.of<BottomNavHelper>(context, listen: false)
-              .bottomNavigationBar(context, _pageIndex, _homepageController),
-        ) : const NoInternet();
+        return model.isOnline
+            ? Scaffold(
+                backgroundColor: Colors.white,
+                body: PageView(
+                  controller: _homepageController,
+                  children: const [
+                    HomePage(),
+                    SearchPage(),
+                    ImageUpload(),
+                    ActivityFeed(),
+                    UserProfile(),
+                  ],
+                  physics: const NeverScrollableScrollPhysics(),
+                  onPageChanged: (page) {
+                    setState(() {
+                      _pageIndex = page;
+                    });
+                  },
+                ),
+                bottomNavigationBar:
+                    Provider.of<BottomNavHelper>(context, listen: false)
+                        .bottomNavigationBar(
+                            context, _pageIndex, _homepageController),
+              )
+            : const NoInternet();
       },
     );
   }

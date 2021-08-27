@@ -5,6 +5,7 @@ import 'package:food_share/models/user_model.dart';
 import 'package:food_share/screens/auth/login_screen.dart';
 import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/services/firebase_operations.dart';
+import 'package:food_share/services/screens/profile_helper.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/loading_animation.dart';
 import 'package:provider/provider.dart';
@@ -156,20 +157,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           Positioned(
                             bottom: 0.0,
                             right: 0.0,
-                            child: Container(
-                              height: 40.0,
-                              width: 40.0,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  width: 4.0,
+                            child: GestureDetector(
+                              onTap: () {
+                                Provider.of<ProfileHelper>(context,
+                                        listen: false)
+                                    .showProfileUserAvatar(
+                                        context,
+                                        Provider.of<FirebaseOperations>(context,
+                                                listen: false)
+                                            .getUserId);
+                              },
+                              child: Container(
+                                height: 40.0,
+                                width: 40.0,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    width: 4.0,
+                                    color: Colors.white,
+                                  ),
+                                  color: kBlue,
+                                ),
+                                child: const Icon(
+                                  Icons.edit,
                                   color: Colors.white,
                                 ),
-                                color: kBlue,
-                              ),
-                              child: const Icon(
-                                Icons.edit,
-                                color: Colors.white,
                               ),
                             ),
                           ),

@@ -1,23 +1,41 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'firebase_operations.dart';
 
 class AuthService with ChangeNotifier {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-  String? userUID;
-
-  String? get getuserUID => userUID;
-
   ///Create Account
-  Future<String> createAccount(String email, String password) async {
+  Future<String> createAccount(BuildContext context, String email,
+      String password, String username, String displayName) async {
     try {
-      UserCredential result = await auth.createUserWithEmailAndPassword(
+      await auth
+          .createUserWithEmailAndPassword(
         email: email,
         password: password,
-      );
-      User? user = result.user;
-      userUID = user?.uid;
-      notifyListeners();
+      )
+          .then((value) {
+        Provider.of<FirebaseOperations>(context, listen: false)
+            .createUserCollection(
+          context,
+          value.user!.uid,
+          {
+            'id': value.user!.uid,
+            'username': username,
+            'email': email,
+            'photoUrl': Provider.of<FirebaseOperations>(context, listen: false)
+                .getUserAvatarUrl,
+            'displayName': displayName,
+            'bio': '',
+            'timestamp': Timestamp.now(),
+            'isVerified': false,
+          },
+          username,
+        );
+      });
 
       return 'Account created';
     } on FirebaseAuthException catch (e) {
@@ -35,12 +53,10 @@ class AuthService with ChangeNotifier {
   /// Login user
   Future<String> loginUser(String email, String password) async {
     try {
-      UserCredential result = await auth.signInWithEmailAndPassword(
+      await auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      User? user = result.user;
-      userUID = user?.uid;
       notifyListeners();
 
       return 'Welcome';
