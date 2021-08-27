@@ -58,7 +58,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               _displayNameController.text.isEmpty
           ? _displayNameValid = false
           : _displayNameValid = true;
-      _bioController.text.trim().length > 100
+      _bioController.text.trim().length > 75
           ? _bioValid = false
           : _bioValid = true;
     });
