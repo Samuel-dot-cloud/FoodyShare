@@ -6,6 +6,7 @@ import 'package:food_share/screens/auth/forgot_password.dart';
 import 'package:food_share/screens/auth/startup_view.dart';
 import 'package:food_share/screens/auth/login_screen.dart';
 import 'package:food_share/screens/auth/sign_up_screen.dart';
+import 'package:food_share/screens/onboard/onboarding_screen.dart';
 import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/services/connectivity_provider.dart';
 import 'package:food_share/services/firebase_operations.dart';
@@ -16,21 +17,21 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+
+int? isViewed;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await FirebaseAppCheck.instance
       .activate(webRecaptchaSiteKey: 'recaptcha-v3-site-key');
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  isViewed = prefs.getInt('onboard');
   runApp(
     MultiProvider(
       providers: [
-        // ChangeNotifierProvider(
-        //   create: (context) => PostFunctions(),
-        // ),
-        // ChangeNotifierProvider(
-        //   create: (context) => DiscoverHelper(),
-        // ),
         ChangeNotifierProvider(
           create: (context) => ProfileHelper(),
         ),
@@ -51,7 +52,6 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (context) => ConnectivityProvider(),
-          child: const MyApp(),
         ),
       ],
       child: const MyApp(),
@@ -75,7 +75,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => const Home(),
+        '/': (context) => isViewed !=0 ? const OnboardingScreen() : const Home(),
         'home': (context) => const BottomNav(),
         'login': (context) => const LoginScreen(),
         'ForgotPassword': (context) => const ForgotPassword(),

@@ -374,7 +374,7 @@ class _UserProfileState extends State<UserProfile> {
           ),
         ),
         const SizedBox(
-          height: 8.0,
+          height: 1.0,
         ),
         Text(
           '@' +
@@ -387,7 +387,7 @@ class _UserProfileState extends State<UserProfile> {
           ),
         ),
         const SizedBox(
-          height: 4.0,
+          height: 3.0,
         ),
         Text(
           "\"" + Provider.of<FirebaseOperations>(context, listen: false).getUserBio + "\"",

@@ -478,7 +478,7 @@ class _AltProfileState extends State<AltProfile> {
           ),
         ),
         const SizedBox(
-          height: 8.0,
+          height: 1.0,
         ),
         Text(
           '@' + widget.authorUsername,
@@ -489,7 +489,7 @@ class _AltProfileState extends State<AltProfile> {
           ),
         ),
         const SizedBox(
-          height: 8.0,
+          height: 3.0,
         ),
         Text(
           "\"" + widget.authorBio + "\"",

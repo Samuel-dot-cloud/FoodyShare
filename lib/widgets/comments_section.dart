@@ -92,7 +92,9 @@ class _CommentsSectionState extends State<CommentsSection> {
               Provider.of<FirebaseOperations>(context, listen: false).getUserId,
           'timestamp': Timestamp.now(),
         },
-      );
+      ).whenComplete(() {
+
+      });
     }
     _commentController.clear();
   }

@@ -5,6 +5,7 @@ import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/widgets/comments_section.dart';
 import 'package:food_share/widgets/ingredients_section.dart';
 import 'package:food_share/widgets/preparation_section.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
@@ -172,7 +173,14 @@ class _RecipeDetailsState extends State<RecipeDetails> {
               ),
               Text(
                 widget.description,
-                style: _textTheme.caption,
+                style: GoogleFonts.inconsolata(
+                 textStyle: const TextStyle(
+                   fontWeight: FontWeight.w400,
+                    fontSize: 13.0,
+                    color: Colors.grey,
+                   overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ),
               const SizedBox(
                 height: 10.0,
