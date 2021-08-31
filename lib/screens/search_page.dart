@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:food_share/config/size_config.dart';
 import 'package:food_share/models/recipe_model.dart';
 import 'package:food_share/models/user_model.dart';
 import 'package:food_share/viewmodel/loading_animation.dart';
@@ -51,6 +52,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig.init(context);
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
@@ -89,6 +91,9 @@ class _SearchPageState extends State<SearchPage> {
             ),
           ),
           onChanged: searchUsers ? handleUserSearch : handleRecipeSearch,
+          inputFormatters: [
+            FilteringTextInputFormatter.deny(RegExp("[@]")),
+          ],
         ),
       ),
       body: searchState(),
@@ -128,6 +133,9 @@ class _SearchPageState extends State<SearchPage> {
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (!snapshot.hasData) {
                 return loadingAnimation('Loading users...');
+              } else if (snapshot.data?.docs.isEmpty) {
+                return _nothingFound(
+                    'No users found matching the username provided...');
               } else {
                 List<UserResult> searchResults = [];
                 snapshot.data?.docs.forEach((doc) {
@@ -145,6 +153,8 @@ class _SearchPageState extends State<SearchPage> {
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (!snapshot.hasData) {
                 return loadingAnimation('Loading recipes...');
+              } else if (snapshot.data?.docs.isEmpty) {
+                return _nothingFound('No recipes found yet..');
               } else {
                 List<RecipeResult> searchResults = [];
                 snapshot.data?.docs.forEach((doc) {
@@ -232,6 +242,33 @@ class _SearchPageState extends State<SearchPage> {
           ],
         );
       },
+    );
+  }
+
+  _nothingFound(String text) {
+    return SingleChildScrollView(
+      child: Center(
+        child: Column(
+          children: [
+            SizedBox(
+              height: SizeConfig.defaultSize * 40,
+              width: SizeConfig.defaultSize * 80,
+              child: Lottie.asset('assets/lottie/no-result-found.json'),
+            ),
+            SizedBox(
+              height: SizeConfig.defaultSize,
+            ),
+            Text(
+              text,
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: SizeConfig.defaultSize * 2.4,
+                  fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center,
+            )
+          ],
+        ),
+      ),
     );
   }
 }
