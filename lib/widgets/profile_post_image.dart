@@ -38,7 +38,6 @@ class _ProfilePostImageState extends State<ProfilePostImage> {
                   description: snapshot.data!['description'],
                   recipeImage: snapshot.data!['mediaUrl'],
                   servings: snapshot.data!['servings'],
-                  likes: snapshot.data!['likes'],
                   authorUserUID: snapshot.data!['authorId'],
                   preparation: snapshot.data!['preparation'],
                   recipeTimestamp: snapshot.data!['timestamp'],

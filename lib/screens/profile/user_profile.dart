@@ -408,7 +408,7 @@ class _UserProfileState extends State<UserProfile> {
       child: Column(
         children: [
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.30,
+            height: MediaQuery.of(context).size.height * 0.40,
             width: MediaQuery.of(context).size.width * 0.80,
             child: Lottie.asset('assets/lottie/no-post.json'),
           ),

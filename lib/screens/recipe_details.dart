@@ -20,7 +20,6 @@ class RecipeDetails extends StatefulWidget {
       cookingTime,
       postID;
   final List ingredients, preparation;
-  final Map likes;
   final Timestamp recipeTimestamp;
 
   const RecipeDetails({
@@ -35,7 +34,6 @@ class RecipeDetails extends StatefulWidget {
     required this.postID,
     required this.ingredients,
     required this.preparation,
-    required this.likes,
   }) : super(key: key);
 
   @override

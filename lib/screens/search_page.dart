@@ -2,10 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:food_share/config/size_config.dart';
 import 'package:food_share/models/recipe_model.dart';
 import 'package:food_share/models/user_model.dart';
-import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/loading_animation.dart';
+import 'package:food_share/widgets/recipe_search_result.dart';
 import 'package:food_share/widgets/user_result.dart';
 import 'package:lottie/lottie.dart';
 
@@ -17,38 +18,47 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  List<bool> optionSelected = [true, false, false];
-  bool _searchState = true;
   var usersRef = FirebaseFirestore.instance.collection('users');
+  var recipesRef = FirebaseFirestore.instance.collection('recipes');
   Future<QuerySnapshot>? searchResultsFuture;
 
   TextEditingController searchController = TextEditingController();
 
-  handleSearch(String query) {
+  bool searchUsers = true;
+
+  handleUserSearch(String query) {
     Future<QuerySnapshot> users = usersRef
-        .where('username', isGreaterThanOrEqualTo: query)
+        .where('username', isGreaterThanOrEqualTo: query.trim())
+        .where('username', isLessThan: query.trim() + 'z')
         .get();
     setState(() {
       searchResultsFuture = users;
     });
   }
 
-  clearSearch(){
+  handleRecipeSearch(String query) {
+    Future<QuerySnapshot> recipes = recipesRef
+        .where('name', isGreaterThanOrEqualTo: query.trim())
+        .where('name', isLessThan: query.trim() + 'z')
+        .get();
+    setState(() {
+      searchResultsFuture = recipes;
+    });
+  }
+
+  clearSearch() {
     searchController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig.init(context);
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0.0,
-        leading: const Icon(
-          Icons.sort,
-          color: Colors.black,
-        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(
@@ -60,338 +70,205 @@ class _SearchPageState extends State<SearchPage> {
                 color: Colors.black,
               ),
               onPressed: () {
-                setState(() {
-                  _searchState = !_searchState;
-                });
+                _showSearchSelectionBottomSheet(context);
               },
             ),
           ),
         ],
-        title: Visibility(
-          visible: _searchState,
-          child: TextFormField(
-            controller: searchController,
-            decoration: InputDecoration(
-              hintText: 'Search here...',
-              filled: true,
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.clear),
-                onPressed: clearSearch,
-              ),
+        title: TextFormField(
+          controller: searchController,
+          decoration: InputDecoration(
+            hintText: searchUsers ? 'Search users...' : 'Search recipes...',
+            filled: true,
+            prefixIcon: Icon(
+              searchUsers ? Icons.alternate_email : FontAwesomeIcons.utensils,
+              color: Colors.black,
+              size: 17.0,
             ),
-            onFieldSubmitted: handleSearch,
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.clear),
+              onPressed: clearSearch,
+            ),
           ),
+          onChanged: searchUsers ? handleUserSearch : handleRecipeSearch,
+          inputFormatters: [
+            FilteringTextInputFormatter.deny(RegExp("[@]")),
+          ],
         ),
       ),
-      body:
-      // !_searchState
-      //     ? SingleChildScrollView(
-      //         physics: const BouncingScrollPhysics(),
-      //         child: Column(
-      //           children: [
-      //             Padding(
-      //               padding: const EdgeInsets.symmetric(
-      //                 horizontal: 16.0,
-      //               ),
-      //               child: Column(
-      //                 crossAxisAlignment: CrossAxisAlignment.start,
-      //                 children: [
-      //                   buildTextTitleVariation1('Explore section'),
-      //                   buildTextSubtitleVariation1(
-      //                       'A huge selection of tasty and delicious food recipes.'),
-      //                   const SizedBox(
-      //                     height: 32.0,
-      //                   ),
-      //                   Row(
-      //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //                     children: [
-      //                       // option(
-      //                       //   text: 'Vegetables',
-      //                       //   image: 'assets/icons/salad.png',
-      //                       //   index: 0,
-      //                       // ),
-      //                       // const SizedBox(
-      //                       //   width: 8.0,
-      //                       // ),
-      //                       option(
-      //                         text: 'Meats',
-      //                         image: 'assets/icons/steak.png',
-      //                         index: 0,
-      //                       ),
-      //                       // const SizedBox(
-      //                       //   width: 8.0,
-      //                       // ),
-      //                       option(
-      //                         text: 'Sweets',
-      //                         image: 'assets/icons/candies.png',
-      //                         index: 1,
-      //                       ),
-      //                       // const SizedBox(
-      //                       //   width: 8.0,
-      //                       // ),
-      //                       option(
-      //                         text: 'Cakes',
-      //                         image: 'assets/icons/cake.png',
-      //                         index: 2,
-      //                       ),
-      //                     ],
-      //                   ),
-      //                 ],
-      //               ),
-      //             ),
-      //             const SizedBox(
-      //               height: 24.0,
-      //             ),
-      //             SizedBox(
-      //               height: 350.0,
-      //               child: ListView(
-      //                 physics: const BouncingScrollPhysics(),
-      //                 scrollDirection: Axis.horizontal,
-      //                 shrinkWrap: true,
-      //                 children: buildRecipes(),
-      //               ),
-      //             ),
-      //             const SizedBox(
-      //               height: 16.0,
-      //             ),
-      //             Padding(
-      //               padding: const EdgeInsets.symmetric(
-      //                 horizontal: 16.0,
-      //               ),
-      //               child: Row(
-      //                 children: [
-      //                   buildTextTitleVariation2('Popular', false),
-      //                   const SizedBox(
-      //                     width: 8.0,
-      //                   ),
-      //                   buildTextTitleVariation2('Food', true),
-      //                 ],
-      //               ),
-      //             ),
-      //             SizedBox(
-      //               height: 190.0,
-      //               child: PageView(
-      //                 physics: const BouncingScrollPhysics(),
-      //                 children: buildPopulars(),
-      //               ),
-      //             ),
-      //           ],
-      //         ),
-      //       )
-          searchState(),
+      body: searchState(),
     );
   }
 
-  Widget option(
-      {required String text, required String image, required int index}) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          optionSelected[index] = !optionSelected[index];
-        });
-      },
-      child: Container(
-        height: 40.0,
-        decoration: BoxDecoration(
-          color: optionSelected[index] ? kBlue : Colors.white,
-          borderRadius: const BorderRadius.all(
-            Radius.circular(
-              20.0,
+  searchState() {
+    return searchResultsFuture == null || searchController.text.isEmpty
+        ? Center(
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                Lottie.asset(
+                  'assets/lottie/chef.json',
+                  height: MediaQuery.of(context).size.height * 0.60,
+                  width: MediaQuery.of(context).size.width * 0.80,
+                ),
+                const Text(
+                  'Search for all things recipes!!!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 23.0,
+                  ),
+                ),
+              ],
             ),
-          ),
-          boxShadow: [kBoxShadow],
-        ),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12.0,
-        ),
-        child: Row(
+          )
+        : buildSearchResults();
+  }
+
+  buildSearchResults() {
+    return searchUsers
+        ? FutureBuilder(
+            future: searchResultsFuture,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (!snapshot.hasData) {
+                return loadingAnimation('Loading users...');
+              } else if (snapshot.data?.docs.isEmpty) {
+                return _nothingFound(
+                    'No users found matching the username provided...');
+              } else {
+                List<UserResult> searchResults = [];
+                snapshot.data?.docs.forEach((doc) {
+                  CustomUser customUser = CustomUser.fromDocument(doc);
+                  UserResult searchResult = UserResult(customUser: customUser);
+                  searchResults.add(searchResult);
+                });
+                return ListView(
+                  children: searchResults,
+                );
+              }
+            })
+        : FutureBuilder(
+            future: searchResultsFuture,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (!snapshot.hasData) {
+                return loadingAnimation('Loading recipes...');
+              } else if (snapshot.data?.docs.isEmpty) {
+                return _nothingFound('No recipes found yet..');
+              } else {
+                List<RecipeResult> searchResults = [];
+                snapshot.data?.docs.forEach((doc) {
+                  RecipeModel recipeModel = RecipeModel.fromDocument(doc);
+                  RecipeResult searchResult =
+                      RecipeResult(recipeModel: recipeModel);
+                  searchResults.add(searchResult);
+                });
+                return ListView(
+                  children: searchResults,
+                );
+              }
+            });
+  }
+
+  _showSearchSelectionBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Wrap(
           children: [
             SizedBox(
-              height: 32.0,
-              width: 32.0,
-              child: Image.asset(
-                image,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(
+                      'Search',
+                      style: TextStyle(
+                        fontSize: 22.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Divider(
+                      height: 2.0,
+                    ),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      setState(() {
+                        searchUsers = true;
+                      });
+                      Navigator.pop(context);
+                    },
+                    leading: const Icon(
+                      Icons.alternate_email,
+                      color: Colors.black,
+                    ),
+                    title: const Text(
+                      'Search for users',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 2.0,
+                  ),
+                  ListTile(
+                    onTap: () {
+                      setState(() {
+                        searchUsers = false;
+                      });
+                      Navigator.pop(context);
+                    },
+                    leading: const FaIcon(
+                      FontAwesomeIcons.utensils,
+                      color: Colors.black,
+                      size: 17.0,
+                    ),
+                    title: const Text(
+                      'Search for recipes',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(
-              width: 8.0,
+          ],
+        );
+      },
+    );
+  }
+
+  _nothingFound(String text) {
+    return SingleChildScrollView(
+      child: Center(
+        child: Column(
+          children: [
+            SizedBox(
+              height: SizeConfig.defaultSize * 40,
+              width: SizeConfig.defaultSize * 80,
+              child: Lottie.asset('assets/lottie/no-result-found.json'),
+            ),
+            SizedBox(
+              height: SizeConfig.defaultSize,
             ),
             Text(
               text,
               style: TextStyle(
-                color: optionSelected[index] ? Colors.white : Colors.black,
-                fontSize: 14.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+                  color: Colors.black,
+                  fontSize: SizeConfig.defaultSize * 2.4,
+                  fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center,
+            )
           ],
         ),
       ),
     );
   }
-
-  // List<Widget> buildRecipes() {
-  //   List<Widget> list = [];
-  //   for (var i = 0; i < RecipeModel.demoRecipe.length; i++) {
-  //     list.add(buildRecipe(RecipeModel.demoRecipe[i], i));
-  //   }
-  //   return list;
-  // }
-
-  Widget buildRecipe(RecipeModel recipe, int index) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.all(
-          Radius.circular(
-            20.0,
-          ),
-        ),
-        boxShadow: [kBoxShadow],
-      ),
-      margin: EdgeInsets.only(
-        right: 16.0,
-        left: index == 0 ? 16.0 : 0,
-        bottom: 16.0,
-        top: 8.0,
-      ),
-      padding: const EdgeInsets.all(16.0),
-      width: 220.0,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: Hero(
-              tag: recipe.imgPath.toString(),
-              child: Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(recipe.imgPath.toString()),
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 8.0,
-          ),
-          buildRecipeTitle(recipe.title.toString()),
-          buildTextSubtitleVariation2(recipe.description.toString()),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              buildCalories(recipe.servings.toString() + ' servings'),
-              const Icon(
-                FontAwesomeIcons.gratipay,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  // List<Widget> buildPopulars() {
-  //   List<Widget> list = [];
-  //   for (var i = 0; i < RecipeModel.demoRecipe.length; i++) {
-  //     list.add(buildPopular(RecipeModel.demoRecipe[i]));
-  //   }
-  //   return list;
-  // }
-
-  searchState() {
-    return searchResultsFuture == null ? Center(
-      child: ListView(
-        shrinkWrap: true,
-        children: [
-          Lottie.asset(
-            'assets/lottie/chef.json',
-            height: MediaQuery.of(context).size.height * 0.60,
-            width: MediaQuery.of(context).size.width * 0.80,
-          ),
-          const Text(
-            'Search for all things recipes!!!',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.w600,
-              fontSize: 23.0,
-            ),
-          ),
-        ],
-      ),
-    ) : buildSearchResults();
-  }
-
-  buildSearchResults(){
-    return FutureBuilder(
-      future: searchResultsFuture,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if(!snapshot.hasData){
-          return loadingAnimation('Loading...');
-        }
-        List<UserResult> searchResults = [];
-        snapshot.data?.docs.forEach((doc) {
-          CustomUser customUser = CustomUser.fromDocument(doc);
-         UserResult searchResult = UserResult(customUser: customUser);
-          searchResults.add(searchResult);
-        });
-        return ListView(
-            children: searchResults,
-        );
-      });
-  }
-
-}
-
-Widget buildPopular(RecipeModel recipe) {
-  return Container(
-    margin: const EdgeInsets.all(16.0),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: const BorderRadius.all(
-        Radius.circular(20.0),
-      ),
-      boxShadow: [kBoxShadow],
-    ),
-    child: Row(
-      children: [
-        Container(
-          height: 160.0,
-          width: 160.0,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(recipe.imgPath.toString()),
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                buildRecipeTitle(recipe.title.toString()),
-                buildRecipeSubtitle(recipe.description.toString()),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    buildCalories(recipe.servings.toString() + ' servings'),
-                    const Icon(
-                      FontAwesomeIcons.gratipay,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
 }

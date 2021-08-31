@@ -5,7 +5,6 @@ import 'package:food_share/viewmodel/main.dart';
 import 'package:food_share/widgets/rounded_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'components/animated_container.dart';
 import 'components/main_content.dart';
 import 'components/skip_button.dart';
 import 'components/steps_container.dart';
