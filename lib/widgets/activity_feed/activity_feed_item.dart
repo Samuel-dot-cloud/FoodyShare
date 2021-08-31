@@ -33,7 +33,6 @@ class ActivityFeedItem extends StatelessWidget {
               recipeName: title,
               recipeImage: mediaUrl,
               servings: servings,
-              likes: likes,
             ),
           ),
         ),
@@ -170,8 +169,6 @@ class ActivityFeedItem extends StatelessWidget {
       servings = '',
       mediaUrl = '';
 
-  Map likes = {};
-
   List preparation = [], ingredients = [];
 
   Timestamp timestamp = Timestamp.now();
@@ -190,7 +187,6 @@ class ActivityFeedItem extends StatelessWidget {
       cookingTime = doc.data()!['cookingTime'];
       servings = doc.data()!['servings'];
       mediaUrl = doc.data()!['mediaUrl'];
-      likes = doc.data()!['likes'];
       preparation = doc.data()!['preparation'];
       timestamp = doc.data()!['timestamp'];
       ingredients = doc.data()!['ingredients'];

@@ -47,7 +47,6 @@ class _RecipeCardState extends State<RecipeCard> {
                       description: widget.recipeDoc['description'],
                       recipeImage: widget.recipeDoc['mediaUrl'],
                       servings: widget.recipeDoc['servings'],
-                      likes: widget.recipeDoc['likes'],
                       authorUserUID: widget.recipeDoc['authorId'],
                       preparation: widget.recipeDoc['preparation'],
                       recipeTimestamp: widget.recipeDoc['timestamp'],
