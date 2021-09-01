@@ -111,13 +111,13 @@ class _SearchPageState extends State<SearchPage> {
                   height: MediaQuery.of(context).size.height * 0.60,
                   width: MediaQuery.of(context).size.width * 0.80,
                 ),
-                const Text(
+                Text(
                   'Search for all things recipes!!!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.w600,
-                    fontSize: 23.0,
+                    fontSize: SizeConfig.defaultSize * 2.3,
                   ),
                 ),
               ],
