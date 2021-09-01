@@ -18,12 +18,34 @@ class RecipeCard extends StatefulWidget {
 }
 
 class _RecipeCardState extends State<RecipeCard> {
+
+
+  @override
+  void initState() {
+    checkIfLiked();
+    _isButtonDisabled = false;
+    super.initState();
+  }
+
   bool saved = false;
+  bool _isLiked = false;
+  late bool _isButtonDisabled;
 
-  int likeCount = 0;
 
-  CollectionReference recipesRef =
-      FirebaseFirestore.instance.collection('recipes');
+
+  checkIfLiked() async {
+    DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('recipes')
+        .doc(widget.recipeDoc['postId'])
+        .collection('likes')
+        .doc(
+          Provider.of<FirebaseOperations>(context, listen: false).getUserId,
+        )
+        .get();
+    setState(() {
+      _isLiked = doc.exists;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -160,56 +182,93 @@ class _RecipeCardState extends State<RecipeCard> {
                           ),
                           const Spacer(),
                           InkWell(
-                            onTap: () {
-                              Provider.of<FirebaseOperations>(context,
-                                      listen: false)
-                                  .addLike(
-                                context,
-                                widget.recipeDoc['postId'],
-                                Provider.of<FirebaseOperations>(context,
-                                        listen: false)
-                                    .getUserId,
-                              );
-                              if (_isNotPostOwner) {
-                                Provider.of<FirebaseOperations>(context,
-                                        listen: false)
-                                    .addToActivityFeed(
-                                  widget.recipeDoc['authorId'],
-                                  widget.recipeDoc['postId'],
-                                  {
-                                    'type': 'like',
-                                    'userUID': Provider.of<FirebaseOperations>(
+                            onTap: _isButtonDisabled
+                                ? null
+                                : () {
+                                    setState(() {
+                                      _isButtonDisabled = true;
+                                    });
+                                    _isLiked
+                                        ? Provider.of<FirebaseOperations>(
+                                                context,
+                                                listen: false)
+                                            .removeLike(
                                             context,
-                                            listen: false)
-                                        .getUserId,
-                                    'postId': widget.recipeDoc['postId'],
-                                    'timestamp': Timestamp.now(),
+                                            widget.recipeDoc['postId'],
+                                            Provider.of<FirebaseOperations>(
+                                                    context,
+                                                    listen: false)
+                                                .getUserId,
+                                          )
+                                            .whenComplete(() {
+                                            setState(() {
+                                              _isLiked = false;
+                                              _isButtonDisabled = false;
+                                            });
+                                          })
+                                        : Provider.of<FirebaseOperations>(
+                                                context,
+                                                listen: false)
+                                            .addLike(
+                                            context,
+                                            widget.recipeDoc['postId'],
+                                            Provider.of<FirebaseOperations>(
+                                                    context,
+                                                    listen: false)
+                                                .getUserId,
+                                          )
+                                            .whenComplete(() {
+                                            setState(() {
+                                              _isLiked = true;
+                                              _isButtonDisabled = false;
+                                            });
+                                            if (_isNotPostOwner) {
+                                              Provider.of<FirebaseOperations>(
+                                                      context,
+                                                      listen: false)
+                                                  .addLikeToActivityFeed(
+                                                widget.recipeDoc['authorId'],
+                                                widget.recipeDoc['postId'],
+                                                {
+                                                  'type': 'like',
+                                                  'userUID': Provider.of<
+                                                              FirebaseOperations>(
+                                                          context,
+                                                          listen: false)
+                                                      .getUserId,
+                                                  'postId': widget
+                                                      .recipeDoc['postId'],
+                                                  'timestamp': Timestamp.now(),
+                                                },
+                                              );
+                                            }
+                                          });
                                   },
-                                );
-                              }
-                            },
-                            child: const FaIcon(
+                            child: FaIcon(
                               FontAwesomeIcons.heart,
-                              color: Colors.red,
+                              color: _isLiked ? Colors.red : Colors.black,
                             ),
                           ),
-                          StreamBuilder<QuerySnapshot>(
+                          StreamBuilder<DocumentSnapshot>(
                             stream: FirebaseFirestore.instance
                                 .collection('recipes')
                                 .doc(widget.recipeDoc['postId'])
                                 .collection('likes')
+                                .doc('like_count')
                                 .snapshots(),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
                                 return const Center(
-                                  child: CircularProgressIndicator(),
+                                  child: Text(''),
                                 );
                               } else {
                                 return Padding(
                                   padding: const EdgeInsets.only(left: 4.0),
                                   child: Text(
-                                    snapshot.data!.docs.length.toString(),
+                                    snapshot.data!.exists
+                                        ? snapshot.data!['count'].toString()
+                                        : '0',
                                     style: const TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold,
@@ -231,20 +290,5 @@ class _RecipeCardState extends State<RecipeCard> {
         ),
       ],
     );
-  }
-
-  int getLikeCount() {
-    dynamic likes = widget.recipeDoc['likes'];
-    if (likes == null) {
-      return 0;
-    }
-    int count = 0;
-    likes.values.forEach((val) {
-      if (val == true) {
-        count += 1;
-      }
-    });
-
-    return count;
   }
 }

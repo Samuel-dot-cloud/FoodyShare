@@ -6,12 +6,15 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/utils/sign_up_util.dart';
 import 'package:provider/provider.dart';
-
-import 'auth_service.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class FirebaseOperations with ChangeNotifier {
   final activityFeedRef = FirebaseFirestore.instance.collection('feed');
   final usersRef = FirebaseFirestore.instance.collection('users');
+  final recipesRef = FirebaseFirestore.instance.collection('recipes');
+  final commentsRef = FirebaseFirestore.instance.collection('comments');
+  firebase_storage.Reference reference =
+      firebase_storage.FirebaseStorage.instance.ref();
   late UploadTask imageUploadTask;
 
   late String userAvatarUrl;
@@ -86,7 +89,8 @@ class FirebaseOperations with ChangeNotifier {
       'photoUrl': url,
     }).whenComplete(() {
       Fluttertoast.showToast(
-          msg: 'Image updated successfully. \nYou may need to restart the application to notice the changes made.',
+          msg:
+              'Image updated successfully. \nYou may need to restart the application to notice the changes made.',
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
@@ -142,7 +146,55 @@ class FirebaseOperations with ChangeNotifier {
           .collection('following')
           .doc(followerDocId)
           .set(followerData);
+    }).whenComplete(() async {
+      addFollowCount(followerUID, followingUID);
     });
+  }
+
+  Future addFollowCount(String followerUID, String followingUID) async {
+    var doc1 = await usersRef
+        .doc(followingUID)
+        .collection('counts')
+        .doc('followerCount')
+        .get();
+    var doc2 = await usersRef
+        .doc(followerUID)
+        .collection('counts')
+        .doc('followingCount')
+        .get();
+    if (doc1.exists && doc2.exists) {
+      return usersRef
+          .doc(followingUID)
+          .collection('counts')
+          .doc('followerCount')
+          .update({
+        'count': FieldValue.increment(1),
+      }).whenComplete(() async {
+        return usersRef
+            .doc(followerUID)
+            .collection('counts')
+            .doc('followingCount')
+            .update({
+          'count': FieldValue.increment(1),
+        });
+      });
+    } else {
+      return usersRef
+          .doc(followingUID)
+          .collection('counts')
+          .doc('followerCount')
+          .set({
+        'count': FieldValue.increment(1),
+      }).whenComplete(() async {
+        return usersRef
+            .doc(followerUID)
+            .collection('counts')
+            .doc('followingCount')
+            .set({
+          'count': FieldValue.increment(1),
+        });
+      });
+    }
   }
 
   Future unfollowUser(
@@ -162,38 +214,128 @@ class FirebaseOperations with ChangeNotifier {
           .collection('following')
           .doc(followerDocId)
           .delete();
+    }).whenComplete(() async {
+      return usersRef
+          .doc(followerUID)
+          .collection('counts')
+          .doc('followingCount')
+          .update({
+        'count': FieldValue.increment(-1),
+      }).whenComplete(() async {
+        return usersRef
+            .doc(followingUID)
+            .collection('counts')
+            .doc('followerCount')
+            .update({
+          'count': FieldValue.increment(-1),
+        });
+      });
     });
   }
 
-  Future addToActivityFeed(String authorId, String postId, dynamic data) async {
-    activityFeedRef.doc(authorId).collection('feedItems').doc(postId).set(data);
+  Future addFollowToActivityFeed(
+      String otherUserId, String currentUserId, dynamic data) async {
+    activityFeedRef
+        .doc(otherUserId)
+        .collection('feedItems')
+        .doc('userNotifications')
+        .collection('followActivity')
+        .doc(currentUserId)
+        .set(data);
   }
 
-  Future removeFromActivityFeed(String authorId, String postId) async {
-    activityFeedRef.doc(authorId).collection('feedItems').doc(postId).delete();
+  Future addLikeToActivityFeed(
+      String authorId, String postId, dynamic data) async {
+    activityFeedRef
+        .doc(authorId)
+        .collection('feedItems')
+        .doc('userNotifications')
+        .collection('postActivity')
+        .doc(postId)
+        .set(data);
+  }
+
+  Future removeFollowFromActivityFeed(
+      String authorId, String currentUserId) async {
+    activityFeedRef
+        .doc(authorId)
+        .collection('feedItems')
+        .doc('userNotifications')
+        .collection('followActivity')
+        .doc(currentUserId)
+        .delete();
   }
 
   Future addCommentToActivityFeed(String authorId, dynamic data) async {
-    activityFeedRef.doc(authorId).collection('feedItems').add(data);
+    activityFeedRef
+        .doc(authorId)
+        .collection('feedItems')
+        .doc('userNotifications')
+        .collection('postActivity')
+        .add(data);
   }
 
   Future addLike(BuildContext context, String postId, String userUID) async {
-    return FirebaseFirestore.instance
+    return recipesRef.doc(postId).collection('likes').doc(userUID).set({
+      'liked': true,
+      'userUID': userUID,
+      'timestamp': Timestamp.now(),
+    }).whenComplete(() async {
+      var doc = await recipesRef
+          .doc(postId)
+          .collection('likes')
+          .doc('like_count')
+          .get();
+      if (doc.exists) {
+        return recipesRef
+            .doc(postId)
+            .collection('likes')
+            .doc('like_count')
+            .update({
+          'count': FieldValue.increment(1),
+        });
+      } else {
+        return recipesRef
+            .doc(postId)
+            .collection('likes')
+            .doc('like_count')
+            .set({
+          'count': FieldValue.increment(1),
+        });
+      }
+    });
+  }
+
+  checkIfLiked(BuildContext context, String postId) async {
+    DocumentSnapshot doc = await FirebaseFirestore.instance
         .collection('recipes')
         .doc(postId)
         .collection('likes')
+        .doc(getUserId)
+        .get();
+    return doc.exists;
+  }
+
+  Future removeLike(BuildContext context, String postId, String userUID) async {
+    return recipesRef
+        .doc(postId)
+        .collection('likes')
         .doc(userUID)
-        .set({
-      'liked': FieldValue.increment(1),
-      'userUID': userUID,
-      'timestamp': Timestamp.now(),
+        .delete()
+        .whenComplete(() {
+      return recipesRef
+          .doc(postId)
+          .collection('likes')
+          .doc('like_count')
+          .update({
+        'count': FieldValue.increment(-1),
+      });
     });
   }
 
   Future addToFavorites(
       String currentUserId, String postId, dynamic recipeData) async {
-    return FirebaseFirestore.instance
-        .collection('users')
+    return usersRef
         .doc(currentUserId)
         .collection('favorites')
         .doc(postId)
@@ -201,11 +343,23 @@ class FirebaseOperations with ChangeNotifier {
   }
 
   Future removeFromFavorites(String currentUserId, String postId) async {
-    return FirebaseFirestore.instance
-        .collection('users')
+    return usersRef
         .doc(currentUserId)
         .collection('favorites')
         .doc(postId)
         .delete();
+  }
+
+  Future deleteRecipe(String postId) async {
+    return recipesRef.doc(postId).delete().whenComplete(() async {
+      return commentsRef.doc(postId).delete().whenComplete(() async {
+        return deleteRecipeImage(postId, reference);
+      });
+    });
+  }
+
+  Future deleteRecipeImage(
+      String postId, firebase_storage.Reference reference) async {
+    await reference.child('recipe-images/$postId.jpg').delete();
   }
 }

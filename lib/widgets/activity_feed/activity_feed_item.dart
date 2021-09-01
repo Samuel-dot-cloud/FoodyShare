@@ -60,14 +60,16 @@ class ActivityFeedItem extends StatelessWidget {
     }
     if (type == 'like') {
       activityItemText = 'liked your post';
-    } else if (type == 'follow') {
-      activityItemText = 'started following you';
-    } else if (type == 'comment') {
+    }  else if (type == 'comment') {
       activityItemText = 'commented on your post';
     } else {
       activityItemText = "Error: Unknown type '$type'";
     }
   }
+
+  // else if (type == 'follow') {
+  // activityItemText = 'started following you';
+  // }
 
   @override
   Widget build(BuildContext context) {

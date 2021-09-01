@@ -43,14 +43,29 @@ class RecipeDetails extends StatefulWidget {
 class _RecipeDetailsState extends State<RecipeDetails> {
   @override
   void initState() {
+    checkIfLiked();
+    _isButtonDisabled = false;
     checkIfAddedToFavorites();
     super.initState();
   }
 
   bool _isAdded = false;
+  bool _isLiked = false;
+  late bool _isButtonDisabled;
 
-  CollectionReference recipesRef =
-      FirebaseFirestore.instance.collection('recipes');
+  checkIfLiked() async {
+    DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('recipes')
+        .doc(widget.postID)
+        .collection('likes')
+        .doc(
+          Provider.of<FirebaseOperations>(context, listen: false).getUserId,
+        )
+        .get();
+    setState(() {
+      _isLiked = doc.exists;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,28 +107,33 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                 right: 40.0,
                 child: InkWell(
                   onTap: () {
-                    _isAdded
-                        ? Provider.of<FirebaseOperations>(context,
-                                listen: false)
-                            .removeFromFavorites(currentUserId, widget.postID).whenComplete(() {
-                      setState(() {
-                        _isAdded = false;
-                      });
-                    })
-                        : Provider.of<FirebaseOperations>(context,
-                                listen: false)
-                            .addToFavorites(
-                            currentUserId,
-                            widget.postID,
-                            {
-                              'postId': widget.postID,
-                              'timestamp': Timestamp.now(),
-                            },
-                          ).whenComplete(() {
-                      setState(() {
-                        _isAdded = true;
-                      });
-                    });
+                    if (_isNotPostOwner) {
+                      _isAdded
+                          ? Provider.of<FirebaseOperations>(context,
+                                  listen: false)
+                              .removeFromFavorites(currentUserId, widget.postID)
+                              .whenComplete(() {
+                              setState(() {
+                                _isAdded = false;
+                              });
+                            })
+                          : Provider.of<FirebaseOperations>(context,
+                                  listen: false)
+                              .addToFavorites(
+                              currentUserId,
+                              widget.postID,
+                              {
+                                'postId': widget.postID,
+                                'timestamp': Timestamp.now(),
+                              },
+                            ).whenComplete(() {
+                              setState(() {
+                                _isAdded = true;
+                              });
+                            });
+                    } else {
+                      _showOptionsBottomSheet(context);
+                    }
                   },
                   child: _isNotPostOwner
                       ? FaIcon(
@@ -123,9 +143,10 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                           color: Colors.white,
                           size: 28.0,
                         )
-                      : const SizedBox(
-                          height: 0.0,
-                          width: 0.0,
+                      : const Icon(
+                          Icons.more_vert,
+                          color: Colors.white,
+                          size: 32.0,
                         ),
                 ),
               ),
@@ -172,110 +193,195 @@ class _RecipeDetailsState extends State<RecipeDetails> {
               Text(
                 widget.description,
                 style: GoogleFonts.inconsolata(
-                 textStyle: const TextStyle(
-                   fontWeight: FontWeight.w400,
+                  textStyle: const TextStyle(
+                    fontWeight: FontWeight.w400,
                     fontSize: 13.0,
                     color: Colors.grey,
-                   overflow: TextOverflow.ellipsis,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ),
               const SizedBox(
                 height: 10.0,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
+              Column(
                 children: [
-                  InkWell(
-                    onTap: () {
-                      Provider.of<FirebaseOperations>(context, listen: false)
-                          .addLike(
-                        context,
-                        widget.postID,
-                        Provider.of<FirebaseOperations>(context, listen: false)
-                            .getUserId,
-                      );
-                      if (_isNotPostOwner) {
-                        Provider.of<FirebaseOperations>(context, listen: false)
-                            .addToActivityFeed(
-                          widget.authorUserUID,
-                          widget.postID,
-                          {
-                            'type': 'like',
-                            'userUID': Provider.of<FirebaseOperations>(context,
-                                    listen: false)
-                                .getUserId,
-                            'postId': widget.postID,
-                            'timestamp': Timestamp.now(),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          onTap: _isButtonDisabled
+                              ? null
+                              : () {
+                                  setState(() {
+                                    _isButtonDisabled = true;
+                                  });
+                                  _isLiked
+                                      ? Provider.of<FirebaseOperations>(context,
+                                              listen: false)
+                                          .removeLike(
+                                          context,
+                                          widget.postID,
+                                          Provider.of<FirebaseOperations>(
+                                                  context,
+                                                  listen: false)
+                                              .getUserId,
+                                        )
+                                          .whenComplete(() {
+                                          setState(() {
+                                            _isLiked = false;
+                                            _isButtonDisabled = false;
+                                          });
+                                        })
+                                      : Provider.of<FirebaseOperations>(context,
+                                              listen: false)
+                                          .addLike(
+                                          context,
+                                          widget.postID,
+                                          Provider.of<FirebaseOperations>(
+                                                  context,
+                                                  listen: false)
+                                              .getUserId,
+                                        )
+                                          .whenComplete(() {
+                                          setState(() {
+                                            _isLiked = true;
+                                            _isButtonDisabled = false;
+                                          });
+                                          if (_isNotPostOwner) {
+                                            Provider.of<FirebaseOperations>(
+                                                    context,
+                                                    listen: false)
+                                                .addLikeToActivityFeed(
+                                              widget.authorUserUID,
+                                              widget.postID,
+                                              {
+                                                'type': 'like',
+                                                'userUID': Provider.of<
+                                                            FirebaseOperations>(
+                                                        context,
+                                                        listen: false)
+                                                    .getUserId,
+                                                'postId': widget.postID,
+                                                'timestamp': Timestamp.now(),
+                                              },
+                                            );
+                                          }
+                                        });
+                                },
+                          child: FaIcon(
+                            FontAwesomeIcons.heart,
+                            color: _isLiked ? Colors.red : Colors.black,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5.0,
+                        ),
+                        StreamBuilder<DocumentSnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('recipes')
+                              .doc(widget.postID)
+                              .collection('likes')
+                              .doc('like_count')
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: Text(''),
+                              );
+                            } else {
+                              return Text(
+                                snapshot.data!.exists
+                                    ? snapshot.data!['count'].toString()
+                                    : '0',
+                                style: const TextStyle(
+                                  // color: Colors.black,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 15.0,
+                                ),
+                              );
+                            }
                           },
-                        );
-                      }
-                    },
-                    child: const FaIcon(
-                      FontAwesomeIcons.heart,
-                      color: Colors.red,
+                        ),
+                        const SizedBox(
+                          width: 10.0,
+                        ),
+                        const Icon(
+                          Icons.timer,
+                        ),
+                        const SizedBox(
+                          width: 5.0,
+                        ),
+                        Text(widget.cookingTime + '\''),
+                        const SizedBox(
+                          width: 10.0,
+                        ),
+                        const FaIcon(
+                          FontAwesomeIcons.commentDots,
+                          color: Colors.black,
+                        ),
+                        const SizedBox(
+                          width: 5.0,
+                        ),
+                        StreamBuilder<DocumentSnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('comments')
+                              .doc(widget.postID)
+                              .collection('count')
+                              .doc('commentCount')
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: Text(''),
+                              );
+                            } else {
+                              return Text(
+                                snapshot.data!.exists
+                                    ? snapshot.data!['count'].toString()
+                                    : '0',
+                              );
+                            }
+                          },
+                        ),
+                        const SizedBox(
+                          width: 10.0,
+                        ),
+                        const Icon(
+                          Icons.mail_outline,
+                        ),
+                        const SizedBox(
+                          width: 5.0,
+                        ),
+                        Text(timeago.format(widget.recipeTimestamp.toDate())),
+                        const SizedBox(
+                          width: 10.0,
+                        ),
+                      ],
                     ),
                   ),
-                  // const SizedBox(
-                  //   width: 5.0,
-                  // ),
-                  StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('recipes')
-                        .doc(widget.postID)
-                        .collection('likes')
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else {
-                        return Text(
-                          snapshot.data!.docs.length.toString(),
-                          style: const TextStyle(
-                            // color: Colors.black,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 15.0,
-                          ),
-                        );
-                      }
-                    },
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6.0, left: 5.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const FaIcon(
+                          FontAwesomeIcons.pizzaSlice,
+                          color: Colors.black,
+                        ),
+                        const SizedBox(
+                          width: 5.0,
+                        ),
+                        Text(widget.servings + ' servings'),
+                      ],
+                    ),
                   ),
-
-                  // const SizedBox(
-                  //   width: 5.0,
-                  // ),
-                  const Icon(
-                    Icons.timer,
-                  ),
-                  // const SizedBox(
-                  //   width: 5.0,
-                  // ),
-                  Text(widget.cookingTime + '\''),
-                  // const SizedBox(
-                  //   width: 5.0,
-                  // ),
-                  const Icon(
-                    Icons.mail_outline,
-                  ),
-                  // const SizedBox(
-                  //   width: 5.0,
-                  // ),
-                  Text(timeago.format(widget.recipeTimestamp.toDate())),
-                  // const SizedBox(
-                  //   width: 10.0,
-                  // ),
-                  Container(
-                    color: Colors.black,
-                    height: 30.0,
-                    width: 2.0,
-                  ),
-                  // const SizedBox(
-                  //   width: 10.0,
-                  // ),
-                  Text(widget.servings + ' servings'),
                 ],
               ),
               const SizedBox(
@@ -359,5 +465,55 @@ class _RecipeDetailsState extends State<RecipeDetails> {
     setState(() {
       _isAdded = doc.exists;
     });
+  }
+
+  _showOptionsBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Wrap(
+          children: [
+            SizedBox(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(
+                      'Options',
+                      style: TextStyle(
+                        fontSize: 22.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Divider(
+                      height: 2.0,
+                    ),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    leading: const Icon(
+                      Icons.delete_forever,
+                      color: Colors.black,
+                    ),
+                    title: const Text(
+                      'Delete recipe',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
