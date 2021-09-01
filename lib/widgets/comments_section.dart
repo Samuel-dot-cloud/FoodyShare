@@ -26,6 +26,32 @@ class CommentsSection extends StatefulWidget {
 class _CommentsSectionState extends State<CommentsSection> {
   final TextEditingController _commentController = TextEditingController();
 
+  Future addCommentCount() async {
+    var doc = await commentsRef
+        .doc(widget.postId)
+        .collection('count')
+        .doc('commentCount')
+        .get();
+
+    if (doc.exists) {
+      commentsRef
+          .doc(widget.postId)
+          .collection('count')
+          .doc('commentCount')
+          .update({
+        'count': FieldValue.increment(1),
+      });
+    } else {
+      commentsRef
+          .doc(widget.postId)
+          .collection('count')
+          .doc('commentCount')
+          .set({
+        'count': FieldValue.increment(1),
+      });
+    }
+  }
+
   displayComments() {
     return StreamBuilder<QuerySnapshot>(
       stream: commentsRef
@@ -80,6 +106,8 @@ class _CommentsSectionState extends State<CommentsSection> {
           Provider.of<FirebaseOperations>(context, listen: false).getUserId,
       'comment': _commentController.text,
       'timestamp': Timestamp.now(),
+    }).whenComplete(() {
+      addCommentCount();
     });
     if (_isNotPostOwner) {
       Provider.of<FirebaseOperations>(context, listen: false)
@@ -92,9 +120,7 @@ class _CommentsSectionState extends State<CommentsSection> {
               Provider.of<FirebaseOperations>(context, listen: false).getUserId,
           'timestamp': Timestamp.now(),
         },
-      ).whenComplete(() {
-
-      });
+      ).whenComplete(() {});
     }
     _commentController.clear();
   }
@@ -150,12 +176,12 @@ class Comment extends StatefulWidget {
   final String comment;
   final Timestamp timestamp;
 
-  const Comment(
-      {Key? key,
-      required this.userUID,
-      required this.comment,
-      required this.timestamp,})
-      : super(key: key);
+  const Comment({
+    Key? key,
+    required this.userUID,
+    required this.comment,
+    required this.timestamp,
+  }) : super(key: key);
 
   factory Comment.fromDocument(DocumentSnapshot doc) {
     return Comment(

@@ -237,13 +237,13 @@ class _UserProfileState extends State<UserProfile> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         SizedBox(
-          child: StreamBuilder<QuerySnapshot>(
+          child: StreamBuilder<DocumentSnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('users')
                 .doc(Provider.of<FirebaseOperations>(context, listen: false)
-                .getUserId)
-                .collection('recipes')
-                .orderBy('timestamp', descending: true)
+                    .getUserId)
+                .collection('counts')
+                .doc('recipeCount')
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -253,7 +253,7 @@ class _UserProfileState extends State<UserProfile> {
               } else {
                 return _infoCell(
                   title: 'Posts',
-                  value: snapshot.data!.docs.length.toString(),
+                  value: snapshot.data!.exists ? snapshot.data!['count'].toString() : '0',
                 );
               }
             },
@@ -273,12 +273,13 @@ class _UserProfileState extends State<UserProfile> {
                         .getUserId);
           },
           child: SizedBox(
-            child: StreamBuilder<QuerySnapshot>(
+            child: StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('users')
                   .doc(Provider.of<FirebaseOperations>(context, listen: false)
                       .getUserId)
-                  .collection('followers')
+                  .collection('counts')
+                  .doc('followerCount')
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -288,7 +289,8 @@ class _UserProfileState extends State<UserProfile> {
                 } else {
                   return _infoCell(
                     title: 'Followers',
-                    value: snapshot.data!.docs.length.toString(),
+                    value:
+                        snapshot.data!.exists ? snapshot.data!['count'].toString() : '0',
                   );
                 }
               },
@@ -309,12 +311,13 @@ class _UserProfileState extends State<UserProfile> {
                         .getUserId);
           },
           child: SizedBox(
-            child: StreamBuilder<QuerySnapshot>(
+            child: StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('users')
                   .doc(Provider.of<FirebaseOperations>(context, listen: false)
                       .getUserId)
-                  .collection('following')
+                  .collection('counts')
+                  .doc('followingCount')
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -324,7 +327,8 @@ class _UserProfileState extends State<UserProfile> {
                 } else {
                   return _infoCell(
                     title: 'Following',
-                    value: snapshot.data!.docs.length.toString(),
+                    value:
+                        snapshot.data!.exists ? snapshot.data!['count'].toString() : '0',
                   );
                 }
               },
@@ -390,7 +394,10 @@ class _UserProfileState extends State<UserProfile> {
           height: 3.0,
         ),
         Text(
-          "\"" + Provider.of<FirebaseOperations>(context, listen: false).getUserBio + "\"",
+          "\"" +
+              Provider.of<FirebaseOperations>(context, listen: false)
+                  .getUserBio +
+              "\"",
           style: GoogleFonts.robotoMono(
             textStyle: const TextStyle(
               fontStyle: FontStyle.normal,

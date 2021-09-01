@@ -35,7 +35,6 @@ class _CreateRecipeState extends State<CreateRecipe> {
 
   @override
   void initState() {
-    // TODO: implement initState
     photoFile = File(widget.file.path);
     super.initState();
   }

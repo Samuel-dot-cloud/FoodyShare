@@ -31,9 +31,12 @@ class AltProfile extends StatefulWidget {
 }
 
 class _AltProfileState extends State<AltProfile> {
+  late bool _isButtonDisabled;
+
   @override
   void initState() {
     checkIfFollowing();
+    _isButtonDisabled = false;
     super.initState();
   }
 
@@ -242,81 +245,89 @@ class _AltProfileState extends State<AltProfile> {
                   ? (MediaQuery.of(context).size.width - (2 * hPadding)) / 1.6
                   : double.infinity,
               child: TextButton(
-                onPressed: () {
-                  _isFollowing
-                      ? Provider.of<FirebaseOperations>(context, listen: false)
-                          .unfollowUser(
-                          widget.userUID,
-                          Provider.of<FirebaseOperations>(context,
-                                  listen: false)
-                              .getUserId,
-                          Provider.of<FirebaseOperations>(context,
-                                  listen: false)
-                              .getUserId,
-                          widget.userUID,
-                        )
-                          .whenComplete(() {
-                          Provider.of<FirebaseOperations>(context,
-                                  listen: false)
-                              .removeFromActivityFeed(
-                            widget.userUID,
-                            Provider.of<FirebaseOperations>(context,
+                onPressed: _isButtonDisabled
+                    ? null
+                    : () {
+                        setState(() {
+                          _isButtonDisabled = true;
+                        });
+                        _isFollowing
+                            ? Provider.of<FirebaseOperations>(context,
                                     listen: false)
-                                .getUserId,
-                          );
-                          setState(() {
-                            _isFollowing = false;
-                          });
-                          followNotification(
-                              context, 'Unfollowed @' + widget.authorUsername);
-                        })
-                      : Provider.of<FirebaseOperations>(context, listen: false)
-                          .followUser(
-                              widget.userUID,
-                              Provider.of<FirebaseOperations>(context,
-                                      listen: false)
-                                  .getUserId,
-                              {
-                                'userUID': Provider.of<FirebaseOperations>(
-                                        context,
+                                .unfollowUser(
+                                widget.userUID,
+                                Provider.of<FirebaseOperations>(context,
                                         listen: false)
                                     .getUserId,
-                                'timestamp': Timestamp.now(),
-                              },
-                              Provider.of<FirebaseOperations>(context,
-                                      listen: false)
-                                  .getUserId,
-                              widget.userUID,
-                              {
-                                'userUID': widget.userUID,
-                                'timestamp': Timestamp.now(),
+                                Provider.of<FirebaseOperations>(context,
+                                        listen: false)
+                                    .getUserId,
+                                widget.userUID,
+                              )
+                                .whenComplete(() {
+                                followNotification(context,
+                                    'Unfollowed @' + widget.authorUsername);
+                                Provider.of<FirebaseOperations>(context,
+                                        listen: false)
+                                    .removeFollowFromActivityFeed(
+                                  widget.userUID,
+                                  Provider.of<FirebaseOperations>(context,
+                                          listen: false)
+                                      .getUserId,
+                                );
+                                setState(() {
+                                  _isFollowing = false;
+                                  _isButtonDisabled = false;
+                                });
                               })
-                          .whenComplete(() {
-                          Provider.of<FirebaseOperations>(context,
-                                  listen: false)
-                              .addToActivityFeed(
-                            widget.userUID,
-                            Provider.of<FirebaseOperations>(context,
+                            : Provider.of<FirebaseOperations>(context,
                                     listen: false)
-                                .getUserId,
-                            {
-                              'type': 'follow',
-                              'postId': '',
-                              'profileId': widget.userUID,
-                              'userUID': Provider.of<FirebaseOperations>(
-                                      context,
-                                      listen: false)
-                                  .getUserId,
-                              'timestamp': Timestamp.now(),
-                            },
-                          );
-                          setState(() {
-                            _isFollowing = true;
-                          });
-                          followNotification(
-                              context, 'Followed @' + widget.authorUsername);
-                        });
-                },
+                                .followUser(
+                                    widget.userUID,
+                                    Provider.of<FirebaseOperations>(context,
+                                            listen: false)
+                                        .getUserId,
+                                    {
+                                      'userUID':
+                                          Provider.of<FirebaseOperations>(
+                                                  context,
+                                                  listen: false)
+                                              .getUserId,
+                                      'timestamp': Timestamp.now(),
+                                    },
+                                    Provider.of<FirebaseOperations>(context,
+                                            listen: false)
+                                        .getUserId,
+                                    widget.userUID,
+                                    {
+                                      'userUID': widget.userUID,
+                                      'timestamp': Timestamp.now(),
+                                    })
+                                .whenComplete(() {
+                                followNotification(context,
+                                    'Followed @' + widget.authorUsername);
+                                Provider.of<FirebaseOperations>(context,
+                                        listen: false)
+                                    .addFollowToActivityFeed(
+                                  widget.userUID,
+                                  Provider.of<FirebaseOperations>(context,
+                                          listen: false)
+                                      .getUserId,
+                                  {
+                                    'profileId': widget.userUID,
+                                    'userUID': Provider.of<FirebaseOperations>(
+                                            context,
+                                            listen: false)
+                                        .getUserId,
+                                    'timestamp': Timestamp.now(),
+                                  },
+                                );
+                                setState(() {
+                                  _isFollowing = true;
+                                  _isButtonDisabled = false;
+                                });
+                              });
+                      },
                 child: Text(
                   _isFollowing ? 'UNFOLLOW' : 'FOLLOW',
                   style: const TextStyle(
@@ -352,11 +363,12 @@ class _AltProfileState extends State<AltProfile> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         SizedBox(
-          child: StreamBuilder<QuerySnapshot>(
+          child: StreamBuilder<DocumentSnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('users')
                 .doc(widget.userUID)
-                .collection('recipes')
+                .collection('counts')
+                .doc('recipeCount')
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -366,7 +378,9 @@ class _AltProfileState extends State<AltProfile> {
               } else {
                 return _infoCell(
                   title: 'Posts',
-                  value: snapshot.data!.docs.length.toString(),
+                  value: snapshot.data!.exists
+                      ? snapshot.data!['count'].toString()
+                      : '0',
                 );
               }
             },
@@ -383,11 +397,12 @@ class _AltProfileState extends State<AltProfile> {
                 .checkFollowerSheet(context, widget.userUID);
           },
           child: SizedBox(
-            child: StreamBuilder<QuerySnapshot>(
+            child: StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('users')
                   .doc(widget.userUID)
-                  .collection('followers')
+                  .collection('counts')
+                  .doc('followerCount')
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -397,7 +412,9 @@ class _AltProfileState extends State<AltProfile> {
                 } else {
                   return _infoCell(
                     title: 'Followers',
-                    value: snapshot.data!.docs.length.toString(),
+                    value: snapshot.data!.exists
+                        ? snapshot.data!['count'].toString()
+                        : '0',
                   );
                 }
               },
@@ -415,11 +432,12 @@ class _AltProfileState extends State<AltProfile> {
                 .checkFollowingSheet(context, widget.userUID);
           },
           child: SizedBox(
-            child: StreamBuilder<QuerySnapshot>(
+            child: StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('users')
                   .doc(widget.userUID)
-                  .collection('following')
+                  .collection('counts')
+                  .doc('followingCount')
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -429,7 +447,9 @@ class _AltProfileState extends State<AltProfile> {
                 } else {
                   return _infoCell(
                     title: 'Following',
-                    value: snapshot.data!.docs.length.toString(),
+                    value: snapshot.data!.exists
+                        ? snapshot.data!['count'].toString()
+                        : '0',
                   );
                 }
               },
