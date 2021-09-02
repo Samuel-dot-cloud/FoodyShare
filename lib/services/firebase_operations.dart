@@ -306,16 +306,6 @@ class FirebaseOperations with ChangeNotifier {
     });
   }
 
-  checkIfLiked(BuildContext context, String postId) async {
-    DocumentSnapshot doc = await FirebaseFirestore.instance
-        .collection('recipes')
-        .doc(postId)
-        .collection('likes')
-        .doc(getUserId)
-        .get();
-    return doc.exists;
-  }
-
   Future removeLike(BuildContext context, String postId, String userUID) async {
     return recipesRef
         .doc(postId)
@@ -354,6 +344,21 @@ class FirebaseOperations with ChangeNotifier {
     return recipesRef.doc(postId).delete().whenComplete(() async {
       return commentsRef.doc(postId).delete().whenComplete(() async {
         return deleteRecipeImage(postId, reference);
+      }).whenComplete(() async {
+        return usersRef
+            .doc(getUserId)
+            .collection('recipes')
+            .doc(postId)
+            .delete()
+            .whenComplete(() async {
+          return usersRef
+              .doc(getUserId)
+              .collection('counts')
+              .doc('recipeCount')
+              .update({
+            'count': FieldValue.increment(-1),
+          });
+        });
       });
     });
   }

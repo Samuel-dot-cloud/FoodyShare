@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/screens/profile/alt_profile.dart';
 import 'package:food_share/screens/recipe_details.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -19,48 +21,48 @@ class ActivityFeedItem extends StatelessWidget {
     String type = feedDoc['type'];
     if (type == 'like' || type == 'comment') {
       mediaPreview = GestureDetector(
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => RecipeDetails(
-              preparation: preparation,
-              recipeTimestamp: timestamp,
-              ingredients: ingredients,
-              description: description,
-              cookingTime: cookingTime,
-              authorUserUID: authorId,
-              postID: feedDoc['postId'],
-              recipeName: title,
-              recipeImage: mediaUrl,
-              servings: servings,
-            ),
-          ),
-        ),
-        child: SizedBox(
-          height: 50.0,
-          width: 50.0,
-          child: AspectRatio(
-            aspectRatio: 16 / 9,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: NetworkImage(mediaUrl),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RecipeDetails(
+                    preparation: preparation,
+                    recipeTimestamp: timestamp,
+                    ingredients: ingredients,
+                    description: description,
+                    cookingTime: cookingTime,
+                    authorUserUID: authorId,
+                    postID: feedDoc['postId'],
+                    recipeName: title,
+                    recipeImage: mediaUrl,
+                    servings: servings,
                   ),
                 ),
               ),
-            ),
-          ),
-        ),
-      );
+              child: SizedBox(
+                height: 50.0,
+                width: 50.0,
+                child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(mediaUrl),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
     } else {
       mediaPreview = const Text('');
     }
     if (type == 'like') {
       activityItemText = 'liked your post';
-    }  else if (type == 'comment') {
+    } else if (type == 'comment') {
       activityItemText = 'commented on your post';
     } else {
       activityItemText = "Error: Unknown type '$type'";

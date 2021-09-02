@@ -132,7 +132,7 @@ class _UserProfileState extends State<UserProfile> {
                             itemCount: snapshot.data!.docs.length,
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
+                              crossAxisCount: 2,
                               mainAxisSpacing: 16.0,
                             ),
                             itemBuilder: (BuildContext context, int index) =>
