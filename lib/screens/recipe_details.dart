@@ -51,6 +51,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
 
   bool _isAdded = false;
   bool _isLiked = false;
+  bool _isDeleting = false;
   late bool _isButtonDisabled;
 
   checkIfLiked() async {
@@ -92,13 +93,19 @@ class _RecipeDetailsState extends State<RecipeDetails> {
             children: [
               Align(
                 alignment: Alignment.topCenter,
-                child: Hero(
+                child: !_isDeleting ? Hero(
                   tag: widget.recipeImage,
                   child: Image(
                     height: (size.height / 2) + 50,
                     width: double.infinity,
                     fit: BoxFit.cover,
                     image: NetworkImage(widget.recipeImage),
+                  ),
+                ) : const Center(
+                  child: CircularProgressIndicator(
+                    backgroundColor: Colors.cyanAccent,
+                    valueColor:
+                    AlwaysStoppedAnimation<Color>(Colors.yellow),
                   ),
                 ),
               ),
@@ -495,7 +502,15 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                   ),
                   ListTile(
                     onTap: () {
-                      Navigator.pop(context);
+                      setState(() {
+                        _isDeleting = true;
+                      });
+                      Provider.of<FirebaseOperations>(context, listen: false).deleteRecipe(widget.postID).whenComplete(() {
+                        setState(() {
+                          _isDeleting = false;
+                          Navigator.pop(context);
+                        });
+                      });
                     },
                     leading: const Icon(
                       Icons.delete_forever,

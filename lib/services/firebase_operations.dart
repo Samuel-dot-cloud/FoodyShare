@@ -344,6 +344,21 @@ class FirebaseOperations with ChangeNotifier {
     return recipesRef.doc(postId).delete().whenComplete(() async {
       return commentsRef.doc(postId).delete().whenComplete(() async {
         return deleteRecipeImage(postId, reference);
+      }).whenComplete(() async {
+        return usersRef
+            .doc(getUserId)
+            .collection('recipes')
+            .doc(postId)
+            .delete()
+            .whenComplete(() async {
+          return usersRef
+              .doc(getUserId)
+              .collection('counts')
+              .doc('recipeCount')
+              .update({
+            'count': FieldValue.increment(-1),
+          });
+        });
       });
     });
   }

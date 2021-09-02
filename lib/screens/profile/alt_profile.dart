@@ -180,7 +180,7 @@ class _AltProfileState extends State<AltProfile> {
                             itemCount: snapshot.data!.docs.length,
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
+                              crossAxisCount: 2,
                               mainAxisSpacing: 16.0,
                             ),
                             itemBuilder: (BuildContext context, int index) =>

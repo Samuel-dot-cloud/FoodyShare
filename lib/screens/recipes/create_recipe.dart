@@ -81,27 +81,28 @@ class _CreateRecipeState extends State<CreateRecipe> {
       'ingredients': ingredients,
       'preparation': preparation,
       'timestamp': timestamp,
+    }).whenComplete(() async {
+      return addRecipeDetails();
+    }).whenComplete(() async {
+      setState(() {
+        photoFile = File('');
+        isUploading = false;
+      });
+      Fluttertoast.showToast(
+          msg: 'Recipe uploaded successfully 👍🍲',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      Navigator.pop(context);
     });
-    addRecipeDetails();
-    setState(() {
-      photoFile = File('');
-      isUploading = false;
-    });
-    Fluttertoast.showToast(
-        msg: 'Recipe uploaded successfully 👍🍲',
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        fontSize: 16.0);
-    Navigator.pop(context);
   }
 
   ///Adding recipe details to user collection to display in profile section
   Future addRecipeDetails() async {
-    return FirebaseFirestore.instance
-        .collection('users')
+    return usersRef
         .doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId)
         .collection('recipes')
         .doc(postId)
