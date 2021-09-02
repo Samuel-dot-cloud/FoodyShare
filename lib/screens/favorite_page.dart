@@ -39,7 +39,7 @@ class _FavoriteRecipesState extends State<FavoriteRecipes> {
                   return const Text('Error');
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return loadingAnimation('Loading recipe card...');
+                  return loadingAnimation('Loading favorites...');
                 }
                 if (snapshot.hasData) {
                   return snapshot.data!.docs.isNotEmpty

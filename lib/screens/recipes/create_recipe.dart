@@ -30,6 +30,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
   String postId = const Uuid().v4();
   final Timestamp timestamp = Timestamp.now();
   final recipesRef = FirebaseFirestore.instance.collection('recipes');
+  final usersRef = FirebaseFirestore.instance.collection('users');
   firebase_storage.Reference reference =
       firebase_storage.FirebaseStorage.instance.ref();
 
@@ -107,6 +108,32 @@ class _CreateRecipeState extends State<CreateRecipe> {
         .set({
       'postId': postId,
       'timestamp': timestamp,
+    }).whenComplete(() async {
+      var doc = await usersRef
+          .doc(
+              Provider.of<FirebaseOperations>(context, listen: false).getUserId)
+          .collection('counts')
+          .doc('recipeCount')
+          .get();
+      if (doc.exists) {
+        return usersRef
+            .doc(Provider.of<FirebaseOperations>(context, listen: false)
+                .getUserId)
+            .collection('counts')
+            .doc('recipeCount')
+            .update({
+          'count': FieldValue.increment(1),
+        });
+      } else {
+        return usersRef
+            .doc(Provider.of<FirebaseOperations>(context, listen: false)
+                .getUserId)
+            .collection('counts')
+            .doc('recipeCount')
+            .set({
+          'count': FieldValue.increment(1),
+        });
+      }
     });
   }
 
