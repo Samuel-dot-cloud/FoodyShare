@@ -96,6 +96,7 @@ class _AltProfileState extends State<AltProfile> {
             ),
             minHeight: size.height * 0.35,
             maxHeight: size.height * 0.75,
+            parallaxEnabled: true,
             body: GestureDetector(
               onTap: () => _panelController.close(),
               child: Container(
