@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/services/firebase_operations.dart';
+import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/viewmodel/bottom_nav.dart';
 import 'package:food_share/widgets/comments_section.dart';
 import 'package:food_share/widgets/ingredients_section.dart';
 import 'package:food_share/widgets/preparation_section.dart';
@@ -93,21 +96,23 @@ class _RecipeDetailsState extends State<RecipeDetails> {
             children: [
               Align(
                 alignment: Alignment.topCenter,
-                child: !_isDeleting ? Hero(
-                  tag: widget.recipeImage,
-                  child: Image(
-                    height: (size.height / 2) + 50,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    image: NetworkImage(widget.recipeImage),
-                  ),
-                ) : const Center(
-                  child: CircularProgressIndicator(
-                    backgroundColor: Colors.cyanAccent,
-                    valueColor:
-                    AlwaysStoppedAnimation<Color>(Colors.yellow),
-                  ),
-                ),
+                child: !_isDeleting
+                    ? Hero(
+                        tag: widget.recipeImage,
+                        child: Image(
+                          height: (size.height / 2) + 50,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          image: NetworkImage(widget.recipeImage),
+                        ),
+                      )
+                    : const Center(
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.cyanAccent,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.yellow),
+                        ),
+                      ),
               ),
               Positioned(
                 top: 40.0,
@@ -502,15 +507,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                   ),
                   ListTile(
                     onTap: () {
-                      setState(() {
-                        _isDeleting = true;
-                      });
-                      Provider.of<FirebaseOperations>(context, listen: false).deleteRecipe(widget.postID).whenComplete(() {
-                        setState(() {
-                          _isDeleting = false;
-                          Navigator.pop(context);
-                        });
-                      });
+                      showDeleteAlertDialog();
                     },
                     leading: const Icon(
                       Icons.delete_forever,
@@ -530,5 +527,87 @@ class _RecipeDetailsState extends State<RecipeDetails> {
         );
       },
     );
+  }
+
+  Future<void> showDeleteAlertDialog() async {
+    return showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (context) {
+          return AlertDialog(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(20.0),
+              ),
+            ),
+            title: const Text(
+              'Delete recipe?',
+              style: TextStyle(
+                fontSize: 23.0,
+                color: Colors.black,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            content: const Text(
+              'This is an irreversible action!!',
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 20.0,
+              ),
+            ),
+            actions: [
+              MaterialButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.underline,
+                    decorationColor: Colors.black,
+                  ),
+                ),
+              ),
+              MaterialButton(
+                color: kBlue,
+                onPressed: () {
+                  setState(() {
+                    _isDeleting = true;
+                  });
+                  Provider.of<FirebaseOperations>(context, listen: false)
+                      .deleteRecipe(widget.postID)
+                      .whenComplete(() {
+                    setState(() {
+                      _isDeleting = false;
+                    });
+                    Navigator.pop(context);
+                    Fluttertoast.showToast(
+                        msg: 'Recipe successfully deleted.',
+                        toastLength: Toast.LENGTH_LONG,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.blue,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const BottomNav()),
+                        (route) => false);
+                  });
+                },
+                child: const Text(
+                  'Go Ahead',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          );
+        });
   }
 }
