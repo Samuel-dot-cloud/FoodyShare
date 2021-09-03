@@ -11,42 +11,28 @@ import 'package:timeago/timeago.dart' as timeago;
 
 final commentsRef = FirebaseFirestore.instance.collection('comments');
 
-class CommentsSection extends StatefulWidget {
-  const CommentsSection(
-      {Key? key, required this.postId, required this.authorId})
+class CommentsSection extends StatelessWidget {
+  CommentsSection({Key? key, required this.postId, required this.authorId})
       : super(key: key);
 
   final String postId;
   final String authorId;
 
-  @override
-  State<CommentsSection> createState() => _CommentsSectionState();
-}
-
-class _CommentsSectionState extends State<CommentsSection> {
   final TextEditingController _commentController = TextEditingController();
 
   Future addCommentCount() async {
     var doc = await commentsRef
-        .doc(widget.postId)
+        .doc(postId)
         .collection('count')
         .doc('commentCount')
         .get();
 
     if (doc.exists) {
-      commentsRef
-          .doc(widget.postId)
-          .collection('count')
-          .doc('commentCount')
-          .update({
+      commentsRef.doc(postId).collection('count').doc('commentCount').update({
         'count': FieldValue.increment(1),
       });
     } else {
-      commentsRef
-          .doc(widget.postId)
-          .collection('count')
-          .doc('commentCount')
-          .set({
+      commentsRef.doc(postId).collection('count').doc('commentCount').set({
         'count': FieldValue.increment(1),
       });
     }
@@ -55,7 +41,7 @@ class _CommentsSectionState extends State<CommentsSection> {
   displayComments() {
     return StreamBuilder<QuerySnapshot>(
       stream: commentsRef
-          .doc(widget.postId)
+          .doc(postId)
           .collection('comments')
           .orderBy('timestamp', descending: false)
           .snapshots(),
@@ -85,23 +71,25 @@ class _CommentsSectionState extends State<CommentsSection> {
             ),
           );
         } else {
-          List<Comment> comments = [];
-          for (var doc in snapshot.data!.docs) {
-            comments.add(Comment.fromDocument(doc));
-          }
-          return ListView(
-            children: comments,
+          return ListView.builder(
+            physics: const ScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (BuildContext context, int index) => Comment(
+              commentDoc: snapshot.data!.docs[index],
+              authorId: authorId,
+            ),
           );
         }
       },
     );
   }
 
-  addComment() {
+  addComment(BuildContext context) {
     bool _isNotPostOwner =
         Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
-            widget.authorId;
-    commentsRef.doc(widget.postId).collection('comments').add({
+            authorId;
+    commentsRef.doc(postId).collection('comments').add({
       'userUID':
           Provider.of<FirebaseOperations>(context, listen: false).getUserId,
       'comment': _commentController.text,
@@ -112,10 +100,10 @@ class _CommentsSectionState extends State<CommentsSection> {
     if (_isNotPostOwner) {
       Provider.of<FirebaseOperations>(context, listen: false)
           .addCommentToActivityFeed(
-        widget.authorId,
+        authorId,
         {
           'type': 'comment',
-          'postId': widget.postId,
+          'postId': postId,
           'userUID':
               Provider.of<FirebaseOperations>(context, listen: false).getUserId,
           'timestamp': Timestamp.now(),
@@ -154,7 +142,7 @@ class _CommentsSectionState extends State<CommentsSection> {
                     textColor: Colors.white,
                     fontSize: 16.0);
               } else {
-                addComment();
+                addComment(context);
               }
             },
             child: const Text(
@@ -171,42 +159,28 @@ class _CommentsSectionState extends State<CommentsSection> {
   }
 }
 
-class Comment extends StatefulWidget {
-  final String userUID;
-  final String comment;
-  final Timestamp timestamp;
+class Comment extends StatelessWidget {
+  final DocumentSnapshot commentDoc;
+  final String authorId;
 
   const Comment({
     Key? key,
-    required this.userUID,
-    required this.comment,
-    required this.timestamp,
+    required this.commentDoc,
+    required this.authorId,
   }) : super(key: key);
 
-  factory Comment.fromDocument(DocumentSnapshot doc) {
-    return Comment(
-      comment: doc['comment'],
-      userUID: doc['userUID'],
-      timestamp: doc['timestamp'],
-    );
-  }
-
-  @override
-  State<Comment> createState() => _CommentState();
-}
-
-class _CommentState extends State<Comment> {
   @override
   Widget build(BuildContext context) {
     bool _isNotCurrentUser =
         Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
-            widget.userUID;
+            commentDoc['userUID'];
+    bool _isNotAuthor = commentDoc['userUID'] != authorId;
     return Column(
       children: [
         StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance
               .collection('users')
-              .doc(widget.userUID)
+              .doc(commentDoc['userUID'])
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -221,7 +195,7 @@ class _CommentState extends State<Comment> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => AltProfile(
-                          userUID: widget.userUID,
+                          userUID: commentDoc['userUID'],
                           authorImage: snapshot.data!['photoUrl'],
                           authorUsername: snapshot.data!['username'],
                           authorDisplayName: snapshot.data!['displayName'],
@@ -231,20 +205,31 @@ class _CommentState extends State<Comment> {
                     );
                   }
                 },
-                title: Text(
-                  _isNotCurrentUser ? '@' + snapshot.data!['username'] : 'You',
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                title: _isNotAuthor
+                    ? Text(
+                        _isNotCurrentUser
+                            ? '@' + snapshot.data!['username']
+                            : 'You',
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      )
+                    : Text(
+                        _isNotCurrentUser ? 'Author' : 'You(Author)',
+                        style: const TextStyle(
+                          color: kBlue,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                 leading: CircleAvatar(
                   radius: 18.0,
                   backgroundColor: kBlue,
                   backgroundImage: NetworkImage(snapshot.data!['photoUrl']),
                 ),
-                subtitle: Text(widget.comment),
-                trailing: Text(timeago.format(widget.timestamp.toDate())),
+                subtitle: Text(commentDoc['comment']),
+                trailing:
+                    Text(timeago.format(commentDoc['timestamp'].toDate())),
               );
             }
           },

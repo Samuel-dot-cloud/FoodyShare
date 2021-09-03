@@ -159,7 +159,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
                                           child: FollowFeedItem(
                                             feedDoc: snapshot.data!.docs[index],
                                           ),
-                                        ))
+                                        ),)
                                 : _defaultNoNotification('No follow notifications yet...');
                           }
                           return const Text('Error...');
