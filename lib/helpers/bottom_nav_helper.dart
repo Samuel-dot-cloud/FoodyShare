@@ -45,7 +45,7 @@ class BottomNavHelper with ChangeNotifier {
           radius: 16.5,
           backgroundColor: kBlue,
           backgroundImage: NetworkImage(
-              Provider.of<FirebaseOperations>(context, listen: false)
+              Provider.of<FirebaseOperations>(context, listen: true)
                   .getUserImage),
         ),
       ],

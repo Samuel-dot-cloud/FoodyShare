@@ -59,7 +59,7 @@ class ActivityFeedItem extends StatelessWidget {
                         TextSpan(
                           text: feedDoc['type'] == 'like'
                               ? ' liked your post.'
-                              : ' has commented on your post.',
+                              : ' commented on your post.',
                         ),
                       ],
                     ),
