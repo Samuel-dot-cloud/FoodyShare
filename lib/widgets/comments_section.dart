@@ -85,12 +85,14 @@ class _CommentsSectionState extends State<CommentsSection> {
             ),
           );
         } else {
-          List<Comment> comments = [];
-          for (var doc in snapshot.data!.docs) {
-            comments.add(Comment.fromDocument(doc));
-          }
-          return ListView(
-            children: comments,
+          return ListView.builder(
+            physics: const ScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (BuildContext context, int index) => Comment(
+              commentDoc: snapshot.data!.docs[index],
+              authorId: widget.authorId,
+            ),
           );
         }
       },
@@ -172,24 +174,14 @@ class _CommentsSectionState extends State<CommentsSection> {
 }
 
 class Comment extends StatefulWidget {
-  final String userUID;
-  final String comment;
-  final Timestamp timestamp;
+  final DocumentSnapshot commentDoc;
+  final String authorId;
 
   const Comment({
     Key? key,
-    required this.userUID,
-    required this.comment,
-    required this.timestamp,
+    required this.commentDoc,
+    required this.authorId,
   }) : super(key: key);
-
-  factory Comment.fromDocument(DocumentSnapshot doc) {
-    return Comment(
-      comment: doc['comment'],
-      userUID: doc['userUID'],
-      timestamp: doc['timestamp'],
-    );
-  }
 
   @override
   State<Comment> createState() => _CommentState();
@@ -200,13 +192,15 @@ class _CommentState extends State<Comment> {
   Widget build(BuildContext context) {
     bool _isNotCurrentUser =
         Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
-            widget.userUID;
+            widget.commentDoc['userUID'];
+    bool _isNotAuthor = widget.commentDoc['userUID'] !=
+        widget.authorId;
     return Column(
       children: [
         StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance
               .collection('users')
-              .doc(widget.userUID)
+              .doc(widget.commentDoc['userUID'])
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -221,7 +215,7 @@ class _CommentState extends State<Comment> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => AltProfile(
-                          userUID: widget.userUID,
+                          userUID: widget.commentDoc['userUID'],
                           authorImage: snapshot.data!['photoUrl'],
                           authorUsername: snapshot.data!['username'],
                           authorDisplayName: snapshot.data!['displayName'],
@@ -231,11 +225,17 @@ class _CommentState extends State<Comment> {
                     );
                   }
                 },
-                title: Text(
+                title: _isNotAuthor ? Text(
                   _isNotCurrentUser ? '@' + snapshot.data!['username'] : 'You',
                   style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.w500,
+                  ),
+                ) : Text(
+                  _isNotCurrentUser ? 'Author' : 'You(Author)',
+                  style: const TextStyle(
+                    color: kBlue,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 leading: CircleAvatar(
@@ -243,8 +243,9 @@ class _CommentState extends State<Comment> {
                   backgroundColor: kBlue,
                   backgroundImage: NetworkImage(snapshot.data!['photoUrl']),
                 ),
-                subtitle: Text(widget.comment),
-                trailing: Text(timeago.format(widget.timestamp.toDate())),
+                subtitle: Text(widget.commentDoc['comment']),
+                trailing: Text(
+                    timeago.format(widget.commentDoc['timestamp'].toDate())),
               );
             }
           },
