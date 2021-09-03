@@ -5,102 +5,66 @@ import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:provider/provider.dart';
 
-class UserTile extends StatefulWidget {
+class UserTile extends StatelessWidget {
   const UserTile({Key? key, required this.userDoc}) : super(key: key);
 
   final DocumentSnapshot userDoc;
 
   @override
-  State<UserTile> createState() => _UserTileState();
-}
-
-class _UserTileState extends State<UserTile> {
-  @override
-  void initState() {
-    getAuthorData(context, widget.userDoc['userUID']);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    bool _isNotProfileOwner = widget.userDoc['userUID'] !=
+    bool _isNotProfileOwner = userDoc['userUID'] !=
         Provider.of<FirebaseOperations>(context, listen: false).getUserId;
-    Provider.of<FirebaseOperations>(context, listen: true)
-        .initUserData(context);
-    return ListTile(
-      onTap: () {
-        if (_isNotProfileOwner) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AltProfile(
-                authorUsername: authorUsername,
-                authorImage: authorUserImage,
-                authorBio: authorBio,
-                userUID: widget.userDoc['userUID'],
-                authorDisplayName: authorDisplayName,
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(userDoc['userUID'])
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          return ListTile(
+            onTap: () {
+              if (_isNotProfileOwner) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AltProfile(
+                      userUID: userDoc['userUID'],
+                      authorImage: snapshot.data!['photoUrl'],
+                      authorUsername: snapshot.data!['username'],
+                      authorDisplayName: snapshot.data!['displayName'],
+                      authorBio: snapshot.data!['bio'],
+                    ),
+                  ),
+                );
+              }
+            },
+            leading: CircleAvatar(
+              backgroundColor: kBlue,
+              backgroundImage: NetworkImage(snapshot.data!['photoUrl']),
+            ),
+            title: Text(
+              snapshot.data!['displayName'],
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+              ),
+            ),
+            subtitle: Text(
+              _isNotProfileOwner ? '@' + snapshot.data!['username'] : 'You',
+              style: const TextStyle(
+                color: Colors.yellow,
+                fontWeight: FontWeight.bold,
+                fontSize: 14.5,
               ),
             ),
           );
         }
       },
-      leading: CircleAvatar(
-        backgroundColor: kBlue,
-        backgroundImage: NetworkImage(authorUserImage),
-      ),
-      title: Text(
-        authorDisplayName,
-        style: const TextStyle(
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
-          fontSize: 16.0,
-        ),
-      ),
-      subtitle: Text(
-        _isNotProfileOwner ? '@' + authorUsername : 'You',
-        style: const TextStyle(
-          color: Colors.yellow,
-          fontWeight: FontWeight.bold,
-          fontSize: 14.5,
-        ),
-      ),
-      // trailing: widget.userDoc['userUID'] ==
-      //         Provider.of<FirebaseOperations>(context, listen: false).getUserId
-      //     ? const SizedBox(
-      //         width: 0.0,
-      //         height: 0.0,
-      //       )
-      //     : MaterialButton(
-      //         color: kBlue,
-      //         onPressed: () {},
-      //         child: const Text(
-      //           'Unfollow',
-      //           style: TextStyle(
-      //             color: Colors.white,
-      //             fontWeight: FontWeight.bold,
-      //           ),
-      //         ),
-      //       ),
     );
-  }
-
-  String authorEmail = '',
-      authorUsername = '',
-      authorDisplayName = '',
-      authorUserImage = '',
-      authorBio = '';
-
-  Future getAuthorData(BuildContext context, String authorId) async {
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(authorId)
-        .get()
-        .then((doc) {
-      authorUsername = doc.data()!['username'];
-      authorDisplayName = doc.data()!['displayName'];
-      authorEmail = doc.data()!['email'];
-      authorBio = doc.data()!['bio'];
-      authorUserImage = doc.data()!['photoUrl'];
-    });
   }
 }

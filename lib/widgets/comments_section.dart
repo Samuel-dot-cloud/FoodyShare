@@ -106,8 +106,8 @@ class _CommentsSectionState extends State<CommentsSection> {
           Provider.of<FirebaseOperations>(context, listen: false).getUserId,
       'comment': _commentController.text,
       'timestamp': Timestamp.now(),
-    }).whenComplete(() {
-      addCommentCount();
+    }).whenComplete(() async {
+      return addCommentCount();
     });
     if (_isNotPostOwner) {
       Provider.of<FirebaseOperations>(context, listen: false)
@@ -120,7 +120,7 @@ class _CommentsSectionState extends State<CommentsSection> {
               Provider.of<FirebaseOperations>(context, listen: false).getUserId,
           'timestamp': Timestamp.now(),
         },
-      ).whenComplete(() {});
+      );
     }
     _commentController.clear();
   }
@@ -198,7 +198,7 @@ class Comment extends StatefulWidget {
 class _CommentState extends State<Comment> {
   @override
   Widget build(BuildContext context) {
-    bool _isNotPostOwner =
+    bool _isNotCurrentUser =
         Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
             widget.userUID;
     return Column(
@@ -216,7 +216,7 @@ class _CommentState extends State<Comment> {
             } else {
               return ListTile(
                 onTap: () {
-                  if (_isNotPostOwner) {
+                  if (_isNotCurrentUser) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -232,7 +232,7 @@ class _CommentState extends State<Comment> {
                   }
                 },
                 title: Text(
-                  _isNotPostOwner ? '@' + snapshot.data!['username'] : 'You',
+                  _isNotCurrentUser ? '@' + snapshot.data!['username'] : 'You',
                   style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.w500,

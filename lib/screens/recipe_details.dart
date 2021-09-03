@@ -96,23 +96,23 @@ class _RecipeDetailsState extends State<RecipeDetails> {
             children: [
               Align(
                 alignment: Alignment.topCenter,
-                child: !_isDeleting
-                    ? Hero(
-                        tag: widget.recipeImage,
-                        child: Image(
+                child: Hero(
+                  tag: widget.recipeImage,
+                  child: !_isDeleting
+                      ? Image(
                           height: (size.height / 2) + 50,
                           width: double.infinity,
                           fit: BoxFit.cover,
                           image: NetworkImage(widget.recipeImage),
+                        )
+                      : const Center(
+                          child: CircularProgressIndicator(
+                            backgroundColor: Colors.cyanAccent,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.yellow),
+                          ),
                         ),
-                      )
-                    : const Center(
-                        child: CircularProgressIndicator(
-                          backgroundColor: Colors.cyanAccent,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.yellow),
-                        ),
-                      ),
+                ),
               ),
               Positioned(
                 top: 40.0,
