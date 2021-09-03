@@ -15,6 +15,7 @@ import 'package:food_share/viewmodel/bottom_nav.dart';
 import 'package:food_share/widgets/background_image.dart';
 import 'package:food_share/widgets/rounded_button.dart';
 import 'package:food_share/widgets/text_input_field.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 final usersRef = FirebaseFirestore.instance.collection('users');
@@ -29,6 +30,8 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+
+
   final _usernameController = TextEditingController();
   final _displayNameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -150,51 +153,45 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       Stack(
                         children: [
                           Center(
-                            child: ClipOval(
-                              child: BackdropFilter(
-                                filter: ImageFilter.blur(
-                                  sigmaX: 3,
-                                  sigmaY: 3,
-                                ),
-                                child: CircleAvatar(
-                                  backgroundImage: FileImage(
-                                      Provider.of<SignUpUtils>(context,
-                                              listen: false)
-                                          .getUserAvatar),
-                                  radius: size.width * 0.14,
-                                  // ),
+                            child: Container(
+                              width: size.width * 0.38,
+                              height: size.height * 0.18,
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                 Radius.circular(100.0),
                                 ),
                               ),
+                              child: Lottie.asset('assets/lottie/profile-icon.json'),
                             ),
                           ),
-                          Positioned(
-                            top: size.height * 0.08,
-                            left: size.width * 0.56,
-                            child: GestureDetector(
-                              onTap: () {
-                                Provider.of<SignUpService>(context,
-                                        listen: false)
-                                    .showUserAvatar(context);
-                              },
-                              child: Container(
-                                height: size.width * 0.1,
-                                width: size.width * 0.1,
-                                decoration: BoxDecoration(
-                                  color: kBlue,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: kWhite,
-                                    width: 2,
-                                  ),
-                                ),
-                                child: Icon(
-                                  FontAwesomeIcons.upload,
-                                  color: kWhite,
-                                  size: size.width * 0.06,
-                                ),
-                              ),
-                            ),
-                          ),
+                          // Positioned(
+                          //   top: size.height * 0.08,
+                          //   left: size.width * 0.56,
+                          //   child: GestureDetector(
+                          //     onTap: () {
+                          //       Provider.of<SignUpService>(context,
+                          //               listen: false)
+                          //           .showUserAvatar(context);
+                          //     },
+                          //     child: Container(
+                          //       height: size.width * 0.1,
+                          //       width: size.width * 0.1,
+                          //       decoration: BoxDecoration(
+                          //         color: kBlue,
+                          //         shape: BoxShape.circle,
+                          //         border: Border.all(
+                          //           color: kWhite,
+                          //           width: 2,
+                          //         ),
+                          //       ),
+                          //       child: Icon(
+                          //         FontAwesomeIcons.upload,
+                          //         color: kWhite,
+                          //         size: size.width * 0.06,
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                       SizedBox(
