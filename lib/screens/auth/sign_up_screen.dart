@@ -7,16 +7,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/models/user_model.dart';
 import 'package:food_share/services/auth_service.dart';
-import 'package:food_share/services/firebase_operations.dart';
-import 'package:food_share/services/screens/sign_up_service.dart';
 import 'package:food_share/utils/pallete.dart';
-import 'package:food_share/utils/sign_up_util.dart';
 import 'package:food_share/viewmodel/bottom_nav.dart';
 import 'package:food_share/widgets/background_image.dart';
 import 'package:food_share/widgets/rounded_button.dart';
 import 'package:food_share/widgets/text_input_field.dart';
 import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
 
 final usersRef = FirebaseFirestore.instance.collection('users');
 CustomUser? currentUser;

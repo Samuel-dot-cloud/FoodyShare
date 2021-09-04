@@ -24,12 +24,16 @@ class _RecipeCardState extends State<RecipeCard> {
   void initState() {
     checkIfLiked();
     _isButtonDisabled = false;
+    _isNotPostOwner =
+        Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
+            widget.recipeDoc['authorId'];
     super.initState();
   }
 
   bool saved = false;
   bool _isLiked = false;
   late bool _isButtonDisabled;
+  late bool _isNotPostOwner;
 
 
 
@@ -49,9 +53,6 @@ class _RecipeCardState extends State<RecipeCard> {
 
   @override
   Widget build(BuildContext context) {
-    bool _isNotPostOwner =
-        Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
-            widget.recipeDoc['authorId'];
 
     return Column(
       children: [
