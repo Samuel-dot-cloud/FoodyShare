@@ -11,28 +11,41 @@ import 'package:timeago/timeago.dart' as timeago;
 
 final commentsRef = FirebaseFirestore.instance.collection('comments');
 
-class CommentsSection extends StatelessWidget {
+class CommentsSection extends StatefulWidget {
   CommentsSection({Key? key, required this.postId, required this.authorId})
       : super(key: key);
 
   final String postId;
   final String authorId;
 
+  @override
+  State<CommentsSection> createState() => _CommentsSectionState();
+}
+
+class _CommentsSectionState extends State<CommentsSection> {
   final TextEditingController _commentController = TextEditingController();
 
   Future addCommentCount() async {
     var doc = await commentsRef
-        .doc(postId)
+        .doc(widget.postId)
         .collection('count')
         .doc('commentCount')
         .get();
 
     if (doc.exists) {
-      commentsRef.doc(postId).collection('count').doc('commentCount').update({
+      commentsRef
+          .doc(widget.postId)
+          .collection('count')
+          .doc('commentCount')
+          .update({
         'count': FieldValue.increment(1),
       });
     } else {
-      commentsRef.doc(postId).collection('count').doc('commentCount').set({
+      commentsRef
+          .doc(widget.postId)
+          .collection('count')
+          .doc('commentCount')
+          .set({
         'count': FieldValue.increment(1),
       });
     }
@@ -41,9 +54,10 @@ class CommentsSection extends StatelessWidget {
   displayComments() {
     return StreamBuilder<QuerySnapshot>(
       stream: commentsRef
-          .doc(postId)
+          .doc(widget.postId)
           .collection('comments')
-          .orderBy('timestamp', descending: false)
+          .orderBy('timestamp', descending: true)
+          .limit(10)
           .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
@@ -77,7 +91,7 @@ class CommentsSection extends StatelessWidget {
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (BuildContext context, int index) => Comment(
               commentDoc: snapshot.data!.docs[index],
-              authorId: authorId,
+              authorId: widget.authorId,
             ),
           );
         }
@@ -85,11 +99,11 @@ class CommentsSection extends StatelessWidget {
     );
   }
 
-  addComment(BuildContext context) {
+  addComment() {
     bool _isNotPostOwner =
         Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
-            authorId;
-    commentsRef.doc(postId).collection('comments').add({
+            widget.authorId;
+    commentsRef.doc(widget.postId).collection('comments').add({
       'userUID':
           Provider.of<FirebaseOperations>(context, listen: false).getUserId,
       'comment': _commentController.text,
@@ -100,10 +114,10 @@ class CommentsSection extends StatelessWidget {
     if (_isNotPostOwner) {
       Provider.of<FirebaseOperations>(context, listen: false)
           .addCommentToActivityFeed(
-        authorId,
+        widget.authorId,
         {
           'type': 'comment',
-          'postId': postId,
+          'postId': widget.postId,
           'userUID':
               Provider.of<FirebaseOperations>(context, listen: false).getUserId,
           'timestamp': Timestamp.now(),
@@ -142,7 +156,7 @@ class CommentsSection extends StatelessWidget {
                     textColor: Colors.white,
                     fontSize: 16.0);
               } else {
-                addComment(context);
+                addComment();
               }
             },
             child: const Text(
