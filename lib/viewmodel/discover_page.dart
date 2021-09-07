@@ -26,7 +26,7 @@ class _DiscoverRecipeState extends State<DiscoverRecipe> {
             ),
             StreamBuilder<QuerySnapshot>(
               stream:
-                  recipesRef.orderBy("timestamp", descending: true).snapshots(),
+                  recipesRef.orderBy("timestamp", descending: true).limit(10).snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return const Text('Error');

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:food_share/routes/alt_profile_arguments.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/services/screens/profile_helper.dart';
 import 'package:food_share/utils/pallete.dart';
@@ -11,20 +12,12 @@ import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class AltProfile extends StatefulWidget {
-  const AltProfile(
-      {Key? key,
-      required this.userUID,
-      required this.authorDisplayName,
-      required this.authorUsername,
-      required this.authorBio,
-      required this.authorImage})
-      : super(key: key);
+  final AltProfileArguments arguments;
 
-  final String userUID,
-      authorDisplayName,
-      authorUsername,
-      authorBio,
-      authorImage;
+  const AltProfile({
+    Key? key,
+    required this.arguments,
+  }) : super(key: key);
 
   @override
   _AltProfileState createState() => _AltProfileState();
@@ -48,7 +41,7 @@ class _AltProfileState extends State<AltProfile> {
     DocumentSnapshot doc = await FirebaseFirestore.instance
         .collection('users')
         .doc(
-          widget.userUID,
+          widget.arguments.userUID,
         )
         .collection('followers')
         .doc(
@@ -73,7 +66,7 @@ class _AltProfileState extends State<AltProfile> {
             child: Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(widget.authorImage),
+                  image: NetworkImage(widget.arguments.authorImage),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -166,7 +159,7 @@ class _AltProfileState extends State<AltProfile> {
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('users')
-                    .doc(widget.userUID)
+                    .doc(widget.arguments.userUID)
                     .collection('recipes')
                     .snapshots(),
                 builder: (context, snapshot) {
@@ -256,22 +249,24 @@ class _AltProfileState extends State<AltProfile> {
                             ? Provider.of<FirebaseOperations>(context,
                                     listen: false)
                                 .unfollowUser(
-                                widget.userUID,
+                                widget.arguments.userUID,
                                 Provider.of<FirebaseOperations>(context,
                                         listen: false)
                                     .getUserId,
                                 Provider.of<FirebaseOperations>(context,
                                         listen: false)
                                     .getUserId,
-                                widget.userUID,
+                                widget.arguments.userUID,
                               )
                                 .whenComplete(() {
-                                followNotification(context,
-                                    'Unfollowed @' + widget.authorUsername);
+                                followNotification(
+                                    context,
+                                    'Unfollowed @' +
+                                        widget.arguments.authorUsername);
                                 Provider.of<FirebaseOperations>(context,
                                         listen: false)
                                     .removeFollowFromActivityFeed(
-                                  widget.userUID,
+                                  widget.arguments.userUID,
                                   Provider.of<FirebaseOperations>(context,
                                           listen: false)
                                       .getUserId,
@@ -284,7 +279,7 @@ class _AltProfileState extends State<AltProfile> {
                             : Provider.of<FirebaseOperations>(context,
                                     listen: false)
                                 .followUser(
-                                    widget.userUID,
+                                    widget.arguments.userUID,
                                     Provider.of<FirebaseOperations>(context,
                                             listen: false)
                                         .getUserId,
@@ -299,23 +294,25 @@ class _AltProfileState extends State<AltProfile> {
                                     Provider.of<FirebaseOperations>(context,
                                             listen: false)
                                         .getUserId,
-                                    widget.userUID,
+                                    widget.arguments.userUID,
                                     {
-                                      'userUID': widget.userUID,
+                                      'userUID': widget.arguments.userUID,
                                       'timestamp': Timestamp.now(),
                                     })
                                 .whenComplete(() {
-                                followNotification(context,
-                                    'Followed @' + widget.authorUsername);
+                                followNotification(
+                                    context,
+                                    'Followed @' +
+                                        widget.arguments.authorUsername);
                                 Provider.of<FirebaseOperations>(context,
                                         listen: false)
                                     .addFollowToActivityFeed(
-                                  widget.userUID,
+                                  widget.arguments.userUID,
                                   Provider.of<FirebaseOperations>(context,
                                           listen: false)
                                       .getUserId,
                                   {
-                                    'profileId': widget.userUID,
+                                    'profileId': widget.arguments.userUID,
                                     'userUID': Provider.of<FirebaseOperations>(
                                             context,
                                             listen: false)
@@ -367,7 +364,7 @@ class _AltProfileState extends State<AltProfile> {
           child: StreamBuilder<DocumentSnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('users')
-                .doc(widget.userUID)
+                .doc(widget.arguments.userUID)
                 .collection('counts')
                 .doc('recipeCount')
                 .snapshots(),
@@ -395,13 +392,13 @@ class _AltProfileState extends State<AltProfile> {
         GestureDetector(
           onTap: () {
             Provider.of<ProfileHelper>(context, listen: false)
-                .checkFollowerSheet(context, widget.userUID);
+                .checkFollowerSheet(context, widget.arguments.userUID);
           },
           child: SizedBox(
             child: StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('users')
-                  .doc(widget.userUID)
+                  .doc(widget.arguments.userUID)
                   .collection('counts')
                   .doc('followerCount')
                   .snapshots(),
@@ -430,13 +427,13 @@ class _AltProfileState extends State<AltProfile> {
         GestureDetector(
           onTap: () {
             Provider.of<ProfileHelper>(context, listen: false)
-                .checkFollowingSheet(context, widget.userUID);
+                .checkFollowingSheet(context, widget.arguments.userUID);
           },
           child: SizedBox(
             child: StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('users')
-                  .doc(widget.userUID)
+                  .doc(widget.arguments.userUID)
                   .collection('counts')
                   .doc('followingCount')
                   .snapshots(),
@@ -491,7 +488,7 @@ class _AltProfileState extends State<AltProfile> {
     return Column(
       children: [
         Text(
-          widget.authorDisplayName,
+          widget.arguments.authorDisplayName,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             fontWeight: FontWeight.w700,
@@ -502,7 +499,7 @@ class _AltProfileState extends State<AltProfile> {
           height: 1.0,
         ),
         Text(
-          '@' + widget.authorUsername,
+          '@' + widget.arguments.authorUsername,
           style: const TextStyle(
             fontStyle: FontStyle.normal,
             fontSize: 22.0,
@@ -513,7 +510,7 @@ class _AltProfileState extends State<AltProfile> {
           height: 3.0,
         ),
         Text(
-          "\"" + widget.authorBio + "\"",
+          "\"" + widget.arguments.authorBio + "\"",
           style: GoogleFonts.robotoMono(
             textStyle: const TextStyle(
               fontStyle: FontStyle.normal,

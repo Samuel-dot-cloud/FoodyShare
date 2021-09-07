@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:food_share/routes/recipe_details_arguments.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/bottom_nav.dart';
@@ -15,28 +16,11 @@ import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class RecipeDetails extends StatefulWidget {
-  final String recipeName,
-      description,
-      authorUserUID,
-      recipeImage,
-      servings,
-      cookingTime,
-      postID;
-  final List ingredients, preparation;
-  final Timestamp recipeTimestamp;
+  final RecipeDetailsArguments arguments;
 
   const RecipeDetails({
     Key? key,
-    required this.recipeName,
-    required this.description,
-    required this.authorUserUID,
-    required this.recipeImage,
-    required this.recipeTimestamp,
-    required this.servings,
-    required this.cookingTime,
-    required this.postID,
-    required this.ingredients,
-    required this.preparation,
+    required this.arguments,
   }) : super(key: key);
 
   @override
@@ -60,7 +44,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   checkIfLiked() async {
     DocumentSnapshot doc = await FirebaseFirestore.instance
         .collection('recipes')
-        .doc(widget.postID)
+        .doc(widget.arguments.postID)
         .collection('likes')
         .doc(
           Provider.of<FirebaseOperations>(context, listen: false).getUserId,
@@ -75,7 +59,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   Widget build(BuildContext context) {
     bool _isNotPostOwner =
         Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
-            widget.authorUserUID;
+            widget.arguments.authorUserUID;
 
     final String currentUserId =
         Provider.of<FirebaseOperations>(context, listen: false).getUserId;
@@ -97,13 +81,13 @@ class _RecipeDetailsState extends State<RecipeDetails> {
               Align(
                 alignment: Alignment.topCenter,
                 child: Hero(
-                  tag: widget.recipeImage,
+                  tag: widget.arguments.recipeImage,
                   child: !_isDeleting
                       ? Image(
                           height: (size.height / 2) + 50,
                           width: double.infinity,
                           fit: BoxFit.cover,
-                          image: NetworkImage(widget.recipeImage),
+                          image: NetworkImage(widget.arguments.recipeImage),
                         )
                       : const Center(
                           child: CircularProgressIndicator(
@@ -123,7 +107,8 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                       _isAdded
                           ? Provider.of<FirebaseOperations>(context,
                                   listen: false)
-                              .removeFromFavorites(currentUserId, widget.postID)
+                              .removeFromFavorites(
+                                  currentUserId, widget.arguments.postID)
                               .whenComplete(() {
                               setState(() {
                                 _isAdded = false;
@@ -133,9 +118,9 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                                   listen: false)
                               .addToFavorites(
                               currentUserId,
-                              widget.postID,
+                              widget.arguments.postID,
                               {
-                                'postId': widget.postID,
+                                'postId': widget.arguments.postID,
                                 'timestamp': Timestamp.now(),
                               },
                             ).whenComplete(() {
@@ -196,14 +181,14 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                 height: 30.0,
               ),
               Text(
-                widget.recipeName,
+                widget.arguments.recipeName,
                 style: _textTheme.headline6,
               ),
               const SizedBox(
                 height: 10.0,
               ),
               Text(
-                widget.description,
+                widget.arguments.description,
                 style: GoogleFonts.inconsolata(
                   textStyle: const TextStyle(
                     fontWeight: FontWeight.w400,
@@ -236,7 +221,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                                               listen: false)
                                           .removeLike(
                                           context,
-                                          widget.postID,
+                                          widget.arguments.postID,
                                           Provider.of<FirebaseOperations>(
                                                   context,
                                                   listen: false)
@@ -252,7 +237,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                                               listen: false)
                                           .addLike(
                                           context,
-                                          widget.postID,
+                                          widget.arguments.postID,
                                           Provider.of<FirebaseOperations>(
                                                   context,
                                                   listen: false)
@@ -268,8 +253,8 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                                                     context,
                                                     listen: false)
                                                 .addLikeToActivityFeed(
-                                              widget.authorUserUID,
-                                              widget.postID,
+                                              widget.arguments.authorUserUID,
+                                              widget.arguments.postID,
                                               {
                                                 'type': 'like',
                                                 'userUID': Provider.of<
@@ -277,7 +262,8 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                                                         context,
                                                         listen: false)
                                                     .getUserId,
-                                                'postId': widget.postID,
+                                                'postId':
+                                                    widget.arguments.postID,
                                                 'timestamp': Timestamp.now(),
                                               },
                                             );
@@ -295,7 +281,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                         StreamBuilder<DocumentSnapshot>(
                           stream: FirebaseFirestore.instance
                               .collection('recipes')
-                              .doc(widget.postID)
+                              .doc(widget.arguments.postID)
                               .collection('likes')
                               .doc('like_count')
                               .snapshots(),
@@ -328,7 +314,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                         const SizedBox(
                           width: 5.0,
                         ),
-                        Text(widget.cookingTime + '\''),
+                        Text(widget.arguments.cookingTime + '\''),
                         const SizedBox(
                           width: 10.0,
                         ),
@@ -342,7 +328,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                         StreamBuilder<DocumentSnapshot>(
                           stream: FirebaseFirestore.instance
                               .collection('comments')
-                              .doc(widget.postID)
+                              .doc(widget.arguments.postID)
                               .collection('count')
                               .doc('commentCount')
                               .snapshots(),
@@ -370,7 +356,8 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                         const SizedBox(
                           width: 5.0,
                         ),
-                        Text(timeago.format(widget.recipeTimestamp.toDate())),
+                        Text(timeago
+                            .format(widget.arguments.recipeTimestamp.toDate())),
                         const SizedBox(
                           width: 10.0,
                         ),
@@ -390,7 +377,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                         const SizedBox(
                           width: 5.0,
                         ),
-                        Text(widget.servings + ' servings'),
+                        Text(widget.arguments.servings + ' servings'),
                       ],
                     ),
                   ),
@@ -443,14 +430,14 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                         child: TabBarView(
                           children: [
                             IngredientsSection(
-                              ingredients: widget.ingredients,
+                              ingredients: widget.arguments.ingredients,
                             ),
                             PreparationSection(
-                              preparations: widget.preparation,
+                              preparations: widget.arguments.preparation,
                             ),
                             CommentsSection(
-                              postId: widget.postID,
-                              authorId: widget.authorUserUID,
+                              postId: widget.arguments.postID,
+                              authorId: widget.arguments.authorUserUID,
                             )
                           ],
                         ),
@@ -472,7 +459,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
         .collection('users')
         .doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId)
         .collection('favorites')
-        .doc(widget.postID)
+        .doc(widget.arguments.postID)
         .get();
     setState(() {
       _isAdded = doc.exists;
@@ -577,7 +564,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                     _isDeleting = true;
                   });
                   Provider.of<FirebaseOperations>(context, listen: false)
-                      .deleteRecipe(widget.postID)
+                      .deleteRecipe(widget.arguments.postID)
                       .whenComplete(() {
                     setState(() {
                       _isDeleting = false;
