@@ -6,9 +6,9 @@ import 'package:food_share/routes/recipe_details_arguments.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/bottom_nav.dart';
-import 'package:food_share/widgets/comments_section.dart';
-import 'package:food_share/widgets/ingredients_section.dart';
-import 'package:food_share/widgets/preparation_section.dart';
+import 'package:food_share/widgets/recipe/comments_section.dart';
+import 'package:food_share/widgets/recipe/ingredients_section.dart';
+import 'package:food_share/widgets/recipe/preparation_section.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -581,7 +581,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                     Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const BottomNav()),
+                            builder: (context) => BottomNav()),
                         (route) => false);
                   });
                 },

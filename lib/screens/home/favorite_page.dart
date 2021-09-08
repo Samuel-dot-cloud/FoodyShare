@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/viewmodel/loading_animation.dart';
-import 'package:food_share/widgets/favorite_post_image.dart';
+import 'package:food_share/widgets/home/favorite_post_image.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -19,8 +19,6 @@ class FavoriteRecipes extends StatefulWidget {
 class _FavoriteRecipesState extends State<FavoriteRecipes> {
   @override
   Widget build(BuildContext context) {
-    final String currentUserId =
-        Provider.of<FirebaseOperations>(context, listen: false).getUserId;
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(

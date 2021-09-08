@@ -6,7 +6,7 @@ import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/screens/auth/login_screen.dart';
 import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/services/firebase_operations.dart';
-import 'package:food_share/services/screens/profile_helper.dart';
+import 'package:food_share/helpers/profile_helper.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/loading_animation.dart';
 import 'package:provider/provider.dart';

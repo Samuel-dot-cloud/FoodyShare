@@ -1,11 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/routes/app_routes.dart';
-import 'package:food_share/screens/auth/login_screen.dart';
 import 'package:food_share/services/firebase_operations.dart';
+import 'package:food_share/utils/constants.dart';
 import 'package:food_share/utils/pallete.dart';
-import 'package:food_share/viewmodel/bottom_nav.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
@@ -58,7 +56,7 @@ class _StartupViewState extends State<StartupView> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: const [
                 Text(
-                  'FoodyShare ',
+                  Constants.appName,
                   style: TextStyle(
                     color: kBlue,
                     fontWeight: FontWeight.bold,
@@ -66,7 +64,7 @@ class _StartupViewState extends State<StartupView> {
                   ),
                 ),
                 Text(
-                  'setting up...',
+                  ' setting up...',
                   style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.normal,

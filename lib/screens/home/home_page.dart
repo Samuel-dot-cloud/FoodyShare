@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food_share/screens/favorite_page.dart';
+import 'package:food_share/screens/home/favorite_page.dart';
 import 'package:food_share/utils/constants.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/discover_page.dart';

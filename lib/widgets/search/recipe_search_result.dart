@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:food_share/models/recipe_model.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/recipe_details_arguments.dart';
-import 'package:food_share/screens/recipe_details.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class RecipeResult extends StatelessWidget {

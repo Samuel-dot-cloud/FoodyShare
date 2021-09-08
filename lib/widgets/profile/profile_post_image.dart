@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/recipe_details_arguments.dart';
-import 'package:food_share/screens/recipe_details.dart';
 
 class ProfilePostImage extends StatefulWidget {
   const ProfilePostImage({

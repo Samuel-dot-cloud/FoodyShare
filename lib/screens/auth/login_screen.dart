@@ -4,9 +4,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/utils/pallete.dart';
-import 'package:food_share/widgets/background_image.dart';
+import 'package:food_share/widgets/auth/background_image.dart';
 import 'package:food_share/widgets/rounded_button.dart';
-import 'package:food_share/widgets/text_input_field.dart';
+import 'package:food_share/widgets/auth/text_input_field.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);

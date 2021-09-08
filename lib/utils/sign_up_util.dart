@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/services/firebase_operations.dart';
-import 'package:food_share/services/screens/sign_up_service.dart';
+import 'package:food_share/services/sign_up_service.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';

@@ -6,7 +6,7 @@ import 'package:food_share/screens/auth/forgot_password.dart';
 import 'package:food_share/screens/auth/login_screen.dart';
 import 'package:food_share/screens/auth/sign_up_screen.dart';
 import 'package:food_share/screens/profile/alt_profile.dart';
-import 'package:food_share/screens/recipe_details.dart';
+import 'package:food_share/screens/home/recipe_details.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/bottom_nav.dart';
 import 'package:lottie/lottie.dart';

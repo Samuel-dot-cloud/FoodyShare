@@ -13,7 +13,7 @@ import 'package:timeago/timeago.dart' as timeago;
 final commentsRef = FirebaseFirestore.instance.collection('comments');
 
 class CommentsSection extends StatefulWidget {
-  CommentsSection({Key? key, required this.postId, required this.authorId})
+  const CommentsSection({Key? key, required this.postId, required this.authorId})
       : super(key: key);
 
   final String postId;

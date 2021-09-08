@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/recipe_details_arguments.dart';
-import 'package:food_share/screens/recipe_details.dart';
+import 'package:food_share/screens/home/recipe_details.dart';
 import 'package:lottie/lottie.dart';
 
 Widget? mediaPreview;

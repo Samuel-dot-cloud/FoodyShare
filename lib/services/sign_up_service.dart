@@ -4,7 +4,7 @@ import 'package:food_share/utils/sign_up_util.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-import '../firebase_operations.dart';
+import 'firebase_operations.dart';
 
 class SignUpService with ChangeNotifier {
   showUserAvatar(BuildContext context) {

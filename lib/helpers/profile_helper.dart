@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/utils/sign_up_util.dart';
-import 'package:food_share/widgets/user_tile.dart';
+import 'package:food_share/widgets/profile/user_tile.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-import '../firebase_operations.dart';
+import '../services/firebase_operations.dart';
 
 class ProfileHelper with ChangeNotifier {
   checkFollowingSheet(BuildContext context, String userId) {
