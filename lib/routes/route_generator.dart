@@ -6,37 +6,47 @@ import 'package:food_share/screens/auth/forgot_password.dart';
 import 'package:food_share/screens/auth/login_screen.dart';
 import 'package:food_share/screens/auth/sign_up_screen.dart';
 import 'package:food_share/screens/profile/alt_profile.dart';
-import 'package:food_share/screens/recipe_details.dart';
+import 'package:food_share/screens/home/recipe_details.dart';
+import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/bottom_nav.dart';
+import 'package:lottie/lottie.dart';
 
-class RouteGenerator{
-  static Route<dynamic> generateRoute(BuildContext context, RouteSettings settings){
-    final argument1 = ModalRoute.of(context)!.settings.arguments as AltProfileArguments;
-    final argument2 = ModalRoute.of(context)!.settings.arguments as RecipeDetailsArguments;
-    switch(settings.name){
+class RouteGenerator {
+  static Route<dynamic> generateRoute(RouteSettings settings) {
+    switch (settings.name) {
       case AppRoutes.login:
-        return MaterialPageRoute(builder: (_) => const LoginScreen());
+        return buildRoute(const LoginScreen(), settings: settings);
       case AppRoutes.register:
-        return MaterialPageRoute(builder: (_) => const SignUpScreen());
+        return buildRoute(const SignUpScreen(), settings: settings);
       case AppRoutes.forgotPassword:
-        return MaterialPageRoute(builder: (_) => const ForgotPassword());
+        return buildRoute(const ForgotPassword(), settings: settings);
       case AppRoutes.bottomNav:
-        return MaterialPageRoute(builder: (_) => const BottomNav());
+        return buildRoute(const BottomNav(), settings: settings);
       case AppRoutes.altProfile:
-        return MaterialPageRoute(builder: (_) => AltProfile(arguments: argument1));
+        final argument1 = settings.arguments as AltProfileArguments;
+        return buildRoute(AltProfile(arguments: argument1), settings: settings);
       case AppRoutes.recipeDetails:
-        return MaterialPageRoute(builder: (_) => RecipeDetails(arguments: argument2));
+        final argument2 = settings.arguments as RecipeDetailsArguments;
+        return buildRoute(RecipeDetails(arguments: argument2),
+            settings: settings);
       default:
         return _errorRoute();
     }
   }
 
-  static Route<dynamic> _errorRoute(){
+  static MaterialPageRoute buildRoute(Widget child,
+      {required RouteSettings settings}) {
+    return MaterialPageRoute(
+        settings: settings, builder: (BuildContext context) => child);
+  }
+
+  static Route<dynamic> _errorRoute() {
     return MaterialPageRoute(builder: (_) {
       return Scaffold(
         appBar: AppBar(
+          backgroundColor: kBlue,
           title: const Text(
-              'ERROR!!',
+            'ERROR!!',
             style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
@@ -44,13 +54,28 @@ class RouteGenerator{
           ),
           centerTitle: true,
         ),
-        body: const Center(
-          child: Text('Seems you have navigated to a wrong route!!'),
+        body: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 450.0,
+                  width: 450.0,
+                  child: Lottie.asset('assets/lottie/error.json'),
+                ),
+                const Text(
+                  'Seems the route you\'ve navigated to doesn\'t exist!!',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
         ),
       );
     });
   }
-
-
 }
-

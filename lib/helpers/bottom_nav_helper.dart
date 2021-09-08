@@ -6,7 +6,8 @@ import 'package:food_share/utils/pallete.dart';
 import 'package:provider/provider.dart';
 
 class BottomNavHelper with ChangeNotifier {
-  Widget bottomNavigationBar(BuildContext context, int index, PageController pageController) {
+  Widget bottomNavigationBar(
+      BuildContext context, int index, PageController pageController) {
     return CurvedNavigationBar(
       index: index,
       animationCurve: Curves.bounceIn,

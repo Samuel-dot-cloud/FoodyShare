@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:food_share/helpers/bottom_nav_helper.dart';
-import 'package:food_share/screens/activity_feed.dart';
-import 'package:food_share/screens/auth/sign_up_screen.dart';
-import 'package:food_share/screens/home_page.dart';
-import 'package:food_share/screens/search_page.dart';
+import 'package:food_share/screens/feed/activity_feed.dart';
+import 'package:food_share/screens/home/home_page.dart';
+import 'package:food_share/screens/recipes/upload_image_page.dart';
+import 'package:food_share/screens/search/search_page.dart';
 import 'package:food_share/screens/profile/user_profile.dart';
 import 'package:food_share/services/connectivity_provider.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/no_internet.dart';
-import 'package:food_share/widgets/create_recipe_page/upload_image_page.dart';
 import 'package:provider/provider.dart';
 
 class BottomNav extends StatefulWidget {

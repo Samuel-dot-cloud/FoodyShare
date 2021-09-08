@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_share/models/recipe_model.dart';
-import 'package:food_share/screens/recipe_details.dart';
+import 'package:food_share/routes/app_routes.dart';
+import 'package:food_share/routes/recipe_details_arguments.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class RecipeResult extends StatelessWidget {
@@ -18,22 +19,22 @@ class RecipeResult extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: () {
-                Navigator.push(
+                final args = RecipeDetailsArguments(
+                  servings: recipeModel.servings,
+                  recipeName: recipeModel.title,
+                  recipeImage: recipeModel.imgPath,
+                  postID: recipeModel.id,
+                  description: recipeModel.description,
+                  authorUserUID: recipeModel.authorId,
+                  cookingTime: recipeModel.cookingTime,
+                  ingredients: recipeModel.ingredients,
+                  recipeTimestamp: recipeModel.createdAt,
+                  preparation: recipeModel.preparation,
+                );
+                Navigator.pushNamed(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => RecipeDetails(
-                      servings: recipeModel.servings,
-                      recipeName: recipeModel.title,
-                      recipeImage: recipeModel.imgPath,
-                      postID: recipeModel.id,
-                      description: recipeModel.description,
-                      authorUserUID: recipeModel.authorId,
-                      cookingTime: recipeModel.cookingTime,
-                      ingredients: recipeModel.ingredients,
-                      recipeTimestamp: recipeModel.createdAt,
-                      preparation: recipeModel.preparation,
-                    ),
-                  ),
+                  AppRoutes.recipeDetails,
+                  arguments: args,
                 );
               },
               child: ListTile(

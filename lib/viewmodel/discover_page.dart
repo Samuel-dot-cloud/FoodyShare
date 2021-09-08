@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:food_share/widgets/recipe_card.dart';
+import 'package:food_share/widgets/recipe/recipe_card.dart';
 
 import 'loading_animation.dart';
 

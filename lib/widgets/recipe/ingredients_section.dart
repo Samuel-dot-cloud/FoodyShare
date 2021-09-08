@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:food_share/models/recipe_model.dart';
 
 class IngredientsSection extends StatelessWidget {
   final List ingredients;
