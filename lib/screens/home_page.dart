@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_share/screens/favorite_page.dart';
+import 'package:food_share/utils/constants.dart';
+import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/discover_page.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
@@ -15,7 +17,32 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+        title: Text(
+          Constants.appName,
+          style: kBodyText.copyWith(
+            color: Colors.black,
+            fontSize: 25.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(
+              right: 16.0,
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.category_outlined,
+                color: Colors.black,
+              ),
+              onPressed: () {
+              },
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: DefaultTabController(
@@ -23,9 +50,6 @@ class _HomePageState extends State<HomePage> {
           initialIndex: 0,
           child: Column(
             children: [
-              const SizedBox(
-                height: 40.0,
-              ),
               TabBar(
                 isScrollable: true,
                 tabs: [
