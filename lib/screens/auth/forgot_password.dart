@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/background_image.dart';
@@ -46,10 +47,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               backgroundColor: Colors.green,
               textColor: Colors.white,
               fontSize: 16.0);
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const LoginScreen()),
-              (route) => false);
+          Navigator.pushReplacementNamed(context, AppRoutes.login);
         } else {
           setState(() {
             isLoading = false;

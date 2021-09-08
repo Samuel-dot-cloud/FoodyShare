@@ -5,6 +5,10 @@ class AltProfileArguments {
   final String authorBio;
   final String authorImage;
 
-  const AltProfileArguments({required this.userUID, required this.authorDisplayName,
-      required this.authorUsername, required this.authorBio, required this.authorImage});
+  const AltProfileArguments(
+      {required this.userUID,
+      required this.authorDisplayName,
+      required this.authorUsername,
+      required this.authorBio,
+      required this.authorImage});
 }

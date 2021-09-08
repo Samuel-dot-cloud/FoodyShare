@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:food_share/screens/profile/alt_profile.dart';
+import 'package:food_share/routes/alt_profile_arguments.dart';
+import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/loading_animation.dart';
@@ -205,17 +206,17 @@ class Comment extends StatelessWidget {
               return ListTile(
                 onTap: () {
                   if (_isNotCurrentUser) {
-                    Navigator.push(
+                    final args = AltProfileArguments(
+                      userUID: commentDoc['userUID'],
+                      authorImage: snapshot.data!['photoUrl'],
+                      authorUsername: snapshot.data!['username'],
+                      authorDisplayName: snapshot.data!['displayName'],
+                      authorBio: snapshot.data!['bio'],
+                    );
+                    Navigator.pushNamed(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => AltProfile(
-                          userUID: commentDoc['userUID'],
-                          authorImage: snapshot.data!['photoUrl'],
-                          authorUsername: snapshot.data!['username'],
-                          authorDisplayName: snapshot.data!['displayName'],
-                          authorBio: snapshot.data!['bio'],
-                        ),
-                      ),
+                      AppRoutes.altProfile,
+                      arguments: args,
                     );
                   }
                 },

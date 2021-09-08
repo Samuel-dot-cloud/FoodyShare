@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/utils/pallete.dart';
-import 'package:food_share/viewmodel/bottom_nav.dart';
 import 'package:food_share/widgets/background_image.dart';
 import 'package:food_share/widgets/rounded_button.dart';
 import 'package:food_share/widgets/text_input_field.dart';
@@ -53,10 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
               backgroundColor: Colors.green,
               textColor: Colors.white,
               fontSize: 16.0);
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const BottomNav()),
-              (route) => false);
+          Navigator.pushReplacementNamed(context, AppRoutes.bottomNav);
         } else {
           setState(() {
             isLoading = false;
@@ -125,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         GestureDetector(
                           onTap: () =>
-                              Navigator.pushNamed(context, 'ForgotPassword'),
+                              Navigator.pushNamed(context, AppRoutes.forgotPassword),
                           child: const Text(
                             'Forgot Password?',
                             style: kBodyText,
@@ -146,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                     GestureDetector(
-                      onTap: () => Navigator.pushNamed(context, 'SignUp'),
+                      onTap: () => Navigator.pushNamed(context, AppRoutes.register),
                       child: Container(
                         child: const Text(
                           'Create A New Account',

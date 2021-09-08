@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:food_share/Viewmodel/bottom_nav.dart';
 import 'package:food_share/helpers/bottom_nav_helper.dart';
+import 'package:food_share/routes/alt_profile_arguments.dart';
+import 'package:food_share/routes/app_routes.dart';
+import 'package:food_share/routes/recipe_details_arguments.dart';
+import 'package:food_share/routes/route_generator.dart';
 import 'package:food_share/screens/auth/forgot_password.dart';
 import 'package:food_share/screens/auth/startup_view.dart';
 import 'package:food_share/screens/auth/login_screen.dart';
 import 'package:food_share/screens/auth/sign_up_screen.dart';
 import 'package:food_share/screens/onboard/onboarding_screen.dart';
+import 'package:food_share/screens/profile/alt_profile.dart';
+import 'package:food_share/screens/recipe_details.dart';
 import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/services/connectivity_provider.dart';
 import 'package:food_share/services/firebase_operations.dart';
@@ -18,7 +24,6 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 int? isViewed;
 
@@ -73,15 +78,13 @@ class MyApp extends StatelessWidget {
         textTheme:
             GoogleFonts.josefinSansTextTheme(Theme.of(context).textTheme),
       ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => isViewed !=0 ? const OnboardingScreen() : const Home(),
-        'home': (context) => const BottomNav(),
-        'login': (context) => const LoginScreen(),
-        'ForgotPassword': (context) => const ForgotPassword(),
-        'SignUp': (context) => const SignUpScreen(),
-      },
+      home: getInitialPage(),
+      onGenerateRoute: RouteGenerator.generateRoute,
     );
+  }
+
+  Widget getInitialPage() {
+    return isViewed != 0 ? const OnboardingScreen() : const Home();
   }
 }
 

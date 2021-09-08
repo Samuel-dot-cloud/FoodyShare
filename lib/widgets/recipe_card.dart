@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:food_share/screens/profile/alt_profile.dart';
-import 'package:food_share/screens/recipe_details.dart';
+import 'package:food_share/routes/alt_profile_arguments.dart';
+import 'package:food_share/routes/app_routes.dart';
+import 'package:food_share/routes/recipe_details_arguments.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:provider/provider.dart';
@@ -18,8 +19,6 @@ class RecipeCard extends StatefulWidget {
 }
 
 class _RecipeCardState extends State<RecipeCard> {
-
-
   @override
   void initState() {
     checkIfLiked();
@@ -34,8 +33,6 @@ class _RecipeCardState extends State<RecipeCard> {
   bool _isLiked = false;
   late bool _isButtonDisabled;
   late bool _isNotPostOwner;
-
-
 
   checkIfLiked() async {
     DocumentSnapshot doc = await FirebaseFirestore.instance
@@ -53,7 +50,6 @@ class _RecipeCardState extends State<RecipeCard> {
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       children: [
         Stack(
@@ -61,23 +57,25 @@ class _RecipeCardState extends State<RecipeCard> {
             Align(
               alignment: Alignment.topCenter,
               child: GestureDetector(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => RecipeDetails(
-                      cookingTime: widget.recipeDoc['cookingTime'],
-                      recipeName: widget.recipeDoc['name'],
-                      description: widget.recipeDoc['description'],
-                      recipeImage: widget.recipeDoc['mediaUrl'],
-                      servings: widget.recipeDoc['servings'],
-                      authorUserUID: widget.recipeDoc['authorId'],
-                      preparation: widget.recipeDoc['preparation'],
-                      recipeTimestamp: widget.recipeDoc['timestamp'],
-                      postID: widget.recipeDoc['postId'],
-                      ingredients: widget.recipeDoc['ingredients'],
-                    ),
-                  ),
-                ),
+                onTap: () {
+                  final args = RecipeDetailsArguments(
+                    cookingTime: widget.recipeDoc['cookingTime'],
+                    recipeName: widget.recipeDoc['name'],
+                    description: widget.recipeDoc['description'],
+                    recipeImage: widget.recipeDoc['mediaUrl'],
+                    servings: widget.recipeDoc['servings'],
+                    authorUserUID: widget.recipeDoc['authorId'],
+                    preparation: widget.recipeDoc['preparation'],
+                    recipeTimestamp: widget.recipeDoc['timestamp'],
+                    postID: widget.recipeDoc['postId'],
+                    ingredients: widget.recipeDoc['ingredients'],
+                  );
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.recipeDetails,
+                    arguments: args,
+                  );
+                },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(24.0),
                   child: Hero(
@@ -139,19 +137,18 @@ class _RecipeCardState extends State<RecipeCard> {
                           GestureDetector(
                             onTap: () {
                               if (_isNotPostOwner) {
-                                Navigator.push(
+                                final args = AltProfileArguments(
+                                  userUID: widget.recipeDoc['authorId'],
+                                  authorImage: snapshot.data!['photoUrl'],
+                                  authorUsername: snapshot.data!['username'],
+                                  authorDisplayName:
+                                      snapshot.data!['displayName'],
+                                  authorBio: snapshot.data!['bio'],
+                                );
+                                Navigator.pushNamed(
                                   context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AltProfile(
-                                      userUID: widget.recipeDoc['authorId'],
-                                      authorImage: snapshot.data!['photoUrl'],
-                                      authorUsername:
-                                          snapshot.data!['username'],
-                                      authorDisplayName:
-                                          snapshot.data!['displayName'],
-                                      authorBio: snapshot.data!['bio'],
-                                    ),
-                                  ),
+                                  AppRoutes.altProfile,
+                                  arguments: args,
                                 );
                               }
                             },

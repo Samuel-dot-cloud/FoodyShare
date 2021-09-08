@@ -6,9 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/models/user_model.dart';
+import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/utils/pallete.dart';
-import 'package:food_share/viewmodel/bottom_nav.dart';
 import 'package:food_share/widgets/background_image.dart';
 import 'package:food_share/widgets/rounded_button.dart';
 import 'package:food_share/widgets/text_input_field.dart';
@@ -26,8 +26,6 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-
-
   final _usernameController = TextEditingController();
   final _displayNameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -109,10 +107,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 backgroundColor: Colors.green,
                 textColor: Colors.white,
                 fontSize: 16.0);
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const BottomNav()),
-                (route) => false);
+            Navigator.pushReplacementNamed(context, AppRoutes.bottomNav);
           } else {
             setState(() {
               isLoading = false;
@@ -154,10 +149,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               height: size.height * 0.18,
                               decoration: const BoxDecoration(
                                 borderRadius: BorderRadius.all(
-                                 Radius.circular(100.0),
+                                  Radius.circular(100.0),
                                 ),
                               ),
-                              child: Lottie.asset('assets/lottie/profile-icon.json'),
+                              child: Lottie.asset(
+                                  'assets/lottie/profile-icon.json'),
                             ),
                           ),
                           // Positioned(
@@ -265,8 +261,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 style: kBodyText,
                               ),
                               GestureDetector(
-                                onTap: () =>
-                                    Navigator.pushNamed(context, 'login'),
+                                onTap: () => Navigator.pushNamed(
+                                    context, AppRoutes.login),
                                 child: Text(
                                   'Login',
                                   style: kBodyText.copyWith(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_share/models/user_model.dart';
+import 'package:food_share/routes/alt_profile_arguments.dart';
+import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/screens/profile/alt_profile.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
@@ -21,17 +23,17 @@ class UserResult extends StatelessWidget {
           GestureDetector(
             onTap: () {
               if (_isNotCurrentUser) {
-                Navigator.push(
+                final args = AltProfileArguments(
+                  userUID: customUser.id,
+                  authorImage: customUser.photoUrl,
+                  authorUsername: customUser.username,
+                  authorDisplayName: customUser.displayName,
+                  authorBio: customUser.bio,
+                );
+                Navigator.pushNamed(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => AltProfile(
-                      userUID: customUser.id,
-                      authorImage: customUser.photoUrl,
-                      authorUsername: customUser.username,
-                      authorDisplayName: customUser.displayName,
-                      authorBio: customUser.bio,
-                    ),
-                  ),
+                  AppRoutes.altProfile,
+                  arguments: args,
                 );
               }
             },

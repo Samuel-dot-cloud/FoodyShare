@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/screens/auth/login_screen.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
@@ -32,19 +33,9 @@ class _StartupViewState extends State<StartupView> {
           milliseconds: 3000,
         ), () {
       if (auth.currentUser == null) {
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
-            (route) => false);
+       Navigator.pushReplacementNamed(context, AppRoutes.login);
       } else {
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const BottomNav()),
-            (route) => false);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const BottomNav()),
-        );
+        Navigator.pushReplacementNamed(context, AppRoutes.bottomNav);
       }
     });
     return Scaffold(

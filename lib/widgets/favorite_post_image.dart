@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_share/routes/app_routes.dart';
+import 'package:food_share/routes/recipe_details_arguments.dart';
 import 'package:food_share/screens/recipe_details.dart';
 import 'package:lottie/lottie.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -26,23 +28,25 @@ class FavoritePostImage extends StatelessWidget {
         } else {
           return snapshot.data!.exists
               ? GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => RecipeDetails(
-                        cookingTime: snapshot.data!['cookingTime'],
-                        recipeName: snapshot.data!['name'],
-                        description: snapshot.data!['description'],
-                        recipeImage: snapshot.data!['mediaUrl'],
-                        servings: snapshot.data!['servings'],
-                        authorUserUID: snapshot.data!['authorId'],
-                        preparation: snapshot.data!['preparation'],
-                        recipeTimestamp: snapshot.data!['timestamp'],
-                        postID: recipeDoc['postId'],
-                        ingredients: snapshot.data!['ingredients'],
-                      ),
-                    ),
-                  ),
+                  onTap: () {
+                    final args = RecipeDetailsArguments(
+                      cookingTime: snapshot.data!['cookingTime'],
+                      recipeName: snapshot.data!['name'],
+                      description: snapshot.data!['description'],
+                      recipeImage: snapshot.data!['mediaUrl'],
+                      servings: snapshot.data!['servings'],
+                      authorUserUID: snapshot.data!['authorId'],
+                      preparation: snapshot.data!['preparation'],
+                      recipeTimestamp: snapshot.data!['timestamp'],
+                      postID: recipeDoc['postId'],
+                      ingredients: snapshot.data!['ingredients'],
+                    );
+                    Navigator.pushNamed(
+                      context,
+                      AppRoutes.recipeDetails,
+                      arguments: args,
+                    );
+                  },
                   child: Container(
                     decoration: const BoxDecoration(
                         color: Colors.transparent,

@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:food_share/routes/alt_profile_arguments.dart';
+import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/screens/profile/alt_profile.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
@@ -28,18 +30,20 @@ class FollowFeedItem extends StatelessWidget {
             } else {
               return ListTile(
                 title: GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AltProfile(
-                        userUID: feedDoc['userUID'],
-                        authorImage: snapshot.data!['photoUrl'],
-                        authorUsername: snapshot.data!['username'],
-                        authorDisplayName: snapshot.data!['displayName'],
-                        authorBio: snapshot.data!['bio'],
-                      ),
-                    ),
-                  ),
+                  onTap: () {
+                    final args = AltProfileArguments(
+                      userUID: feedDoc['userUID'],
+                      authorImage: snapshot.data!['photoUrl'],
+                      authorUsername: snapshot.data!['username'],
+                      authorDisplayName: snapshot.data!['displayName'],
+                      authorBio: snapshot.data!['bio'],
+                    );
+                    Navigator.pushNamed(
+                      context,
+                      AppRoutes.altProfile,
+                      arguments: args,
+                    );
+                  },
                   child: RichText(
                     overflow: TextOverflow.fade,
                     text: TextSpan(

@@ -1,9 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:food_share/models/user_model.dart';
-import 'package:food_share/screens/auth/sign_up_screen.dart';
 import 'package:food_share/screens/recipes/create_recipe.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/rounded_button.dart';
@@ -58,11 +54,11 @@ class _ImageUploadState extends State<ImageUpload> {
           fontSize: 16.0);
     } else {
       Fluttertoast.showToast(
-          msg: 'Image selected successfully',
+          msg: 'Image selected',
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.blue,
           textColor: Colors.white,
           fontSize: 16.0);
       navigateToAddRecipeDetails();
@@ -75,7 +71,7 @@ class _ImageUploadState extends State<ImageUpload> {
       builder: (context) {
         return SimpleDialog(
           title: const Text(
-            'Upload recipe image',
+            'Select recipe image',
             style: TextStyle(
               fontSize: 20.0,
             ),
@@ -197,7 +193,7 @@ class _ImageUploadState extends State<ImageUpload> {
               height: 20.0,
             ),
             RoundedButton(
-              buttonName: 'Upload Image',
+              buttonName: 'Select Image',
               onPressed: () => selectImage(context),
             ),
           ],
