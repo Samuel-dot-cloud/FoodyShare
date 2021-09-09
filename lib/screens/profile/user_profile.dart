@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:food_share/screens/profile/edit_profile.dart';
+import 'package:food_share/routes/app_routes.dart';
+import 'package:food_share/screens/profile/settings/edit_profile.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/helpers/profile_helper.dart';
 import 'package:food_share/utils/pallete.dart';
@@ -198,14 +199,10 @@ class _UserProfileState extends State<UserProfile> {
                   : double.infinity,
               child: TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const EditProfilePage()),
-                  );
+                  Navigator.pushNamed(context, AppRoutes.settings);
                 },
                 child: const Text(
-                  'EDIT PROFILE',
+                  'SETTINGS',
                   style: TextStyle(
                     fontSize: 12.0,
                     fontWeight: FontWeight.w700,

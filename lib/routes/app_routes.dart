@@ -7,7 +7,8 @@ class AppRoutes{
   static const search = '/search';
   static const create = '/create';
   static const feed = '/feed';
-  static const profile = '/profile';
+  static const settings = '/settings';
+  static const editProfile = '/editProfile';
   static const altProfile = '/altProfile';
   static const recipeDetails = '/recipeDetails';
 

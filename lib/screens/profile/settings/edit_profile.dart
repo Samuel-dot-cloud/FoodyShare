@@ -116,18 +116,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
           style: kBodyText,
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {
-              Provider.of<AuthService>(context, listen: false).logOut();
-              Navigator.pushReplacementNamed(context, AppRoutes.login);
-            },
-            icon: const Icon(
-              Icons.logout,
-              color: Colors.white,
-            ),
-          ),
-        ],
       ),
       body: !_isLoading
           ? Container(
