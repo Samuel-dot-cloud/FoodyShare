@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/utils/pallete.dart';
-import 'package:food_share/utils/sign_up_util.dart';
+import 'package:food_share/utils/profile_util.dart';
 import 'package:food_share/widgets/profile/user_tile.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -109,61 +109,41 @@ class ProfileHelper with ChangeNotifier {
         return Container(
           height: MediaQuery.of(context).size.height * 0.30,
           width: MediaQuery.of(context).size.width,
-          child: Column(
-            children: [
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 150.0),
-                child: Divider(
-                  thickness: 4.0,
-                  color: Colors.white54,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 150.0),
+                  child: Divider(
+                    thickness: 4.0,
+                    color: Colors.white54,
+                  ),
                 ),
-              ),
-              CircleAvatar(
-                radius: 80.0,
-                backgroundColor: Colors.grey,
-                backgroundImage: NetworkImage(
-                    Provider.of<FirebaseOperations>(context, listen: false)
-                        .getUserImage),
-              ),
-              SizedBox(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    MaterialButton(
-                      onPressed: () {
-                        selectProfileAvatarOptionsSheet(context);
-                      },
-                      child: const Text(
-                        'Select',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.underline,
-                          decorationColor: Colors.white,
-                        ),
+                CircleAvatar(
+                  radius: 80.0,
+                  backgroundColor: Colors.grey,
+                  backgroundImage: NetworkImage(
+                      Provider.of<FirebaseOperations>(context, listen: false)
+                          .getUserImage),
+                ),
+                SizedBox(
+                  child: MaterialButton(
+                    onPressed: () {
+                      selectProfileAvatarOptionsSheet(context);
+                    },
+                    child: const Text(
+                      'Select',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
+                        decorationColor: Colors.white,
                       ),
                     ),
-                    MaterialButton(
-                      color: kBlue,
-                      onPressed: () {
-                        Provider.of<FirebaseOperations>(context, listen: false)
-                            .updateUserAvatar(context, userUID)
-                            .whenComplete(() async {
-                          Navigator.pop(context);
-                        });
-                      },
-                      child: const Text(
-                        'Update Image',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           decoration: const BoxDecoration(
             color: Colors.black,
@@ -179,67 +159,69 @@ class ProfileHelper with ChangeNotifier {
         context: context,
         builder: (context) {
           return Container(
-            child: Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 150.0),
-                  child: Divider(
-                    thickness: 4.0,
-                    color: Colors.white54,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 150.0),
+                    child: Divider(
+                      thickness: 4.0,
+                      color: Colors.white54,
+                    ),
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    MaterialButton(
-                      color: Colors.black,
-                      child: const Text(
-                        'Gallery',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.0,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      MaterialButton(
+                        color: Colors.black,
+                        child: const Text(
+                          'Gallery',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.0,
+                          ),
                         ),
+                        onPressed: () {
+                          Provider.of<ProfileUtils>(context, listen: false)
+                              .pickUserAvatar(context, ImageSource.gallery)
+                              .whenComplete(() {
+                            Navigator.pop(context);
+                            showSelectedUserAvatar(
+                                context,
+                                Provider.of<FirebaseOperations>(context,
+                                        listen: false)
+                                    .getUserId);
+                          });
+                        },
                       ),
-                      onPressed: () {
-                        Provider.of<SignUpUtils>(context, listen: false)
-                            .pickUserAvatar(context, ImageSource.gallery)
-                            .whenComplete(() {
-                          Navigator.pop(context);
-                          showProfileUserAvatar(
-                              context,
-                              Provider.of<FirebaseOperations>(context,
-                                      listen: false)
-                                  .getUserId);
-                        });
-                      },
-                    ),
-                    MaterialButton(
-                      color: Colors.black,
-                      child: const Text(
-                        'Camera',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.0,
+                      MaterialButton(
+                        color: Colors.black,
+                        child: const Text(
+                          'Camera',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.0,
+                          ),
                         ),
+                        onPressed: () {
+                          Provider.of<ProfileUtils>(context, listen: false)
+                              .pickUserAvatar(context, ImageSource.camera)
+                              .whenComplete(() {
+                            Navigator.pop(context);
+                            showSelectedUserAvatar(
+                                context,
+                                Provider.of<FirebaseOperations>(context,
+                                        listen: false)
+                                    .getUserId);
+                          });
+                        },
                       ),
-                      onPressed: () {
-                        Provider.of<SignUpUtils>(context, listen: false)
-                            .pickUserAvatar(context, ImageSource.camera)
-                            .whenComplete(() {
-                          Navigator.pop(context);
-                          showProfileUserAvatar(
-                              context,
-                              Provider.of<FirebaseOperations>(context,
-                                      listen: false)
-                                  .getUserId);
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
             height: MediaQuery.of(context).size.height * 0.1,
             width: MediaQuery.of(context).size.width,
@@ -249,6 +231,81 @@ class ProfileHelper with ChangeNotifier {
             ),
           );
         });
+  }
+
+  showSelectedUserAvatar(BuildContext context, String userUID) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.30,
+          width: MediaQuery.of(context).size.width,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 150.0),
+                  child: Divider(
+                    thickness: 4.0,
+                    color: Colors.white54,
+                  ),
+                ),
+                CircleAvatar(
+                  radius: 80.0,
+                  backgroundColor: Colors.grey,
+                  backgroundImage: FileImage(
+                      Provider.of<ProfileUtils>(context, listen: false)
+                          .userAvatar),),
+                SizedBox(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      MaterialButton(
+                        onPressed: () {
+                          selectProfileAvatarOptionsSheet(context);
+                        },
+                        child: const Text(
+                          'Select again',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            decoration: TextDecoration.underline,
+                            decorationColor: Colors.white,
+                          ),
+                        ),
+                      ),
+                      MaterialButton(
+                        color: kBlue,
+                        onPressed: () {
+                          Provider.of<FirebaseOperations>(context, listen: false)
+                              .updateUserAvatar(context, userUID)
+                              .whenComplete(() async {
+                            Navigator.pop(context);
+                          });
+                        },
+                        child: const Text(
+                          'Update Image',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+
+                          ),
+                        ),
+                      ),
+                    ],
+
+                  ),
+                ),
+              ],
+            ),
+          ),
+          decoration: const BoxDecoration(
+            color: Colors.black,
+            borderRadius: BorderRadius.zero,
+          ),
+        );
+      },
+    );
   }
 
   Center _defaultNoAssociation() {

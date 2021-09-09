@@ -4,7 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/utils/pallete.dart';
-import 'package:food_share/utils/sign_up_util.dart';
+import 'package:food_share/utils/profile_util.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
@@ -46,7 +46,7 @@ class FirebaseOperations with ChangeNotifier {
         .ref()
         .child('user-avatars/${DateTime.now()}.jpg');
     imageUploadTask = imageReference.putFile(
-        Provider.of<SignUpUtils>(context, listen: false).getUserAvatar);
+        Provider.of<ProfileUtils>(context, listen: false).getUserAvatar);
     await imageUploadTask.whenComplete(() {
       Fluttertoast.showToast(
           msg: 'Image uploaded successfully',
@@ -67,7 +67,7 @@ class FirebaseOperations with ChangeNotifier {
     Reference imageReference =
         FirebaseStorage.instance.ref().child('user-avatars/$uid.jpg');
     imageUploadTask = imageReference.putFile(
-        Provider.of<SignUpUtils>(context, listen: false).getUserAvatar);
+        Provider.of<ProfileUtils>(context, listen: false).getUserAvatar);
     await imageUploadTask.whenComplete(() {
       Fluttertoast.showToast(
           msg: 'Image uploaded successfully',

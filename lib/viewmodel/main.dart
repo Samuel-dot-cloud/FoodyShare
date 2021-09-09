@@ -8,8 +8,7 @@ import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/services/connectivity_provider.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/helpers/profile_helper.dart';
-import 'package:food_share/services/sign_up_service.dart';
-import 'package:food_share/utils/sign_up_util.dart';
+import 'package:food_share/utils/profile_util.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -38,10 +37,7 @@ void main() async {
           create: (context) => AuthService(),
         ),
         ChangeNotifierProvider(
-          create: (context) => SignUpUtils(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => SignUpService(),
+          create: (context) => ProfileUtils(),
         ),
         ChangeNotifierProvider(
           create: (context) => BottomNavHelper(),
