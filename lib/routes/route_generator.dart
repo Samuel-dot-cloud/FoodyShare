@@ -7,6 +7,8 @@ import 'package:food_share/screens/auth/login_screen.dart';
 import 'package:food_share/screens/auth/sign_up_screen.dart';
 import 'package:food_share/screens/profile/alt_profile.dart';
 import 'package:food_share/screens/home/recipe_details.dart';
+import 'package:food_share/screens/profile/settings/edit_profile.dart';
+import 'package:food_share/screens/profile/settings/profile_settings.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/bottom_nav.dart';
 import 'package:lottie/lottie.dart';
@@ -22,6 +24,10 @@ class RouteGenerator {
         return buildRoute(const ForgotPassword(), settings: settings);
       case AppRoutes.bottomNav:
         return buildRoute(const BottomNav(), settings: settings);
+      case AppRoutes.settings:
+        return buildRoute(const ProfileSettings(), settings: settings);
+      case AppRoutes.editProfile:
+        return buildRoute(const EditProfilePage(), settings: settings);
       case AppRoutes.altProfile:
         final argument1 = settings.arguments as AltProfileArguments;
         return buildRoute(AltProfile(arguments: argument1), settings: settings);
