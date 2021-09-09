@@ -5,7 +5,7 @@ import 'package:food_share/routes/alt_profile_arguments.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
-import 'package:food_share/viewmodel/loading_animation.dart';
+import 'package:food_share/utils/loading_animation.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/utils/form_values.dart';
-import 'package:food_share/viewmodel/loading_animation.dart';
+import 'package:food_share/utils/loading_animation.dart';
 import 'package:food_share/widgets/create_recipe_page/ingredients_form.dart';
 import 'package:food_share/widgets/create_recipe_page/preparation_form.dart';
 import 'package:food_share/widgets/rounded_button.dart';
