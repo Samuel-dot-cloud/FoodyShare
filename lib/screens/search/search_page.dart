@@ -80,10 +80,13 @@ class _SearchPageState extends State<SearchPage> {
           decoration: InputDecoration(
             hintText: searchUsers ? 'Search users...' : 'Search recipes...',
             filled: true,
-            prefixIcon: Icon(
-              searchUsers ? Icons.alternate_email : FontAwesomeIcons.utensils,
-              color: Colors.black,
-              size: 17.0,
+            prefixIcon: Padding(
+              padding: const EdgeInsets.only(bottom: 8.0, left: 29.5),
+              child: Icon(
+                searchUsers ? Icons.alternate_email : FontAwesomeIcons.utensils,
+                color: Colors.black,
+                size: 17.0,
+              ),
             ),
             suffixIcon: IconButton(
               icon: const Icon(Icons.clear),
