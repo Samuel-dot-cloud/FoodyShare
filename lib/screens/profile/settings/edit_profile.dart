@@ -1,10 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/models/user_model.dart';
-import 'package:food_share/routes/app_routes.dart';
-import 'package:food_share/screens/auth/login_screen.dart';
-import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/helpers/profile_helper.dart';
 import 'package:food_share/utils/pallete.dart';

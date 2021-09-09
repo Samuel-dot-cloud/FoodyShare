@@ -156,34 +156,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   'assets/lottie/profile-icon.json'),
                             ),
                           ),
-                          // Positioned(
-                          //   top: size.height * 0.08,
-                          //   left: size.width * 0.56,
-                          //   child: GestureDetector(
-                          //     onTap: () {
-                          //       Provider.of<SignUpService>(context,
-                          //               listen: false)
-                          //           .showUserAvatar(context);
-                          //     },
-                          //     child: Container(
-                          //       height: size.width * 0.1,
-                          //       width: size.width * 0.1,
-                          //       decoration: BoxDecoration(
-                          //         color: kBlue,
-                          //         shape: BoxShape.circle,
-                          //         border: Border.all(
-                          //           color: kWhite,
-                          //           width: 2,
-                          //         ),
-                          //       ),
-                          //       child: Icon(
-                          //         FontAwesomeIcons.upload,
-                          //         color: kWhite,
-                          //         size: size.width * 0.06,
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
                         ],
                       ),
                       SizedBox(
