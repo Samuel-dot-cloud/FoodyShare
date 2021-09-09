@@ -5,7 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/config/size_config.dart';
 import 'package:food_share/models/recipe_model.dart';
 import 'package:food_share/models/user_model.dart';
-import 'package:food_share/viewmodel/loading_animation.dart';
+import 'package:food_share/utils/loading_animation.dart';
 import 'package:food_share/widgets/search/recipe_search_result.dart';
 import 'package:food_share/widgets/search/user_result.dart';
 import 'package:lottie/lottie.dart';

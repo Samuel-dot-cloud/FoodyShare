@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
-import 'package:food_share/viewmodel/loading_animation.dart';
+import 'package:food_share/utils/loading_animation.dart';
 import 'package:food_share/widgets/activity_feed/activity_feed_item.dart';
 import 'package:food_share/widgets/activity_feed/follow_feed_item.dart';
 import 'package:lottie/lottie.dart';

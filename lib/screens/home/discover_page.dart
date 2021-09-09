@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/widgets/recipe/recipe_card.dart';
 
-import 'loading_animation.dart';
+import '../../utils/loading_animation.dart';
 
 class DiscoverRecipe extends StatefulWidget {
   const DiscoverRecipe({Key? key}) : super(key: key);

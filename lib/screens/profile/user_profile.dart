@@ -4,7 +4,7 @@ import 'package:food_share/screens/profile/edit_profile.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/helpers/profile_helper.dart';
 import 'package:food_share/utils/pallete.dart';
-import 'package:food_share/viewmodel/loading_animation.dart';
+import 'package:food_share/utils/loading_animation.dart';
 import 'package:food_share/widgets/profile/profile_post_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
