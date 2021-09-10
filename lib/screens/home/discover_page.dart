@@ -18,7 +18,6 @@ class DiscoverRecipe extends StatefulWidget {
 class _DiscoverRecipeState extends State<DiscoverRecipe> {
   CollectionReference recipesRef =
       FirebaseFirestore.instance.collection('recipes');
-  final ScrollController _scrollController = ScrollController();
 
   final StreamController<List<DocumentSnapshot>> _recipeController =
       StreamController<List<DocumentSnapshot>>.broadcast();
@@ -105,9 +104,8 @@ class _DiscoverRecipeState extends State<DiscoverRecipe> {
                 }
                 if (snapshot.hasData) {
                   return ListView.builder(
-                      physics: const BouncingScrollPhysics(),
+                      physics: const ScrollPhysics(),
                       shrinkWrap: true,
-                      controller: _scrollController,
                       itemCount: snapshot.data!.length,
                       itemBuilder: (BuildContext context, int index) => Padding(
                             padding: const EdgeInsets.symmetric(
