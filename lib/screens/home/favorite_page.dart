@@ -43,6 +43,7 @@ class _FavoriteRecipesState extends State<FavoriteRecipes> {
         .orderBy('timestamp', descending: true)
         .limit(favoriteRecipeLimit);
 
+
     if (_lastDocument != null) {
       pageRecipeQuery = pageRecipeQuery.startAfterDocument(_lastDocument!);
     }
