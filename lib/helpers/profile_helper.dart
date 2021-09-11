@@ -5,6 +5,7 @@ import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/utils/profile_util.dart';
 import 'package:food_share/widgets/profile/profile_post_image.dart';
 import 'package:food_share/widgets/profile/user_tile.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -258,7 +259,8 @@ class ProfileHelper with ChangeNotifier {
                   backgroundColor: Colors.grey,
                   backgroundImage: FileImage(
                       Provider.of<ProfileUtils>(context, listen: false)
-                          .userAvatar),),
+                          .userAvatar),
+                ),
                 SizedBox(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -280,7 +282,8 @@ class ProfileHelper with ChangeNotifier {
                       MaterialButton(
                         color: kBlue,
                         onPressed: () {
-                          Provider.of<FirebaseOperations>(context, listen: false)
+                          Provider.of<FirebaseOperations>(context,
+                                  listen: false)
                               .updateUserAvatar(context, userUID)
                               .whenComplete(() async {
                             Navigator.pop(context);
@@ -291,12 +294,10 @@ class ProfileHelper with ChangeNotifier {
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-
                           ),
                         ),
                       ),
                     ],
-
                   ),
                 ),
               ],
@@ -311,7 +312,9 @@ class ProfileHelper with ChangeNotifier {
     );
   }
 
-  Padding userRecipeGridViewPosts(BuildContext context, String userUID, int recipeLimit){
+  ///Recipe posts
+  Padding userRecipeGridViewPosts(
+      BuildContext context, String userUID, int recipeLimit) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: SizedBox(
@@ -330,25 +333,24 @@ class ProfileHelper with ChangeNotifier {
                 } else {
                   return snapshot.data!.docs.isNotEmpty
                       ? GridView.builder(
-                    primary: false,
-                    shrinkWrap: true,
-                    padding: EdgeInsets.zero,
-                    itemCount: snapshot.data!.docs.length,
-                    gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 16.0,
-                    ),
-                    itemBuilder:
-                        (BuildContext context, int index) =>
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 3.0),
-                          child: ProfilePostImage(
-                            recipeDoc: snapshot.data!.docs[index],
+                          primary: false,
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero,
+                          itemCount: snapshot.data!.docs.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 16.0,
                           ),
-                        ),
-                  )
+                          itemBuilder: (BuildContext context, int index) =>
+                              Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 3.0),
+                            child: ProfilePostImage(
+                              recipeDoc: snapshot.data!.docs[index],
+                            ),
+                          ),
+                        )
                       : _defaultNoRecipes(context);
                 }
               },
@@ -359,6 +361,46 @@ class ProfileHelper with ChangeNotifier {
           ],
         ),
       ),
+    );
+  }
+
+  ///Profile title section
+  Column titleSection(String displayName, String username, String bio) {
+    return Column(
+      children: [
+        Text(
+          displayName,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 27.0,
+          ),
+        ),
+        const SizedBox(
+          height: 1.0,
+        ),
+        Text(
+          '@' + username,
+          style: const TextStyle(
+            fontStyle: FontStyle.normal,
+            fontSize: 22.0,
+            color: Colors.grey,
+          ),
+        ),
+        const SizedBox(
+          height: 3.0,
+        ),
+        Text(
+          "\"" + bio + "\"",
+          style: GoogleFonts.robotoMono(
+            textStyle: const TextStyle(
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w300,
+              fontSize: 14.0,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -398,9 +440,7 @@ class ProfileHelper with ChangeNotifier {
         ),
         GestureDetector(
           onTap: () {
-            checkFollowerSheet(
-                context,
-                userUID);
+            checkFollowerSheet(context, userUID);
           },
           child: SizedBox(
             child: StreamBuilder<DocumentSnapshot>(
@@ -434,9 +474,7 @@ class ProfileHelper with ChangeNotifier {
         ),
         GestureDetector(
           onTap: () {
-            checkFollowingSheet(
-                context,
-                userUID);
+            checkFollowingSheet(context, userUID);
           },
           child: SizedBox(
             child: StreamBuilder<DocumentSnapshot>(
@@ -492,7 +530,6 @@ class ProfileHelper with ChangeNotifier {
     );
   }
 
-
   Center _defaultNoRecipes(BuildContext context) {
     return Center(
       child: Column(
@@ -516,7 +553,6 @@ class ProfileHelper with ChangeNotifier {
       ),
     );
   }
-
 
   Center _defaultNoAssociation() {
     return const Center(
