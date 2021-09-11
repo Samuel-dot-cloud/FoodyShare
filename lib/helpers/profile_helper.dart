@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:food_share/utils/loading_animation.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/utils/profile_util.dart';
+import 'package:food_share/widgets/profile/profile_post_image.dart';
 import 'package:food_share/widgets/profile/user_tile.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 import '../services/firebase_operations.dart';
@@ -308,6 +310,213 @@ class ProfileHelper with ChangeNotifier {
       },
     );
   }
+
+  Padding userRecipeGridViewPosts(BuildContext context, String userUID, int recipeLimit){
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        child: Column(
+          children: [
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(userUID)
+                  .collection('recipes')
+                  .limit(recipeLimit)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return loadingAnimation('Loading user posts');
+                } else {
+                  return snapshot.data!.docs.isNotEmpty
+                      ? GridView.builder(
+                    primary: false,
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    itemCount: snapshot.data!.docs.length,
+                    gridDelegate:
+                    const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 16.0,
+                    ),
+                    itemBuilder:
+                        (BuildContext context, int index) =>
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 3.0),
+                          child: ProfilePostImage(
+                            recipeDoc: snapshot.data!.docs[index],
+                          ),
+                        ),
+                  )
+                      : _defaultNoRecipes(context);
+                }
+              },
+            ),
+            const SizedBox(
+              height: 10.0,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Info section
+  Row infoSection(BuildContext context, String userUID) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        SizedBox(
+          child: StreamBuilder<DocumentSnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('users')
+                .doc(userUID)
+                .collection('counts')
+                .doc('recipeCount')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                return _infoCell(
+                  title: 'Posts',
+                  value: snapshot.data!.exists
+                      ? snapshot.data!['count'].toString()
+                      : '0',
+                );
+              }
+            },
+          ),
+        ),
+        Container(
+          width: 1.5,
+          height: 40.0,
+          color: Colors.grey,
+        ),
+        GestureDetector(
+          onTap: () {
+            checkFollowerSheet(
+                context,
+                userUID);
+          },
+          child: SizedBox(
+            child: StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(userUID)
+                  .collection('counts')
+                  .doc('followerCount')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return _infoCell(
+                    title: 'Followers',
+                    value: snapshot.data!.exists
+                        ? snapshot.data!['count'].toString()
+                        : '0',
+                  );
+                }
+              },
+            ),
+          ),
+        ),
+        Container(
+          width: 1.5,
+          height: 40.0,
+          color: Colors.grey,
+        ),
+        GestureDetector(
+          onTap: () {
+            checkFollowingSheet(
+                context,
+                userUID);
+          },
+          child: SizedBox(
+            child: StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(userUID)
+                  .collection('counts')
+                  .doc('followingCount')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return _infoCell(
+                    title: 'Following',
+                    value: snapshot.data!.exists
+                        ? snapshot.data!['count'].toString()
+                        : '0',
+                  );
+                }
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Info cell
+  Column _infoCell({required String title, required String value}) {
+    return Column(
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.w300,
+            fontSize: 18.0,
+          ),
+        ),
+        const SizedBox(
+          height: 8.0,
+        ),
+        Text(
+          value,
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 18.0,
+          ),
+        ),
+      ],
+    );
+  }
+
+
+  Center _defaultNoRecipes(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.40,
+            width: MediaQuery.of(context).size.width * 0.80,
+            child: Lottie.asset('assets/lottie/no-post.json'),
+          ),
+          const SizedBox(
+            height: 20.0,
+          ),
+          const Text(
+            'No Recipes Here...',
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 25.0,
+                fontWeight: FontWeight.bold),
+          )
+        ],
+      ),
+    );
+  }
+
 
   Center _defaultNoAssociation() {
     return const Center(
