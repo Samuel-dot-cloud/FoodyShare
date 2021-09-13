@@ -29,7 +29,7 @@ class ProfileUtils with ChangeNotifier {
 
     userAvatar != null
         ? Provider.of<ProfileHelper>(context, listen: false)
-            .showSelectedUserAvatar(context, Provider.of<FirebaseOperations>(context).getUserId)
+            .showSelectedUserAvatar(context, Provider.of<FirebaseOperations>(context, listen: false).getUserId)
         : Fluttertoast.showToast(
             msg: 'Image upload error!!!',
             toastLength: Toast.LENGTH_SHORT,

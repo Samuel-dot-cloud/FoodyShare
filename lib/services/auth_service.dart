@@ -26,10 +26,9 @@ class AuthService with ChangeNotifier {
             'id': value.user!.uid,
             'username': username,
             'email': email,
-            'photoUrl': Provider.of<FirebaseOperations>(context, listen: false)
-                .getUserAvatarUrl,
+            'photoUrl': 'https://cdn.icon-icons.com/icons2/2506/PNG/512/user_icon_150670.png',
             'displayName': displayName,
-            'bio': '',
+            'bio': 'I\'m new here',
             'timestamp': Timestamp.now(),
             'isVerified': false,
           },

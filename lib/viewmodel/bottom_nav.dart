@@ -48,7 +48,7 @@ class _BottomNavState extends State<BottomNav> {
                     ActivityFeed(),
                     UserProfile(),
                   ],
-                  physics: const ScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   onPageChanged: (page) {
                     setState(() {
                       _pageIndex = page;

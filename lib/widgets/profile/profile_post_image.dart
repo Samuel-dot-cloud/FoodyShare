@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/recipe_details_arguments.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class ProfilePostImage extends StatefulWidget {
   const ProfilePostImage({
@@ -51,13 +52,10 @@ class _ProfilePostImageState extends State<ProfilePostImage> {
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(snapshot.data!['mediaUrl']),
-                    fit: BoxFit.cover,
-                  ),
-                ),
+              child: FadeInImage.memoryNetwork(
+                placeholder: kTransparentImage,
+                image: snapshot.data!['mediaUrl'],
+                fit: BoxFit.cover,
               ),
             ),
           );
