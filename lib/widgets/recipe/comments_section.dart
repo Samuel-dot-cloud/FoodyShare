@@ -28,7 +28,7 @@ class CommentsSection extends StatefulWidget {
 class _CommentsSectionState extends State<CommentsSection> {
   final TextEditingController _commentController = TextEditingController();
 
-  ///Recipe grid view pagination logic
+  ///Comments pagination logic
 
   final StreamController<List<DocumentSnapshot>> _commentsController =
       StreamController<List<DocumentSnapshot>>.broadcast();
