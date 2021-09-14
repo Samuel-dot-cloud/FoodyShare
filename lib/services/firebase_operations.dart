@@ -108,6 +108,18 @@ class FirebaseOperations with ChangeNotifier {
           .doc(username)
           .set({
         'userUID': uid,
+      }).whenComplete(() {
+        usersRef.doc(uid).collection('counts').doc('followerCount').set({
+          'count': FieldValue.increment(0),
+        }).whenComplete(() {
+          return usersRef
+              .doc(uid)
+              .collection('counts')
+              .doc('followingCount')
+              .set({
+            'count': FieldValue.increment(0),
+          });
+        });
       });
     });
   }
