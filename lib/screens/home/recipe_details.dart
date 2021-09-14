@@ -151,7 +151,9 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                 top: 40.0,
                 left: 20.0,
                 child: InkWell(
-                  onTap: () => Navigator.pop(context),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
                   child: const Icon(
                     Icons.arrow_back_ios,
                     color: Colors.white,

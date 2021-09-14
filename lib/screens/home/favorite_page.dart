@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/services/firebase_operations.dart';
-import 'package:food_share/utils/loading_animation.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/home/favorite_post_image.dart';
 import 'package:lottie/lottie.dart';
@@ -105,7 +104,7 @@ class _FavoriteRecipesState extends State<FavoriteRecipes> {
                   return const Text('Error');
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return loadingAnimation('Loading favorites...');
+                  return _defaultNoFavorites();
                 } else if (snapshot.hasData) {
                   if (snapshot.data!.isNotEmpty) {
                     return Column(

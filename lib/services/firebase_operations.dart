@@ -108,6 +108,18 @@ class FirebaseOperations with ChangeNotifier {
           .doc(username)
           .set({
         'userUID': uid,
+      }).whenComplete(() {
+        usersRef.doc(uid).collection('counts').doc('followerCount').set({
+          'count': FieldValue.increment(0),
+        }).whenComplete(() {
+          return usersRef
+              .doc(uid)
+              .collection('counts')
+              .doc('followingCount')
+              .set({
+            'count': FieldValue.increment(0),
+          });
+        });
       });
     });
   }
@@ -152,49 +164,21 @@ class FirebaseOperations with ChangeNotifier {
   }
 
   Future addFollowCount(String followerUID, String followingUID) async {
-    var doc1 = await usersRef
+    return usersRef
         .doc(followingUID)
         .collection('counts')
         .doc('followerCount')
-        .get();
-    var doc2 = await usersRef
-        .doc(followerUID)
-        .collection('counts')
-        .doc('followingCount')
-        .get();
-    if (doc1.exists && doc2.exists) {
+        .update({
+      'count': FieldValue.increment(1),
+    }).whenComplete(() async {
       return usersRef
-          .doc(followingUID)
+          .doc(followerUID)
           .collection('counts')
-          .doc('followerCount')
+          .doc('followingCount')
           .update({
         'count': FieldValue.increment(1),
-      }).whenComplete(() async {
-        return usersRef
-            .doc(followerUID)
-            .collection('counts')
-            .doc('followingCount')
-            .update({
-          'count': FieldValue.increment(1),
-        });
       });
-    } else {
-      return usersRef
-          .doc(followingUID)
-          .collection('counts')
-          .doc('followerCount')
-          .set({
-        'count': FieldValue.increment(1),
-      }).whenComplete(() async {
-        return usersRef
-            .doc(followerUID)
-            .collection('counts')
-            .doc('followingCount')
-            .set({
-          'count': FieldValue.increment(1),
-        });
-      });
-    }
+    });
   }
 
   Future unfollowUser(

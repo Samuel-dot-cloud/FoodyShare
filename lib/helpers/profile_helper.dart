@@ -1,9 +1,9 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:food_share/utils/loading_animation.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/utils/profile_util.dart';
-import 'package:food_share/widgets/profile/profile_post_image.dart';
 import 'package:food_share/widgets/profile/user_tile.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -312,58 +312,6 @@ class ProfileHelper with ChangeNotifier {
     );
   }
 
-  ///Recipe posts
-  Padding userRecipeGridViewPosts(
-      BuildContext context, String userUID, int recipeLimit) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SizedBox(
-        child: Column(
-          children: [
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(userUID)
-                  .collection('recipes')
-                  .limit(recipeLimit)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return loadingAnimation('Loading user posts');
-                } else {
-                  return snapshot.data!.docs.isNotEmpty
-                      ? GridView.builder(
-                          primary: false,
-                          shrinkWrap: true,
-                          padding: EdgeInsets.zero,
-                          itemCount: snapshot.data!.docs.length,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 16.0,
-                          ),
-                          itemBuilder: (BuildContext context, int index) =>
-                              Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 3.0),
-                            child: ProfilePostImage(
-                              recipeDoc: snapshot.data!.docs[index],
-                            ),
-                          ),
-                        )
-                      : _defaultNoRecipes(context);
-                }
-              },
-            ),
-            const SizedBox(
-              height: 10.0,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   ///Profile title section
   Column titleSection(String displayName, String username, String bio) {
     return Column(
@@ -530,7 +478,7 @@ class ProfileHelper with ChangeNotifier {
     );
   }
 
-  Center _defaultNoRecipes(BuildContext context) {
+  Center defaultNoRecipes(BuildContext context) {
     return Center(
       child: Column(
         children: [
