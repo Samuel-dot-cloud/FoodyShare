@@ -22,7 +22,7 @@ class FollowFeedSection extends StatefulWidget {
 class _FollowFeedSectionState extends State<FollowFeedSection> {
   final activityFeedRef = FirebaseFirestore.instance.collection('feed');
 
-  ///Comments pagination logic
+  ///Follow Feed pagination logic
 
   final StreamController<List<DocumentSnapshot>> _feedController =
       StreamController<List<DocumentSnapshot>>.broadcast();
@@ -61,6 +61,7 @@ class _FollowFeedSectionState extends State<FollowFeedSection> {
           backgroundColor: Colors.blueAccent,
           textColor: Colors.white,
           fontSize: 16.0);
+
     }
 
     var currentRequestIndex = _allPagedResults.length;
