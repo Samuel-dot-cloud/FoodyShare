@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_share/helpers/activity_feed_helper.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/loading_animation.dart';
 import 'package:food_share/utils/pallete.dart';
@@ -16,7 +17,8 @@ class LikeAndCommentFeedSection extends StatefulWidget {
   static const int feedLimit = 10;
 
   @override
-  State<LikeAndCommentFeedSection> createState() => _LikeAndCommentFeedSectionState();
+  State<LikeAndCommentFeedSection> createState() =>
+      _LikeAndCommentFeedSectionState();
 }
 
 class _LikeAndCommentFeedSectionState extends State<LikeAndCommentFeedSection> {
@@ -87,7 +89,8 @@ class _LikeAndCommentFeedSectionState extends State<LikeAndCommentFeedSection> {
             _lastDocument = snapshot.docs.last;
           }
 
-          _hasMoreData = generalFeeds.length == LikeAndCommentFeedSection.feedLimit;
+          _hasMoreData =
+              generalFeeds.length == LikeAndCommentFeedSection.feedLimit;
         }
       },
     );
@@ -97,19 +100,21 @@ class _LikeAndCommentFeedSectionState extends State<LikeAndCommentFeedSection> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: SizedBox(
-        child: Column(
-          children: [
-            StreamBuilder<List<DocumentSnapshot>>(
-              stream: listenToFeedRealTime(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return const Text('Error');
-                }
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return loadingAnimation('Loading comments & likes...');
-                }
-                if (snapshot.hasData) {
-                  return ListView.builder(
+        child: StreamBuilder<List<DocumentSnapshot>>(
+          stream: listenToFeedRealTime(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Text('Error');
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Provider.of<ActivityFeedHelper>(context, listen: false)
+                  .defaultNoNotification(
+                      context, 'No recipe feed items to display..');
+            }
+            if (snapshot.hasData) {
+              return Column(
+                children: [
+                  ListView.builder(
                       physics: const ScrollPhysics(),
                       shrinkWrap: true,
                       itemCount: snapshot.data!.length,
@@ -121,36 +126,35 @@ class _LikeAndCommentFeedSectionState extends State<LikeAndCommentFeedSection> {
                             child: ActivityFeedItem(
                               feedDoc: snapshot.data![index],
                             ),
-                          ));
-                }
-                return const Text('Error ...');
-              },
-            ),
-
-            const SizedBox(
-              height: 10.0,
-            ),
-            OutlinedButton(
-              onPressed: () {
-                _getFeed();
-              },
-              child: const Text(
-                'SEE MORE',
-                style: TextStyle(
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    side: const BorderSide(color: kBlue),
+                          )),
+                  const SizedBox(
+                    height: 10.0,
                   ),
-                ),
-              ),
-            ),
-          ],
+                  OutlinedButton(
+                    onPressed: () {
+                      _getFeed();
+                    },
+                    child: const Text(
+                      'SEE MORE',
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                          side: const BorderSide(color: kBlue),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+            return const Text('Error ...');
+          },
         ),
       ),
     );

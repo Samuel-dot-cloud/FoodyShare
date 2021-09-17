@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:food_share/helpers/activity_feed_helper.dart';
 import 'package:food_share/helpers/bottom_nav_helper.dart';
 import 'package:food_share/routes/route_generator.dart';
 import 'package:food_share/screens/auth/startup_view.dart';
@@ -8,6 +9,7 @@ import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/services/connectivity_provider.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/helpers/profile_helper.dart';
+import 'package:food_share/utils/constants.dart';
 import 'package:food_share/utils/profile_util.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +31,9 @@ void main() async {
       providers: [
         ChangeNotifierProvider(
           create: (context) => ProfileHelper(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ActivityFeedHelper(),
         ),
         ChangeNotifierProvider(
           create: (context) => FirebaseOperations(),
@@ -60,7 +65,7 @@ class MyApp extends StatelessWidget {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'FoodyShare',
+      title: Constants.appName,
       theme: ThemeData(
         textTheme:
             GoogleFonts.josefinSansTextTheme(Theme.of(context).textTheme),
