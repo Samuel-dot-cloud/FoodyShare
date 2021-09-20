@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/screens/home/favorite_page.dart';
 import 'package:food_share/utils/constants.dart';
 import 'package:food_share/utils/pallete.dart';
@@ -35,10 +36,11 @@ class _HomePageState extends State<HomePage> {
             ),
             child: IconButton(
               icon: const Icon(
-                Icons.category_outlined,
+                Icons.collections_outlined,
                 color: Colors.black,
               ),
               onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.collections);
               },
             ),
           ),
