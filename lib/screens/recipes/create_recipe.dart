@@ -8,7 +8,7 @@ import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/form_values.dart';
 import 'package:food_share/utils/pallete.dart';
-import 'package:food_share/widgets/create_recipe_page/recipe_form.dart';
+import 'package:food_share/widgets/create/recipe_form.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image/image.dart' as image_plugin;

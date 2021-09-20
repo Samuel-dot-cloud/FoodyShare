@@ -3,6 +3,7 @@ class AppRoutes{
   static const forgotPassword = '/forgotPassword';
   static const register = '/register';
   static const bottomNav = '/bottomNav';
+  static const collections = '/collections';
   static const startupView = '/startup';
   static const search = '/search';
   static const create = '/create';

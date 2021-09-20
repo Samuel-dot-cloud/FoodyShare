@@ -1,17 +1,10 @@
-import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
-import 'package:food_share/utils/loading_animation.dart';
-import 'package:food_share/widgets/activity_feed/activity_feed_item.dart';
-import 'package:food_share/widgets/activity_feed/follow_feed_item.dart';
 import 'package:food_share/widgets/activity_feed/follow_feed_section.dart';
 import 'package:food_share/widgets/activity_feed/like_and_comment_feed_section.dart';
 import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
 final activityFeedRef = FirebaseFirestore.instance.collection('feed');
@@ -96,7 +89,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
     ));
   }
 
-  _defaultNoNotification(String text) {
+  defaultNoNotification(String text) {
     return SingleChildScrollView(
       child: Center(
         child: Column(
