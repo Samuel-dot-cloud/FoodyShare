@@ -1,9 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/config/size_config.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class RecipeCollectionCard extends StatelessWidget {
-  const RecipeCollectionCard({Key? key}) : super(key: key);
+  const RecipeCollectionCard(
+      {Key? key, required this.collectionDoc,
+     })
+      : super(key: key);
+
+  final DocumentSnapshot collectionDoc;
 
   @override
   Widget build(BuildContext context) {
@@ -18,19 +25,19 @@ class RecipeCollectionCard extends StatelessWidget {
         ),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.red,
+            color: _colorFromHex(collectionDoc['color']),
             borderRadius: BorderRadius.circular(size * 1.8),
           ),
           child: Row(
             children: [
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.all(size * 2.0),
+                  padding: EdgeInsets.all(size * 0.5),
                   child: Column(
                     children: [
                       const Spacer(),
                       Text(
-                        'Course',
+                        collectionDoc['name'],
                         style: TextStyle(
                           fontSize: size * 2.2,
                           color: Colors.white,
@@ -41,9 +48,9 @@ class RecipeCollectionCard extends StatelessWidget {
                       SizedBox(
                         height: size * 0.5,
                       ),
-                      const Text(
-                        'Recipes ordered by course',
-                        style: TextStyle(
+                      Text(
+                        collectionDoc['description'],
+                        style: const TextStyle(
                           color: Colors.white54,
                         ),
                         maxLines: 2,
@@ -51,12 +58,14 @@ class RecipeCollectionCard extends StatelessWidget {
                       ),
                       const Spacer(),
                       buildInfoRow(size,
-                          data: Icons.person, text: '30 authors'),
+                          data: Icons.person,
+                          text: collectionDoc['author_no'].toString() + ' authors'),
                       SizedBox(
-                        height: size * 0.5,
+                        height: size * 0.3,
                       ),
                       buildInfoRow(size,
-                          data: FontAwesomeIcons.utensils, text: '70 recipes'),
+                          data: FontAwesomeIcons.utensils,
+                          text: collectionDoc['recipe_no'].toString() + ' recipes'),
                       const Spacer(),
                     ],
                   ),
@@ -67,8 +76,9 @@ class RecipeCollectionCard extends StatelessWidget {
               ),
               AspectRatio(
                 aspectRatio: 0.71,
-                child: Image.network(
-                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGUluUzhynemnSpHeY3OCRf4UVsdhfB83D3g&usqp=CAU',
+                child: FadeInImage.memoryNetwork(
+                  placeholder: kTransparentImage,
+                  image: collectionDoc['imageUrl'],
                   fit: BoxFit.cover,
                   alignment: Alignment.centerLeft,
                 ),
@@ -80,6 +90,11 @@ class RecipeCollectionCard extends StatelessWidget {
     );
   }
 
+  Color _colorFromHex(String hexColor) {
+    final hexCode = hexColor.replaceAll('#', '');
+    return Color(int.parse('FF$hexCode', radix: 16));
+  }
+
   Row buildInfoRow(double size,
       {required IconData data, required String text}) {
     return Row(
@@ -87,7 +102,6 @@ class RecipeCollectionCard extends StatelessWidget {
         Icon(
           data,
           color: Colors.white,
-          size: 22.0,
         ),
         SizedBox(
           width: size,
@@ -102,3 +116,4 @@ class RecipeCollectionCard extends StatelessWidget {
     );
   }
 }
+
