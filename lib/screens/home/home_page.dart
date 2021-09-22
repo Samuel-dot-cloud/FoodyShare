@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
             ),
             child: IconButton(
               icon: const Icon(
-                Icons.collections_outlined,
+                Icons.grid_view_outlined,
                 color: Colors.black,
               ),
               onPressed: () {

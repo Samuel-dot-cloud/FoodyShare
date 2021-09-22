@@ -5,7 +5,8 @@ import 'package:food_share/routes/recipe_details_arguments.dart';
 import 'package:food_share/screens/auth/forgot_password.dart';
 import 'package:food_share/screens/auth/login_screen.dart';
 import 'package:food_share/screens/auth/sign_up_screen.dart';
-import 'package:food_share/screens/collection/recipe_collections.dart';
+import 'package:food_share/screens/collection/recipe_collections_screen.dart';
+import 'package:food_share/screens/collection/recipe_hashtag_screen.dart';
 import 'package:food_share/screens/profile/alt_profile.dart';
 import 'package:food_share/screens/home/recipe_details.dart';
 import 'package:food_share/screens/profile/settings/edit_profile.dart';
@@ -27,6 +28,8 @@ class RouteGenerator {
         return buildRoute(const BottomNav(), settings: settings);
       case AppRoutes.collections:
         return buildRoute(const RecipeCollectionsScreen(), settings: settings);
+      case AppRoutes.hashtags:
+        return buildRoute(const RecipeHashtagScreen(), settings: settings);
       case AppRoutes.settings:
         return buildRoute(const ProfileSettings(), settings: settings);
       case AppRoutes.editProfile:
