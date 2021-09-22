@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/config/size_config.dart';
 import 'package:food_share/routes/app_routes.dart';
+import 'package:food_share/routes/recipe_hashtags_arguments.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class RecipeCollectionCard extends StatelessWidget {
-  const RecipeCollectionCard(
-      {Key? key, required this.collectionDoc,
-     })
-      : super(key: key);
+  const RecipeCollectionCard({
+    Key? key,
+    required this.collectionDoc,
+  }) : super(key: key);
 
   final DocumentSnapshot collectionDoc;
 
@@ -18,8 +19,11 @@ class RecipeCollectionCard extends StatelessWidget {
     SizeConfig.init(context);
     double size = SizeConfig.defaultSize;
     return GestureDetector(
-      onTap: (){
-        Navigator.pushNamed(context, AppRoutes.hashtags);
+      onTap: () {
+        final args = RecipeHashtagsArguments(
+            collectionName: collectionDoc['name'],
+            collectionDocId: collectionDoc['collection_id']);
+        Navigator.pushNamed(context, AppRoutes.hashtags, arguments: args);
       },
       child: AspectRatio(
         aspectRatio: 1.65,
@@ -64,19 +68,22 @@ class RecipeCollectionCard extends StatelessWidget {
                         const Spacer(),
                         _buildInfoRow(size,
                             data: Icons.person,
-                            text: collectionDoc['author_no'].toString() + ' authors'),
+                            text: collectionDoc['author_no'].toString() +
+                                ' authors'),
                         SizedBox(
                           height: size * 0.1,
                         ),
                         _buildInfoRow(size,
                             data: FontAwesomeIcons.utensils,
-                            text: collectionDoc['recipe_no'].toString() + ' recipes'),
+                            text: collectionDoc['recipe_no'].toString() +
+                                ' recipes'),
                         SizedBox(
                           height: size * 0.1,
                         ),
                         _buildInfoRow(size,
                             data: Icons.grid_3x3_outlined,
-                            text: collectionDoc['hashtag_no'].toString() + ' hashtags'),
+                            text: collectionDoc['hashtag_no'].toString() +
+                                ' hashtags'),
                         const Spacer(),
                       ],
                     ),
@@ -128,4 +135,3 @@ class RecipeCollectionCard extends StatelessWidget {
     );
   }
 }
-

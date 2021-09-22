@@ -1,10 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/config/size_config.dart';
-import 'package:food_share/widgets/collections/icon_font.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class RecipeHashtagCard extends StatelessWidget {
-  const RecipeHashtagCard({Key? key}) : super(key: key);
+  const RecipeHashtagCard({Key? key, required this.hashtagDoc }) : super(key: key);
+
+  final DocumentSnapshot hashtagDoc;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +23,7 @@ class RecipeHashtagCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(20.0),
               child: FadeInImage.memoryNetwork(
                 placeholder: kTransparentImage,
-                image: 'https://www.getdroidtips.com/wp-content/uploads/2019/12/Call-of-Duty-Wallpapers-Download-in-High-Resolution.jpg',
+                image: hashtagDoc['imageUrl'],
                 fit: BoxFit.cover,
               ),
             ),
@@ -53,25 +56,16 @@ class RecipeHashtagCard extends StatelessWidget {
               padding: EdgeInsets.all(size * 1.0),
               child: Row(
                 children: [
-                  ClipOval(
-                    child: Container(
-                      color: Colors.brown,
-                      padding: EdgeInsets.all(size * 1.0),
-                      child: IconFont(
-                        color: Colors.white,
-                        size: size * 3.0,
-                        iconName: 'a',
-                      ),
-                    ),
-                  ),
                   SizedBox(
                     width: size * 1.0,
                   ),
                   Text(
-                    'Test',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: size * 2.5,
+                    hashtagDoc['name'],
+                    style: GoogleFonts.robotoMono(
+                      textStyle: TextStyle(
+                        color: Colors.white,
+                        fontSize: size * 2.0,
+                      ),
                     ),
                   ),
                 ],
