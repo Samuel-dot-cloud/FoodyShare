@@ -5,6 +5,7 @@ class AppRoutes{
   static const bottomNav = '/bottomNav';
   static const collections = '/collections';
   static const hashtags = '/hashtags';
+  static const hashtag = '/hashtag';
   static const startupView = '/startup';
   static const search = '/search';
   static const create = '/create';
