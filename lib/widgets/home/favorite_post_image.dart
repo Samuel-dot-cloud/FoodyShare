@@ -47,9 +47,17 @@ class FavoritePostImage extends StatelessWidget {
                     );
                   },
                   child: Container(
-                    decoration: const BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.all(Radius.circular(15))),
+                    decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.all(Radius.circular(15)),
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.black.withOpacity(0.9),
+                          Colors.transparent,
+                        ],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                      ),
+                    ),
                     child: ClipRRect(
                       borderRadius: const BorderRadius.all(Radius.circular(15)),
                       child: FadeInImage.memoryNetwork(

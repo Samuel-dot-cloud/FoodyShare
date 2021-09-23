@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:food_share/routes/alt_profile_arguments.dart';
 import 'package:food_share/routes/app_routes.dart';
+import 'package:food_share/routes/hashtag_recipes_arguments.dart';
 import 'package:food_share/routes/recipe_details_arguments.dart';
+import 'package:food_share/routes/recipe_hashtags_arguments.dart';
 import 'package:food_share/screens/auth/forgot_password.dart';
 import 'package:food_share/screens/auth/login_screen.dart';
 import 'package:food_share/screens/auth/sign_up_screen.dart';
-import 'package:food_share/screens/collection/recipe_collections.dart';
+import 'package:food_share/screens/collection/hashtag_recipes_screen.dart';
+import 'package:food_share/screens/collection/recipe_collections_screen.dart';
+import 'package:food_share/screens/collection/recipe_hashtag_collection_screen.dart';
 import 'package:food_share/screens/profile/alt_profile.dart';
 import 'package:food_share/screens/home/recipe_details.dart';
 import 'package:food_share/screens/profile/settings/edit_profile.dart';
@@ -27,16 +31,24 @@ class RouteGenerator {
         return buildRoute(const BottomNav(), settings: settings);
       case AppRoutes.collections:
         return buildRoute(const RecipeCollectionsScreen(), settings: settings);
+      case AppRoutes.hashtags:
+        final arguments = settings.arguments as RecipeHashtagsArguments;
+        return buildRoute(RecipeHashtagCollectionScreen(arguments: arguments),
+            settings: settings);
+      case AppRoutes.hashtag:
+        final arguments = settings.arguments as HashtagRecipesArguments;
+        return buildRoute(HashtagRecipesScreen(arguments: arguments),
+            settings: settings);
       case AppRoutes.settings:
         return buildRoute(const ProfileSettings(), settings: settings);
       case AppRoutes.editProfile:
         return buildRoute(const EditProfilePage(), settings: settings);
       case AppRoutes.altProfile:
-        final argument1 = settings.arguments as AltProfileArguments;
-        return buildRoute(AltProfile(arguments: argument1), settings: settings);
+        final arguments = settings.arguments as AltProfileArguments;
+        return buildRoute(AltProfile(arguments: arguments), settings: settings);
       case AppRoutes.recipeDetails:
-        final argument2 = settings.arguments as RecipeDetailsArguments;
-        return buildRoute(RecipeDetails(arguments: argument2),
+        final arguments = settings.arguments as RecipeDetailsArguments;
+        return buildRoute(RecipeDetails(arguments: arguments),
             settings: settings);
       default:
         return _errorRoute();
