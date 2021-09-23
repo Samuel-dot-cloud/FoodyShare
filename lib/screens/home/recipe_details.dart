@@ -113,6 +113,14 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                               setState(() {
                                 _isAdded = false;
                               });
+                              Fluttertoast.showToast(
+                                  msg: 'Removed from favorites',
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: kBlue,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
                             })
                           : Provider.of<FirebaseOperations>(context,
                                   listen: false)
@@ -127,6 +135,14 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                               setState(() {
                                 _isAdded = true;
                               });
+                              Fluttertoast.showToast(
+                                  msg: 'Added to favorites',
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: kBlue,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
                             });
                     } else {
                       _showOptionsBottomSheet(context);
