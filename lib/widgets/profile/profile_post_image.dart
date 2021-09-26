@@ -50,12 +50,25 @@ class _ProfilePostImageState extends State<ProfilePostImage> {
                 arguments: args,
               );
             },
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15.0),
-              child: FadeInImage.memoryNetwork(
-                placeholder: kTransparentImage,
-                image: snapshot.data!['mediaUrl'],
-                fit: BoxFit.cover,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15.0),
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.black.withOpacity(0.9),
+                    Colors.transparent,
+                  ],
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                ),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15.0),
+                child: FadeInImage.memoryNetwork(
+                  placeholder: kTransparentImage,
+                  image: snapshot.data!['mediaUrl'],
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           );

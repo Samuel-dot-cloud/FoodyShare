@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:food_share/routes/alt_profile_arguments.dart';
 import 'package:food_share/routes/app_routes.dart';
-import 'package:food_share/screens/profile/alt_profile.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:provider/provider.dart';
@@ -58,8 +57,8 @@ class UserTile extends StatelessWidget {
             ),
             subtitle: Text(
               _isNotProfileOwner ? '@' + snapshot.data!['username'] : 'You',
-              style: const TextStyle(
-                color: Colors.yellow,
+              style: TextStyle(
+                color: _isNotProfileOwner ? Colors.yellow : kBlue,
                 fontWeight: FontWeight.bold,
                 fontSize: 14.5,
               ),
