@@ -4,8 +4,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/routes/alt_profile_arguments.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/recipe_details_arguments.dart';
+import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class RecipePostImage extends StatelessWidget {
@@ -79,7 +81,7 @@ class RecipePostImage extends StatelessWidget {
                       left: 0.0,
                       right: 0.0,
                       child: _buildUserProfileStreamBuilder(
-                          snapshot.data!['authorId']),
+                          context, snapshot.data!['authorId']),
                     ),
                   ],
                 )
@@ -109,7 +111,9 @@ class RecipePostImage extends StatelessWidget {
   }
 
   StreamBuilder<DocumentSnapshot<Object?>> _buildUserProfileStreamBuilder(
-      String authorId) {
+      BuildContext context, String authorId) {
+    bool _isNotProfileOwner = authorId !=
+        Provider.of<FirebaseOperations>(context, listen: false).getUserId;
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
           .collection('users')
@@ -128,24 +132,27 @@ class RecipePostImage extends StatelessWidget {
               backgroundImage: NetworkImage(snapshot.data!['photoUrl']),
             ),
             label: Text(
-              '@' + snapshot.data!['username'],
-              style: const TextStyle(
-                  color: Colors.black),
+              _isNotProfileOwner ? '@' + snapshot.data!['username'] : 'You',
+              style: TextStyle(
+                color: _isNotProfileOwner ? Colors.black : kBlue,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
             onPressed: () {
-              final args = AltProfileArguments(
-                userUID: snapshot.data!['id'],
-                authorImage: snapshot.data!['photoUrl'],
-                authorUsername: snapshot.data!['username'],
-                authorDisplayName: snapshot.data!['displayName'],
-                authorBio: snapshot.data!['bio'],
-              );
-              Navigator.pushNamed(
-                context,
-                AppRoutes.altProfile,
-                arguments: args,
-              );
+              if (_isNotProfileOwner) {
+                final args = AltProfileArguments(
+                  userUID: snapshot.data!['id'],
+                  authorImage: snapshot.data!['photoUrl'],
+                  authorUsername: snapshot.data!['username'],
+                  authorDisplayName: snapshot.data!['displayName'],
+                  authorBio: snapshot.data!['bio'],
+                );
+                Navigator.pushNamed(
+                  context,
+                  AppRoutes.altProfile,
+                  arguments: args,
+                );
+              }
             },
           );
         }
