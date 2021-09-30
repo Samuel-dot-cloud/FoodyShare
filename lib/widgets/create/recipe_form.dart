@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_share/config/size_config.dart';
 import 'package:food_share/utils/form_values.dart';
 import 'package:food_share/utils/loading_animation.dart';
+import 'package:food_share/widgets/create/hashtag_field.dart';
 import 'package:food_share/widgets/create/ingredients_form.dart';
 import 'package:food_share/widgets/create/preparation_form.dart';
 import 'package:food_share/widgets/rounded_button.dart';
@@ -43,6 +45,7 @@ class _RecipeFormState extends State<RecipeForm> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig.init(context);
     return SizedBox(
       child: _isUploading == false
           ? Column(
@@ -107,6 +110,12 @@ class _RecipeFormState extends State<RecipeForm> {
                   onUpdate: (value) {
                     values.preparation = value;
                   },
+                ),
+                const SizedBox(height: 20.0),
+                SizedBox(
+                  height: SizeConfig.defaultSize * 20,
+                  width: SizeConfig.defaultSize * 80,
+                    child: const SingleChildScrollView(child: HashtagField()),
                 ),
                 const SizedBox(height: 40.0),
                 RoundedButton(
