@@ -113,9 +113,9 @@ class _RecipeFormState extends State<RecipeForm> {
                 ),
                 const SizedBox(height: 20.0),
                 SizedBox(
-                  height: SizeConfig.defaultSize * 20,
+                  height: SizeConfig.defaultSize * 30,
                   width: SizeConfig.defaultSize * 80,
-                    child: const SingleChildScrollView(child: HashtagField()),
+                    child: const HashtagField(),
                 ),
                 const SizedBox(height: 40.0),
                 RoundedButton(
