@@ -19,13 +19,14 @@ class _StartupViewState extends State<StartupView> {
 
   @override
   void initState() {
-    Provider.of<FirebaseOperations>(context, listen: false)
-        .initUserData(context);
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<FirebaseOperations>(context, listen: true)
+        .initUserData(context);
     Future.delayed(
         const Duration(
           milliseconds: 3000,
