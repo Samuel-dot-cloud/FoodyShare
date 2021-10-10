@@ -107,7 +107,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 backgroundColor: Colors.green,
                 textColor: Colors.white,
                 fontSize: 16.0);
-            Navigator.pushReplacementNamed(context, AppRoutes.bottomNav);
+            Navigator.pushReplacementNamed(context, AppRoutes.startupView);
           } else {
             setState(() {
               isLoading = false;
