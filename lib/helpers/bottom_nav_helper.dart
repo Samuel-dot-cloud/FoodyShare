@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -45,7 +46,7 @@ class BottomNavHelper with ChangeNotifier {
         CircleAvatar(
           radius: 16.5,
           backgroundColor: kBlue,
-          backgroundImage: NetworkImage(
+          backgroundImage: CachedNetworkImageProvider(
               Provider.of<FirebaseOperations>(context, listen: true)
                   .getUserImage),
         ),

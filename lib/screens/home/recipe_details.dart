@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -87,7 +88,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                           height: (size.height / 2) + 50,
                           width: double.infinity,
                           fit: BoxFit.cover,
-                          image: NetworkImage(widget.arguments.recipeImage),
+                          image: CachedNetworkImageProvider(widget.arguments.recipeImage),
                         )
                       : const Center(
                           child: CircularProgressIndicator(

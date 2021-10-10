@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/utils/pallete.dart';
@@ -126,9 +127,8 @@ class ProfileHelper with ChangeNotifier {
                 CircleAvatar(
                   radius: 80.0,
                   backgroundColor: Colors.grey,
-                  backgroundImage: NetworkImage(
-                      Provider.of<FirebaseOperations>(context, listen: false)
-                          .getUserImage),
+                  backgroundImage: CachedNetworkImageProvider(Provider.of<FirebaseOperations>(context, listen: false)
+                      .getUserImage),
                 ),
                 SizedBox(
                   child: MaterialButton(

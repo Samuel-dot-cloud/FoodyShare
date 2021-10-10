@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/config/size_config.dart';
@@ -34,10 +35,17 @@ class RecipeHashtagCard extends StatelessWidget {
             Positioned.fill(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20.0),
-                child: FadeInImage.memoryNetwork(
-                  placeholder: kTransparentImage,
-                  image: hashtagDoc['imageUrl'],
+                child: CachedNetworkImage(
                   fit: BoxFit.cover,
+                  imageUrl: hashtagDoc['imageUrl'],
+                  progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      CircularProgressIndicator(
+                    value: downloadProgress.progress,
+                    backgroundColor: Colors.cyanAccent,
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(Colors.yellow),
+                  ),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
               ),
             ),

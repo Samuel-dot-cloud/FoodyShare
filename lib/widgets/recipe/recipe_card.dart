@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,7 +8,6 @@ import 'package:food_share/routes/recipe_details_arguments.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:provider/provider.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class RecipeCard extends StatefulWidget {
   const RecipeCard({Key? key, required this.recipeDoc}) : super(key: key);
@@ -80,12 +80,21 @@ class _RecipeCardState extends State<RecipeCard> {
                   borderRadius: BorderRadius.circular(24.0),
                   child: Hero(
                     tag: widget.recipeDoc['mediaUrl'],
-                    child: FadeInImage.memoryNetwork(
+                    child: CachedNetworkImage(
                       height: 320.0,
                       width: 320.0,
-                      placeholder: kTransparentImage,
-                      image: widget.recipeDoc['mediaUrl'],
                       fit: BoxFit.cover,
+                      imageUrl: widget.recipeDoc['mediaUrl'],
+                      progressIndicatorBuilder:
+                          (context, url, downloadProgress) =>
+                              CircularProgressIndicator(
+                        value: downloadProgress.progress,
+                        backgroundColor: Colors.cyanAccent,
+                        valueColor:
+                            const AlwaysStoppedAnimation<Color>(Colors.yellow),
+                      ),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
                     ),
                   ),
                 ),
@@ -118,8 +127,7 @@ class _RecipeCardState extends State<RecipeCard> {
                       child: CircleAvatar(
                         radius: 18.0,
                         backgroundColor: kBlue,
-                        backgroundImage:
-                            NetworkImage(snapshot.data!['photoUrl']),
+                        backgroundImage: CachedNetworkImageProvider(snapshot.data!['photoUrl']),
                       ),
                     ),
                     Flexible(

@@ -1,10 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/recipe_details_arguments.dart';
 import 'package:lottie/lottie.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class FavoritePostImage extends StatelessWidget {
   const FavoritePostImage({Key? key, required this.recipeDoc})
@@ -48,7 +48,7 @@ class FavoritePostImage extends StatelessWidget {
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.all(Radius.circular(15)),
+                      borderRadius: const BorderRadius.all(Radius.circular(15)),
                       gradient: LinearGradient(
                         colors: [
                           Colors.black.withOpacity(0.9),
@@ -60,10 +60,21 @@ class FavoritePostImage extends StatelessWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: const BorderRadius.all(Radius.circular(15)),
-                      child: FadeInImage.memoryNetwork(
-                        placeholder: kTransparentImage,
-                        image: snapshot.data!['mediaUrl'],
+                      child: CachedNetworkImage(
+                        height: 320.0,
+                        width: 320.0,
                         fit: BoxFit.cover,
+                        imageUrl: snapshot.data!['mediaUrl'],
+                        progressIndicatorBuilder:
+                            (context, url, downloadProgress) =>
+                                CircularProgressIndicator(
+                          value: downloadProgress.progress,
+                          backgroundColor: Colors.cyanAccent,
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                              Colors.yellow),
+                        ),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
                       ),
                     ),
                   ),

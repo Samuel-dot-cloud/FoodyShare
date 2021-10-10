@@ -8,8 +8,6 @@ import 'package:food_share/widgets/auth/background_image.dart';
 import 'package:food_share/widgets/rounded_button.dart';
 import 'package:food_share/widgets/auth/text_input_field.dart';
 
-import 'login_screen.dart';
-
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({Key? key}) : super(key: key);
 
