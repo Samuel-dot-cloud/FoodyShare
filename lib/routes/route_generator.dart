@@ -7,6 +7,7 @@ import 'package:food_share/routes/recipe_hashtags_arguments.dart';
 import 'package:food_share/screens/auth/forgot_password.dart';
 import 'package:food_share/screens/auth/login_screen.dart';
 import 'package:food_share/screens/auth/sign_up_screen.dart';
+import 'package:food_share/screens/auth/startup_view.dart';
 import 'package:food_share/screens/collection/hashtag_recipes_screen.dart';
 import 'package:food_share/screens/collection/recipe_collections_screen.dart';
 import 'package:food_share/screens/collection/recipe_hashtag_collection_screen.dart';
@@ -21,6 +22,8 @@ import 'package:lottie/lottie.dart';
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case AppRoutes.startupView:
+        return buildRoute(const StartupView(), settings: settings);
       case AppRoutes.login:
         return buildRoute(const LoginScreen(), settings: settings);
       case AppRoutes.register:
