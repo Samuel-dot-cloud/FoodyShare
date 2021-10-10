@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/routes/alt_profile_arguments.dart';
@@ -70,7 +71,8 @@ class ActivityFeedItem extends StatelessWidget {
                 ),
                 leading: CircleAvatar(
                   backgroundColor: kBlue,
-                  backgroundImage: NetworkImage(snapshot.data!['photoUrl']),
+                  backgroundImage:
+                      CachedNetworkImageProvider(snapshot.data!['photoUrl']),
                 ),
                 subtitle: Text(
                   timeago.format(

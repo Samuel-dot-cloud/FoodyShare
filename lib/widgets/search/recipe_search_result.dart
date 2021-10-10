@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/models/recipe_model.dart';
 import 'package:food_share/routes/app_routes.dart';
@@ -49,7 +50,7 @@ class RecipeResult extends StatelessWidget {
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             fit: BoxFit.cover,
-                            image: NetworkImage(recipeModel.imgPath),
+                            image: CachedNetworkImageProvider(recipeModel.imgPath),
                           ),
                         ),
                       ),

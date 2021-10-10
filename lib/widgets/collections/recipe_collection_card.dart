@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -94,11 +95,21 @@ class RecipeCollectionCard extends StatelessWidget {
                 ),
                 AspectRatio(
                   aspectRatio: 0.71,
-                  child: FadeInImage.memoryNetwork(
-                    placeholder: kTransparentImage,
-                    image: collectionDoc['imageUrl'],
+                  child:
+                  CachedNetworkImage(
                     fit: BoxFit.cover,
                     alignment: Alignment.centerLeft,
+                    imageUrl: collectionDoc['imageUrl'],
+                    progressIndicatorBuilder:
+                        (context, url, downloadProgress) =>
+                        CircularProgressIndicator(
+                          value: downloadProgress.progress,
+                          backgroundColor: Colors.cyanAccent,
+                          valueColor:
+                          const AlwaysStoppedAnimation<Color>(Colors.yellow),
+                        ),
+                    errorWidget: (context, url, error) =>
+                    const Icon(Icons.error),
                   ),
                 ),
               ],

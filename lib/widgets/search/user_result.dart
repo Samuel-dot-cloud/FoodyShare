@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/models/user_model.dart';
 import 'package:food_share/routes/alt_profile_arguments.dart';
@@ -39,7 +40,8 @@ class UserResult extends StatelessWidget {
             },
             child: ListTile(
               leading: CircleAvatar(
-                backgroundImage: NetworkImage(customUser.photoUrl),
+                backgroundImage:
+                    CachedNetworkImageProvider(customUser.photoUrl),
               ),
               title: Text(
                 customUser.displayName,
@@ -50,8 +52,8 @@ class UserResult extends StatelessWidget {
               ),
               subtitle: Text(
                 _isNotCurrentUser ? '@' + customUser.username : 'You',
-                style: const TextStyle(
-                  color: Colors.black,
+                style: TextStyle(
+                  color: _isNotCurrentUser ? Colors.black : kBlue,
                 ),
               ),
             ),

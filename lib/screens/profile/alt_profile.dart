@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -145,7 +146,8 @@ class _AltProfileState extends State<AltProfile> {
                     height: (size.height / 2) + 120,
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    image: NetworkImage(widget.arguments.authorImage),
+                    image: CachedNetworkImageProvider(
+                        widget.arguments.authorImage),
                   ),
                 ),
               ),

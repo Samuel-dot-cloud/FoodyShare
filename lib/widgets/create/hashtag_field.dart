@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chips_input/flutter_chips_input.dart';
 
 import 'hashtag_result.dart';
 
@@ -24,12 +23,12 @@ class _HashtagFieldState extends State<HashtagField> {
         '#objective-C'
       ],
       selected = [];
-  TextEditingController? tc;
+  TextEditingController? hashtagController;
 
   @override
   void initState() {
     super.initState();
-    tc = TextEditingController();
+    hashtagController = TextEditingController();
   }
 
   queryHashtagData(String query) async {
@@ -51,7 +50,7 @@ class _HashtagFieldState extends State<HashtagField> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                  controller: tc,
+                  controller: hashtagController,
                   decoration: InputDecoration(
                       border: const OutlineInputBorder(),
                       contentPadding: const EdgeInsets.fromLTRB(20, 0, 20, 0),

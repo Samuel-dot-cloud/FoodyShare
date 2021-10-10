@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/routes/app_routes.dart';
@@ -45,10 +46,9 @@ class ProfileSettings extends StatelessWidget {
               width: size.width * 0.3,
               child: CircleAvatar(
                 backgroundColor: kBlue,
-                backgroundImage: NetworkImage(
-                  Provider.of<FirebaseOperations>(context, listen: false)
-                      .getUserImage,
-                ),
+                backgroundImage: CachedNetworkImageProvider(
+                    Provider.of<FirebaseOperations>(context, listen: false)
+                        .getUserImage),
               ),
             ),
             SizedBox(
@@ -78,14 +78,14 @@ class ProfileSettings extends StatelessWidget {
               size: size,
               onPressed: () {
                 showLicensePage(
-                    context: context,
+                  context: context,
                   applicationName: Constants.appName,
                   applicationVersion: '0.0.1',
                   applicationLegalese: 'Copyright Samuel Wahome',
                   applicationIcon: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Image.asset(
-                        'assets/icons/launch_image.png',
+                      'assets/icons/launch_image.png',
                       width: 48.0,
                       height: 48.0,
                     ),
