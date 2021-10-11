@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/routes/recipe_details_arguments.dart';
 import 'package:food_share/services/firebase_operations.dart';
+import 'package:food_share/utils/number_formatter.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/bottom_nav.dart';
 import 'package:food_share/widgets/recipe/comments_section.dart';
@@ -208,6 +209,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
               ),
               Text(
                 widget.arguments.description,
+                maxLines: 3,
                 style: GoogleFonts.inconsolata(
                   textStyle: const TextStyle(
                     fontWeight: FontWeight.w400,
@@ -313,10 +315,9 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                             } else {
                               return Text(
                                 snapshot.data!.exists
-                                    ? snapshot.data!['count'].toString()
+                                    ? NumberFormatter.formatter(snapshot.data!['count'].toString())
                                     : '0',
                                 style: const TextStyle(
-                                  // color: Colors.black,
                                   fontWeight: FontWeight.normal,
                                   fontSize: 15.0,
                                 ),
@@ -360,23 +361,25 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                             } else {
                               return Text(
                                 snapshot.data!.exists
-                                    ? snapshot.data!['count'].toString()
+                                    ? NumberFormatter.formatter(snapshot.data!['count'].toString())
                                     : '0',
                               );
                             }
                           },
                         ),
                         const SizedBox(
-                          width: 10.0,
+                          width: 12.0,
                         ),
-                        const Icon(
-                          Icons.mail_outline,
+                        Container(
+                          color: Colors.black,
+                          height: 30.0,
+                          width: 2.0,
                         ),
                         const SizedBox(
                           width: 5.0,
                         ),
                         Text(timeago
-                            .format(widget.arguments.recipeTimestamp.toDate())),
+                            .format(widget.arguments.recipeTimestamp.toDate(), locale: 'en_short')),
                         const SizedBox(
                           width: 10.0,
                         ),
