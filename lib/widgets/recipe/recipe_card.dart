@@ -6,6 +6,7 @@ import 'package:food_share/routes/alt_profile_arguments.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/recipe_details_arguments.dart';
 import 'package:food_share/services/firebase_operations.dart';
+import 'package:food_share/utils/number_formatter.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:provider/provider.dart';
 
@@ -273,7 +274,7 @@ class _RecipeCardState extends State<RecipeCard> {
                                   padding: const EdgeInsets.only(left: 4.0),
                                   child: Text(
                                     snapshot.data!.exists
-                                        ? snapshot.data!['count'].toString()
+                                        ? NumberFormatter.formatter(snapshot.data!['count'].toString())
                                         : '0',
                                     style: const TextStyle(
                                       color: Colors.black,

@@ -319,6 +319,7 @@ class ProfileHelper with ChangeNotifier {
         Text(
           displayName,
           overflow: TextOverflow.ellipsis,
+          maxLines: 2,
           style: const TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 27.0,
