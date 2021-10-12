@@ -122,7 +122,7 @@ class _RecipeCardState extends State<RecipeCard> {
                   horizontal: 24.0,
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Flexible(
                       flex: 1,
