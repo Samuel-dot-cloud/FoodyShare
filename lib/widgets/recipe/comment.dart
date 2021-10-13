@@ -59,8 +59,8 @@ class Comment extends StatelessWidget {
                   _isNotCurrentUser
                       ? '@' + snapshot.data!['username']
                       : 'You',
-                  style: const TextStyle(
-                    color: Colors.black,
+                  style: TextStyle(
+                    color: _isNotCurrentUser ? Colors.black : kBlue,
                     fontWeight: FontWeight.w500,
                   ),
                 )

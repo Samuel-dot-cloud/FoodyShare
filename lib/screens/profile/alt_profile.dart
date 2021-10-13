@@ -9,6 +9,7 @@ import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/helpers/profile_helper.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/profile/profile_post_image.dart';
+import 'package:food_share/widgets/refresh_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -25,6 +26,16 @@ class AltProfile extends StatefulWidget {
 }
 
 class _AltProfileState extends State<AltProfile> {
+  @override
+  void initState() {
+    checkIfFollowing();
+    _isButtonDisabled = false;
+    _isNotProfileOwner =
+        Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
+            widget.arguments.userUID;
+    super.initState();
+  }
+
   late bool _isButtonDisabled;
   double hPadding = 40.0;
 
@@ -97,14 +108,8 @@ class _AltProfileState extends State<AltProfile> {
     );
   }
 
-  @override
-  void initState() {
-    checkIfFollowing();
-    _isButtonDisabled = false;
-    super.initState();
-  }
-
   bool _isFollowing = false;
+  late bool _isNotProfileOwner;
 
   checkIfFollowing() async {
     DocumentSnapshot doc = await FirebaseFirestore.instance
@@ -198,77 +203,82 @@ class _AltProfileState extends State<AltProfile> {
 
             ///Post Gridview
             Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    child: Column(
-                      children: [
-                        StreamBuilder<List<DocumentSnapshot>>(
-                          stream: listenToRecipeGridRealTime(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Provider.of<ProfileHelper>(context,
-                                      listen: false)
-                                  .defaultNoRecipes(context);
-                            } else {
-                              return Column(
-                                children: [
-                                  GridView.builder(
-                                    primary: false,
-                                    shrinkWrap: true,
-                                    padding: EdgeInsets.zero,
-                                    itemCount: snapshot.data!.length,
-                                    gridDelegate:
-                                        const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      mainAxisSpacing: 16.0,
-                                    ),
-                                    itemBuilder:
-                                        (BuildContext context, int index) =>
-                                            Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 3.0),
-                                      child: ProfilePostImage(
-                                        recipeDoc: snapshot.data![index],
+              child: RefreshWidget(
+                onRefresh: () async {
+                  return getRecipeGrid();
+                },
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      child: Column(
+                        children: [
+                          StreamBuilder<List<DocumentSnapshot>>(
+                            stream: listenToRecipeGridRealTime(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Provider.of<ProfileHelper>(context,
+                                        listen: false)
+                                    .defaultNoRecipes(context);
+                              } else {
+                                return Column(
+                                  children: [
+                                    GridView.builder(
+                                      primary: false,
+                                      shrinkWrap: true,
+                                      padding: EdgeInsets.zero,
+                                      itemCount: snapshot.data!.length,
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                        mainAxisSpacing: 16.0,
                                       ),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 10.0,
-                                  ),
-                                  OutlinedButton(
-                                    onPressed: () {
-                                      getRecipeGrid();
-                                    },
-                                    child: const Text(
-                                      'SEE MORE',
-                                      style: TextStyle(
-                                        fontSize: 12.0,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                    style: ButtonStyle(
-                                      shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                        RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(30.0),
-                                          side: const BorderSide(color: kBlue),
+                                      itemBuilder:
+                                          (BuildContext context, int index) =>
+                                              Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 3.0),
+                                        child: ProfilePostImage(
+                                          recipeDoc: snapshot.data![index],
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              );
-                            }
-                          },
-                        ),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                      ],
+                                    const SizedBox(
+                                      height: 10.0,
+                                    ),
+                                    OutlinedButton(
+                                      onPressed: () {
+                                        getRecipeGrid();
+                                      },
+                                      child: const Text(
+                                        'SEE MORE',
+                                        style: TextStyle(
+                                          fontSize: 12.0,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      style: ButtonStyle(
+                                        shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(30.0),
+                                            side: const BorderSide(color: kBlue),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
+                            },
+                          ),
+                          const SizedBox(
+                            height: 10.0,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -284,110 +294,124 @@ class _AltProfileState extends State<AltProfile> {
   Container _actionSection({required double hPadding}) {
     return Container(
       alignment: Alignment.center,
-      child: SizedBox(
-        width: double.infinity,
-        child: TextButton(
-          onPressed: _isButtonDisabled
-              ? null
-              : () {
-                  setState(() {
-                    _isButtonDisabled = true;
-                  });
-                  _isFollowing
-                      ? Provider.of<FirebaseOperations>(context, listen: false)
-                          .unfollowUser(
-                          widget.arguments.userUID,
-                          Provider.of<FirebaseOperations>(context,
-                                  listen: false)
-                              .getUserId,
-                          Provider.of<FirebaseOperations>(context,
-                                  listen: false)
-                              .getUserId,
-                          widget.arguments.userUID,
-                        )
-                          .whenComplete(() {
-                          followNotification(context,
-                              'Unfollowed @' + widget.arguments.authorUsername);
-                          Provider.of<FirebaseOperations>(context,
-                                  listen: false)
-                              .removeFollowFromActivityFeed(
-                            widget.arguments.userUID,
-                            Provider.of<FirebaseOperations>(context,
+      child: _isNotProfileOwner
+          ? SizedBox(
+              width: double.infinity,
+              child: TextButton(
+                onPressed: _isButtonDisabled
+                    ? null
+                    : () {
+                        setState(() {
+                          _isButtonDisabled = true;
+                        });
+                        _isFollowing
+                            ? Provider.of<FirebaseOperations>(context,
                                     listen: false)
-                                .getUserId,
-                          );
-                          setState(() {
-                            _isFollowing = false;
-                            _isButtonDisabled = false;
-                          });
-                        })
-                      : Provider.of<FirebaseOperations>(context, listen: false)
-                          .followUser(
-                              widget.arguments.userUID,
-                              Provider.of<FirebaseOperations>(context,
-                                      listen: false)
-                                  .getUserId,
-                              {
-                                'userUID': Provider.of<FirebaseOperations>(
-                                        context,
+                                .unfollowUser(
+                                widget.arguments.userUID,
+                                Provider.of<FirebaseOperations>(context,
                                         listen: false)
                                     .getUserId,
-                                'timestamp': Timestamp.now(),
-                              },
-                              Provider.of<FirebaseOperations>(context,
-                                      listen: false)
-                                  .getUserId,
-                              widget.arguments.userUID,
-                              {
-                                'userUID': widget.arguments.userUID,
-                                'timestamp': Timestamp.now(),
+                                Provider.of<FirebaseOperations>(context,
+                                        listen: false)
+                                    .getUserId,
+                                widget.arguments.userUID,
+                              )
+                                .whenComplete(() {
+                                followNotification(
+                                    context,
+                                    'Unfollowed @' +
+                                        widget.arguments.authorUsername);
+                                Provider.of<FirebaseOperations>(context,
+                                        listen: false)
+                                    .removeFollowFromActivityFeed(
+                                  widget.arguments.userUID,
+                                  Provider.of<FirebaseOperations>(context,
+                                          listen: false)
+                                      .getUserId,
+                                );
+                                setState(() {
+                                  _isFollowing = false;
+                                  _isButtonDisabled = false;
+                                });
                               })
-                          .whenComplete(() {
-                          followNotification(context,
-                              'Followed @' + widget.arguments.authorUsername);
-                          Provider.of<FirebaseOperations>(context,
-                                  listen: false)
-                              .addFollowToActivityFeed(
-                            widget.arguments.userUID,
-                            Provider.of<FirebaseOperations>(context,
+                            : Provider.of<FirebaseOperations>(context,
                                     listen: false)
-                                .getUserId,
-                            {
-                              'profileId': widget.arguments.userUID,
-                              'userUID': Provider.of<FirebaseOperations>(
-                                      context,
-                                      listen: false)
-                                  .getUserId,
-                              'timestamp': Timestamp.now(),
-                            },
-                          );
-                          setState(() {
-                            _isFollowing = true;
-                            _isButtonDisabled = false;
-                          });
-                        });
-                },
-          child: Text(
-            _isFollowing ? 'UNFOLLOW' : 'FOLLOW',
-            style: const TextStyle(
-              fontSize: 12.0,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
-          style: ButtonStyle(
-            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-            backgroundColor: MaterialStateProperty.all<Color>(
-                _isFollowing ? Colors.red : kBlue),
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.0),
-                side: BorderSide(color: _isFollowing ? Colors.red : kBlue),
+                                .followUser(
+                                    widget.arguments.userUID,
+                                    Provider.of<FirebaseOperations>(context,
+                                            listen: false)
+                                        .getUserId,
+                                    {
+                                      'userUID':
+                                          Provider.of<FirebaseOperations>(
+                                                  context,
+                                                  listen: false)
+                                              .getUserId,
+                                      'timestamp': Timestamp.now(),
+                                    },
+                                    Provider.of<FirebaseOperations>(context,
+                                            listen: false)
+                                        .getUserId,
+                                    widget.arguments.userUID,
+                                    {
+                                      'userUID': widget.arguments.userUID,
+                                      'timestamp': Timestamp.now(),
+                                    })
+                                .whenComplete(() {
+                                followNotification(
+                                    context,
+                                    'Followed @' +
+                                        widget.arguments.authorUsername);
+                                Provider.of<FirebaseOperations>(context,
+                                        listen: false)
+                                    .addFollowToActivityFeed(
+                                  widget.arguments.userUID,
+                                  Provider.of<FirebaseOperations>(context,
+                                          listen: false)
+                                      .getUserId,
+                                  {
+                                    'profileId': widget.arguments.userUID,
+                                    'userUID': Provider.of<FirebaseOperations>(
+                                            context,
+                                            listen: false)
+                                        .getUserId,
+                                    'timestamp': Timestamp.now(),
+                                  },
+                                );
+                                setState(() {
+                                  _isFollowing = true;
+                                  _isButtonDisabled = false;
+                                });
+                              });
+                      },
+                child: Text(
+                  _isFollowing ? 'UNFOLLOW' : 'FOLLOW',
+                  style: const TextStyle(
+                    fontSize: 12.0,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+                style: ButtonStyle(
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.white),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      _isFollowing ? Colors.red : kBlue),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      side:
+                          BorderSide(color: _isFollowing ? Colors.red : kBlue),
+                    ),
+                  ),
+                ),
               ),
+            )
+          : const SizedBox(
+              height: 0.0,
+              width: 0.0,
             ),
-          ),
-        ),
-      ),
     );
   }
 

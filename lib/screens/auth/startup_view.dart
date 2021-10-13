@@ -7,36 +7,26 @@ import 'package:food_share/utils/pallete.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
-class StartupView extends StatefulWidget {
+class StartupView extends StatelessWidget {
   const StartupView({Key? key}) : super(key: key);
 
   @override
-  State<StartupView> createState() => _StartupViewState();
-}
-
-class _StartupViewState extends State<StartupView> {
-  FirebaseAuth auth = FirebaseAuth.instance;
-
-  @override
-  void initState() {
-
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    Provider.of<FirebaseOperations>(context, listen: true)
-        .initUserData(context);
-    Future.delayed(
-        const Duration(
-          milliseconds: 3000,
-        ), () {
-      if (auth.currentUser == null) {
-       Navigator.pushReplacementNamed(context, AppRoutes.login);
-      } else {
-        Navigator.pushReplacementNamed(context, AppRoutes.bottomNav);
-      }
-    });
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    Provider.of<FirebaseOperations>(context, listen: false)
+        .initUserData(context)
+        .whenComplete(() => Future.delayed(
+                const Duration(
+                  milliseconds: 3000,
+                ), () {
+              if (auth.currentUser == null) {
+                Navigator.pushReplacementNamed(context, AppRoutes.login);
+              } else {
+                Navigator.pushReplacementNamed(context, AppRoutes.bottomNav);
+              }
+            }));
+
     return Scaffold(
       body: Container(
         alignment: Alignment.center,

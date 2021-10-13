@@ -11,6 +11,7 @@ class IngredientsSection extends StatelessWidget {
     // ingredients.map((items) => items as Map).forEach((item) =>  item.values.forEach((string) => string.toString()));
     List? ingredientsList =
     ingredients.map((item) => item as Map).toList();
+
     return SingleChildScrollView(
       child: Column(
         children: [

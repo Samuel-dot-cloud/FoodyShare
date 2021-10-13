@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:food_share/utils/pallete.dart';
 
 import 'hashtag_result.dart';
 
@@ -31,14 +32,11 @@ class _HashtagFieldState extends State<HashtagField> {
     hashtagController = TextEditingController();
   }
 
-  queryHashtagData(String query) async {
-    Future<QuerySnapshot> hashtags = hashtagsRef
+  Stream getHashtagCollectionStream(String query){
+    return hashtagsRef
         .where('hashtag_name', isGreaterThanOrEqualTo: query.trim())
         .where('hashtag_name', isLessThan: query.trim() + 'z')
-        .get();
-    setState(() {
-      searchResultsFuture = hashtags;
-    });
+        .snapshots();
   }
 
   @override
@@ -64,14 +62,14 @@ class _HashtagFieldState extends State<HashtagField> {
                                   runSpacing: 5,
                                   children: selected.map((s) {
                                     return Chip(
-                                        backgroundColor: Colors.blue[100],
+                                        backgroundColor: kBlue,
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(7),
                                         ),
                                         label: Text(s,
-                                            style: TextStyle(
-                                                color: Colors.blue[900])),
+                                            style: const TextStyle(
+                                                color: Colors.white)),
                                         onDeleted: () {
                                           setState(() {
                                             selected.remove(s);
@@ -81,61 +79,64 @@ class _HashtagFieldState extends State<HashtagField> {
                             ))),
             ),
             const SizedBox(height: 20),
-            ListView.builder(
-                shrinkWrap: true,
-                itemCount: list.length,
-                physics: const ScrollPhysics(),
-                itemBuilder: (c, i) {
-                  return ListTile(
-                      title: Text(list[i],
-                          style: TextStyle(color: Colors.blue[900])),
-                      onTap: () {
-                        setState(() {
-                          if (!selected.contains(list[i]) && selected.length < 4) {
-                            selected.add(list[i]);
-                          }
-                        });
+            
+            SizedBox(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: hashtagsRef.snapshots().asBroadcastStream(),
+                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) { 
+                if(snapshot.hasError){
+                  return const Text('Something went wrong');
+                }
+                if (snapshot.connectionState == ConnectionState.waiting){
+                  return const CircularProgressIndicator(
+                    backgroundColor: Colors.cyanAccent,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.yellow),
+                  );
+                }
+                if(snapshot.hasData){
+                  return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: snapshot.data!.docs.length,
+                      physics: const ScrollPhysics(),
+                      itemBuilder: (c, i) {
+                        return ListTile(
+                            title: Text(snapshot.data[i]['hashtag_name'],
+                                style: TextStyle(color: Colors.blue[900])),
+                            onTap: () {
+                              setState(() {
+                                if (!selected.contains(snapshot.data[i]['hashtag_name']) && selected.length < 4) {
+                                  selected.add(snapshot.data[i]['hashtag_name']);
+                                }
+                              });
+                            });
                       });
-                })
+                }
+                return const Text('Error');
+              },
+              ),
+            ),
+            // ListView.builder(
+            //     shrinkWrap: true,
+            //     itemCount: list.length,
+            //     physics: const ScrollPhysics(),
+            //     itemBuilder: (c, i) {
+            //       return ListTile(
+            //           title: Text(list[i],
+            //               style: TextStyle(color: Colors.blue[900])),
+            //           onTap: () {
+            //             setState(() {
+            //               if (!selected.contains(list[i]) && selected.length < 4) {
+            //                 selected.add(list[i]);
+            //               }
+            //             });
+            //           });
+            //     })
           ]),
     );
   }
 
-  void _onChipTapped(Hashtag profile) {
-    print('$profile');
-  }
 
-  void _onChanged(List<Hashtag> data) {
-    print('onChanged $data');
-  }
-
-// Future<List<Hashtag>> _findSuggestions(String query) async {
-//   if (query.isNotEmpty) {
-//     return mockResults.where((profile) {
-//       return profile.name.contains(query) || profile.email.contains(query);
-//     }).toList(growable: false);
-//   } else {
-//     return const <Hashtag>[];
-//   }
-// }
 }
-
-const mockResults = <Hashtag>[
-  // AppProfile('Stock Man', 'stock@man.com', 'https://hips.hearstapps.com/vader-prod.s3.amazonaws.com/1581606254-51OOsCOVw3L.jpg?crop=0.990xw:0.980xh;0.00253xw,0.00800xh&resize=768:*'),
-  // AppProfile('Paul', 'paul@google.com', 'https://i.pcmag.com/imagery/articles/00DDUM2F1UuVX1ciAvfJqM3-9.1623763322.fit_lim.size_1600x900.jpg'),
-  // AppProfile('Fred', 'fred@google.com',
-  //     'https://static1.colliderimages.com/wordpress/wp-content/uploads/2020/10/video-games-release-date-calendar.png?q=50&fit=contain&w=750&h=375&dpr=1.5'),
-  // AppProfile('Bera', 'bera@flutter.io',
-  //     'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/most-popular-video-games-of-2020-1582141293.png?crop=1.00xw:1.00xh;0,0&resize=980:*'),
-  // AppProfile('John', 'john@flutter.io',
-  //     'https://hips.hearstapps.com/vader-prod.s3.amazonaws.com/1581605670-image.jpg?crop=0.800xw:1xh;center,top&resize=768:*'),
-  // AppProfile('Thomas', 'thomas@flutter.io',
-  //     'https://hips.hearstapps.com/vader-prod.s3.amazonaws.com/1581614836-51-oioaJsZL.jpg?crop=1xw:0.995xh;center,top&resize=768:*'),
-  // AppProfile('Norbert', 'norbert@flutter.io',
-  //     'https://hips.hearstapps.com/vader-prod.s3.amazonaws.com/1581605863-Madden-NFL-20.jpg?crop=1.00xw:0.965xh;0,0.00865xh&resize=768:*'),
-  // AppProfile('Marina', 'marina@flutter.io',
-  //     'https://hips.hearstapps.com/vader-prod.s3.amazonaws.com/1581605934-61CRUPJ9VLL.jpg?crop=1xw:0.995xh;center,top&resize=768:*'),
-];
 
 class Hashtag {
   final String name;

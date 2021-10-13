@@ -6,6 +6,7 @@ import 'package:food_share/routes/alt_profile_arguments.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/recipe_details_arguments.dart';
 import 'package:food_share/services/firebase_operations.dart';
+import 'package:food_share/utils/number_formatter.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:provider/provider.dart';
 
@@ -121,9 +122,10 @@ class _RecipeCardState extends State<RecipeCard> {
                   horizontal: 24.0,
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Flexible(
+                      flex: 1,
                       child: CircleAvatar(
                         radius: 18.0,
                         backgroundColor: kBlue,
@@ -131,7 +133,7 @@ class _RecipeCardState extends State<RecipeCard> {
                       ),
                     ),
                     Flexible(
-                      flex: 2,
+                    flex: 1,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -186,7 +188,9 @@ class _RecipeCardState extends State<RecipeCard> {
                           Text(
                             widget.recipeDoc['cookingTime'] + '\'',
                           ),
-                          const Spacer(),
+                          const SizedBox(
+                            width: 20.0,
+                          ),
                           InkWell(
                             onTap: _isButtonDisabled
                                 ? null
@@ -273,12 +277,12 @@ class _RecipeCardState extends State<RecipeCard> {
                                   padding: const EdgeInsets.only(left: 4.0),
                                   child: Text(
                                     snapshot.data!.exists
-                                        ? snapshot.data!['count'].toString()
+                                        ? NumberFormatter.formatter(snapshot.data!['count'].toString())
                                         : '0',
                                     style: const TextStyle(
                                       color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 15.0,
                                     ),
                                   ),
                                 );

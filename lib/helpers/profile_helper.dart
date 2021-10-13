@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:food_share/utils/number_formatter.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/utils/profile_util.dart';
 import 'package:food_share/widgets/profile/user_tile.dart';
@@ -319,6 +320,7 @@ class ProfileHelper with ChangeNotifier {
         Text(
           displayName,
           overflow: TextOverflow.ellipsis,
+          maxLines: 2,
           style: const TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 27.0,
@@ -374,7 +376,7 @@ class ProfileHelper with ChangeNotifier {
                 return _infoCell(
                   title: 'Posts',
                   value: snapshot.data!.exists
-                      ? snapshot.data!['count'].toString()
+                      ? NumberFormatter.formatter(snapshot.data!['count'].toString())
                       : '0',
                 );
               }
@@ -407,7 +409,7 @@ class ProfileHelper with ChangeNotifier {
                   return _infoCell(
                     title: 'Followers',
                     value: snapshot.data!.exists
-                        ? snapshot.data!['count'].toString()
+                        ? NumberFormatter.formatter(snapshot.data!['count'].toString())
                         : '0',
                   );
                 }
@@ -441,7 +443,7 @@ class ProfileHelper with ChangeNotifier {
                   return _infoCell(
                     title: 'Following',
                     value: snapshot.data!.exists
-                        ? snapshot.data!['count'].toString()
+                        ? NumberFormatter.formatter(snapshot.data!['count'].toString())
                         : '0',
                   );
                 }
