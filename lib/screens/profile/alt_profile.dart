@@ -9,6 +9,7 @@ import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/helpers/profile_helper.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/profile/profile_post_image.dart';
+import 'package:food_share/widgets/refresh_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -202,77 +203,82 @@ class _AltProfileState extends State<AltProfile> {
 
             ///Post Gridview
             Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    child: Column(
-                      children: [
-                        StreamBuilder<List<DocumentSnapshot>>(
-                          stream: listenToRecipeGridRealTime(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Provider.of<ProfileHelper>(context,
-                                      listen: false)
-                                  .defaultNoRecipes(context);
-                            } else {
-                              return Column(
-                                children: [
-                                  GridView.builder(
-                                    primary: false,
-                                    shrinkWrap: true,
-                                    padding: EdgeInsets.zero,
-                                    itemCount: snapshot.data!.length,
-                                    gridDelegate:
-                                        const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      mainAxisSpacing: 16.0,
-                                    ),
-                                    itemBuilder:
-                                        (BuildContext context, int index) =>
-                                            Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 3.0),
-                                      child: ProfilePostImage(
-                                        recipeDoc: snapshot.data![index],
+              child: RefreshWidget(
+                onRefresh: () async {
+                  return getRecipeGrid();
+                },
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      child: Column(
+                        children: [
+                          StreamBuilder<List<DocumentSnapshot>>(
+                            stream: listenToRecipeGridRealTime(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Provider.of<ProfileHelper>(context,
+                                        listen: false)
+                                    .defaultNoRecipes(context);
+                              } else {
+                                return Column(
+                                  children: [
+                                    GridView.builder(
+                                      primary: false,
+                                      shrinkWrap: true,
+                                      padding: EdgeInsets.zero,
+                                      itemCount: snapshot.data!.length,
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                        mainAxisSpacing: 16.0,
                                       ),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 10.0,
-                                  ),
-                                  OutlinedButton(
-                                    onPressed: () {
-                                      getRecipeGrid();
-                                    },
-                                    child: const Text(
-                                      'SEE MORE',
-                                      style: TextStyle(
-                                        fontSize: 12.0,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                    style: ButtonStyle(
-                                      shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                        RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(30.0),
-                                          side: const BorderSide(color: kBlue),
+                                      itemBuilder:
+                                          (BuildContext context, int index) =>
+                                              Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 3.0),
+                                        child: ProfilePostImage(
+                                          recipeDoc: snapshot.data![index],
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              );
-                            }
-                          },
-                        ),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                      ],
+                                    const SizedBox(
+                                      height: 10.0,
+                                    ),
+                                    OutlinedButton(
+                                      onPressed: () {
+                                        getRecipeGrid();
+                                      },
+                                      child: const Text(
+                                        'SEE MORE',
+                                        style: TextStyle(
+                                          fontSize: 12.0,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      style: ButtonStyle(
+                                        shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(30.0),
+                                            side: const BorderSide(color: kBlue),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
+                            },
+                          ),
+                          const SizedBox(
+                            height: 10.0,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
