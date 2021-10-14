@@ -55,7 +55,7 @@ class _TextInputFieldState extends State<TextInputField> {
                 child: Icon(
                   widget.icon,
                   size: 28.0,
-                  color: kWhite,
+                  color: Colors.white,
                 ),
               ),
               labelText: widget.label,

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
+import 'package:provider/provider.dart';
 
 import 'hashtag_result.dart';
 
@@ -13,7 +15,8 @@ class HashtagField extends StatefulWidget {
 
 class _HashtagFieldState extends State<HashtagField> {
   final hashtagsRef = FirebaseFirestore.instance.collection('hashtags');
-  Future<QuerySnapshot>? searchResultsFuture;
+  QuerySnapshot? snapshotData;
+  bool isExecuted = false;
 
   List<String> list = [
         '#java',
@@ -32,11 +35,18 @@ class _HashtagFieldState extends State<HashtagField> {
     hashtagController = TextEditingController();
   }
 
-  Stream getHashtagCollectionStream(String query){
+  queryHashtagData(String query) {
     return hashtagsRef
         .where('hashtag_name', isGreaterThanOrEqualTo: query.trim())
         .where('hashtag_name', isLessThan: query.trim() + 'z')
-        .snapshots();
+        .get()
+        .then((value) {
+      snapshotData = value;
+    }).whenComplete(() {
+      setState(() {
+        isExecuted = true;
+      });
+    });
   }
 
   @override
@@ -49,6 +59,7 @@ class _HashtagFieldState extends State<HashtagField> {
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                   controller: hashtagController,
+                  onChanged: queryHashtagData,
                   decoration: InputDecoration(
                       border: const OutlineInputBorder(),
                       contentPadding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -79,93 +90,42 @@ class _HashtagFieldState extends State<HashtagField> {
                             ))),
             ),
             const SizedBox(height: 20),
-            
             SizedBox(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: hashtagsRef.snapshots().asBroadcastStream(),
-                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) { 
-                if(snapshot.hasError){
-                  return const Text('Something went wrong');
-                }
-                if (snapshot.connectionState == ConnectionState.waiting){
-                  return const CircularProgressIndicator(
-                    backgroundColor: Colors.cyanAccent,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.yellow),
-                  );
-                }
-                if(snapshot.hasData){
-                  return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: snapshot.data!.docs.length,
-                      physics: const ScrollPhysics(),
-                      itemBuilder: (c, i) {
-                        return ListTile(
-                            title: Text(snapshot.data[i]['hashtag_name'],
-                                style: TextStyle(color: Colors.blue[900])),
-                            onTap: () {
-                              setState(() {
-                                if (!selected.contains(snapshot.data[i]['hashtag_name']) && selected.length < 4) {
-                                  selected.add(snapshot.data[i]['hashtag_name']);
-                                }
-                              });
-                            });
-                      });
-                }
-                return const Text('Error');
-              },
-              ),
+              child: isExecuted
+                  ? searchedData()
+                  : const Text(
+                      'Nothing to show here'
+                    ),
             ),
-            // ListView.builder(
-            //     shrinkWrap: true,
-            //     itemCount: list.length,
-            //     physics: const ScrollPhysics(),
-            //     itemBuilder: (c, i) {
-            //       return ListTile(
-            //           title: Text(list[i],
-            //               style: TextStyle(color: Colors.blue[900])),
-            //           onTap: () {
-            //             setState(() {
-            //               if (!selected.contains(list[i]) && selected.length < 4) {
-            //                 selected.add(list[i]);
-            //               }
-            //             });
-            //           });
-            //     })
           ]),
     );
   }
 
-
-}
-
-class Hashtag {
-  final String name;
-  final String id;
-  final String collectionId;
-
-  const Hashtag(
-      {required this.name, required this.id, required this.collectionId});
-
-  factory Hashtag.fromDocument(DocumentSnapshot doc) {
-    return Hashtag(
-      id: doc['hashtag_id'],
-      collectionId: doc['collection_id'],
-      name: doc['hashtag_name'],
+  Widget searchedData() {
+    return hashtagController!.text.isNotEmpty ? ListView.builder(
+        shrinkWrap: true,
+        itemCount: snapshotData?.docs.length,
+        physics: const ScrollPhysics(),
+        itemBuilder: (BuildContext context, int index) {
+          return ListTile(
+              title: Text(snapshotData?.docs[index]['hashtag_name'],
+                  style: TextStyle(color: Colors.blue[900])),
+              onTap: () {
+                setState(() {
+                  if (!selected.contains(
+                          snapshotData?.docs[index]['hashtag_name']) &&
+                      selected.length < 4) {
+                    selected.add(snapshotData?.docs[index]['hashtag_name']);
+                  }
+                });
+              });
+        }) : const SizedBox(
+      height: 0.0,
+      width: 0.0,
     );
   }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Hashtag &&
-          runtimeType == other.runtimeType &&
-          name == other.name;
-
-  @override
-  int get hashCode => name.hashCode;
-
-  @override
-  String toString() {
-    return 'Profile{$name}';
-  }
 }
+
+// Provider.of<FirebaseOperations>(context, listen: false).queryHashtagData(data).then((value) {
+// snapshotData = value;
+// });

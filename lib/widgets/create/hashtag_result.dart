@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:food_share/widgets/create/hashtag_field.dart';
 
 class HashtagResult extends StatelessWidget {
-  const HashtagResult({Key? key, required this.hashtag}) : super(key: key);
+  const HashtagResult({Key? key}) : super(key: key);
 
-  final Hashtag hashtag;
 
   @override
   Widget build(BuildContext context) {

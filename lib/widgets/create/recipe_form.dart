@@ -113,7 +113,7 @@ class _RecipeFormState extends State<RecipeForm> {
                 ),
                 const SizedBox(height: 20.0),
                 SizedBox(
-                  height: SizeConfig.defaultSize * 30,
+                  height: SizeConfig.defaultSize * 20,
                   width: SizeConfig.defaultSize * 80,
                     child: const HashtagField(),
                 ),
