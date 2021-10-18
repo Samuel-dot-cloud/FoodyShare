@@ -32,8 +32,11 @@ class _CreateRecipeState extends State<CreateRecipe> {
   final Timestamp timestamp = Timestamp.now();
   final recipesRef = FirebaseFirestore.instance.collection('recipes');
   final usersRef = FirebaseFirestore.instance.collection('users');
+  final hashtagsRef = FirebaseFirestore.instance.collection('hashtags');
+  final collectionsRef = FirebaseFirestore.instance.collection('collections');
   firebase_storage.Reference reference =
       firebase_storage.FirebaseStorage.instance.ref();
+  DocumentSnapshot? hashtagData;
 
   @override
   void initState() {
@@ -62,6 +65,24 @@ class _CreateRecipeState extends State<CreateRecipe> {
     return urlString;
   }
 
+  /// Adding recipes to hashtag collections
+  processHashtags(String hashtagID, String postId) {
+    return hashtagsRef.doc(hashtagID).get().then((value) {
+      hashtagData = value;
+    }).whenComplete(() {
+      collectionsRef
+          .doc(hashtagData!['collection_id'])
+          .collection('hashtags')
+          .doc(hashtagData!['hashtag_id'])
+          .collection('recipes')
+          .doc(postId)
+          .set({
+        'post_id': postId,
+        'timestamp': timestamp,
+      });
+    });
+  }
+
   createRecipePost(
       {required String mediaUrl,
       required String name,
@@ -69,7 +90,8 @@ class _CreateRecipeState extends State<CreateRecipe> {
       required String cookingTime,
       required String servings,
       required List<Map<String, String>> ingredients,
-      required List<Map<String, String>> preparation}) async {
+      required List<Map<String, String>> preparation,
+      required List<String> hashtagID}) async {
     recipesRef.doc(postId).set({
       'postId': postId,
       'authorId':
@@ -81,9 +103,15 @@ class _CreateRecipeState extends State<CreateRecipe> {
       'servings': servings,
       'ingredients': ingredients,
       'preparation': preparation,
+      'hashtags': hashtagID,
+      'videoURL': '',
       'timestamp': timestamp,
     }).whenComplete(() async {
       return addRecipeDetails();
+    }).whenComplete(() async {
+      for (var id in hashtagID) {
+        processHashtags(id, postId);
+      }
     }).whenComplete(() async {
       setState(() {
         photoFile = File('');
@@ -153,6 +181,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
       description: values.description.toString(),
       mediaUrl: mediaUrl,
       name: values.name.toString(),
+      hashtagID: values.hashtagId!.toList(),
     );
   }
 
