@@ -13,6 +13,7 @@ class FirebaseOperations with ChangeNotifier {
   final usersRef = FirebaseFirestore.instance.collection('users');
   final recipesRef = FirebaseFirestore.instance.collection('recipes');
   final commentsRef = FirebaseFirestore.instance.collection('comments');
+  final hashtagsRef = FirebaseFirestore.instance.collection('hashtags');
   firebase_storage.Reference reference =
       firebase_storage.FirebaseStorage.instance.ref();
   late UploadTask imageUploadTask;
@@ -350,5 +351,12 @@ class FirebaseOperations with ChangeNotifier {
   Future deleteRecipeImage(
       String postId, firebase_storage.Reference reference) async {
     await reference.child('recipe-images/$postId.jpg').delete();
+  }
+
+  Future queryHashtagData(String query) {
+    return hashtagsRef
+        .where('hashtag_name', isGreaterThanOrEqualTo: query.trim())
+        .where('hashtag_name', isLessThan: query.trim() + 'z')
+        .get();
   }
 }

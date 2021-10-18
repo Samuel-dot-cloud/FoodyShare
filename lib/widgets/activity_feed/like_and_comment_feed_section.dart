@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/helpers/activity_feed_helper.dart';
 import 'package:food_share/services/firebase_operations.dart';
-import 'package:food_share/utils/loading_animation.dart';
 import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/widgets/refresh_widget.dart';
 import 'package:provider/provider.dart';
 
 import 'activity_feed_item.dart';
@@ -98,63 +98,68 @@ class _LikeAndCommentFeedSectionState extends State<LikeAndCommentFeedSection> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: SizedBox(
-        child: StreamBuilder<List<DocumentSnapshot>>(
-          stream: listenToFeedRealTime(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Text('Error');
-            }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Provider.of<ActivityFeedHelper>(context, listen: false)
-                  .defaultNoNotification(
-                      context, 'No recipe feed items to display..');
-            }
-            if (snapshot.hasData) {
-              return Column(
-                children: [
-                  ListView.builder(
-                      physics: const ScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (BuildContext context, int index) => Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12.0,
-                              vertical: 12.0,
-                            ),
-                            child: ActivityFeedItem(
-                              feedDoc: snapshot.data![index],
-                            ),
-                          )),
-                  const SizedBox(
-                    height: 10.0,
-                  ),
-                  OutlinedButton(
-                    onPressed: () {
-                      _getFeed();
-                    },
-                    child: const Text(
-                      'SEE MORE',
-                      style: TextStyle(
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.w700,
-                      ),
+    return RefreshWidget(
+      onRefresh: () async {
+        return _getFeed();
+      },
+      child: SingleChildScrollView(
+        child: SizedBox(
+          child: StreamBuilder<List<DocumentSnapshot>>(
+            stream: listenToFeedRealTime(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Text('Error');
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Provider.of<ActivityFeedHelper>(context, listen: false)
+                    .defaultNoNotification(
+                        context, 'No recipe feed items to display..');
+              }
+              if (snapshot.hasData) {
+                return Column(
+                  children: [
+                    ListView.builder(
+                        physics: const ScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (BuildContext context, int index) => Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12.0,
+                                vertical: 12.0,
+                              ),
+                              child: ActivityFeedItem(
+                                feedDoc: snapshot.data![index],
+                              ),
+                            )),
+                    const SizedBox(
+                      height: 10.0,
                     ),
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                          side: const BorderSide(color: kBlue),
+                    OutlinedButton(
+                      onPressed: () {
+                        _getFeed();
+                      },
+                      child: const Text(
+                        'SEE MORE',
+                        style: TextStyle(
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                            side: const BorderSide(color: kBlue),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              );
-            }
-            return const Text('Error ...');
-          },
+                  ],
+                );
+              }
+              return const Text('Error ...');
+            },
+          ),
         ),
       ),
     );

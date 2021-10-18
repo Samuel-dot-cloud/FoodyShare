@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/utils/pallete.dart';
 
-import 'hashtag_result.dart';
-
 class HashtagField extends StatefulWidget {
-  const HashtagField({Key? key}) : super(key: key);
+  const HashtagField({Key? key, required this.onUpdate}) : super(key: key);
+
+  final ValueChanged<List<String>> onUpdate;
 
   @override
   State<HashtagField> createState() => _HashtagFieldState();
@@ -13,17 +13,10 @@ class HashtagField extends StatefulWidget {
 
 class _HashtagFieldState extends State<HashtagField> {
   final hashtagsRef = FirebaseFirestore.instance.collection('hashtags');
-  Future<QuerySnapshot>? searchResultsFuture;
+  QuerySnapshot? snapshotData;
+  bool isExecuted = false;
 
-  List<String> list = [
-        '#java',
-        '#javaScript',
-        '#flutter',
-        '#kotlin',
-        '#swift',
-        '#objective-C'
-      ],
-      selected = [];
+  List<String> selected = [];
   TextEditingController? hashtagController;
 
   @override
@@ -32,11 +25,26 @@ class _HashtagFieldState extends State<HashtagField> {
     hashtagController = TextEditingController();
   }
 
-  Stream getHashtagCollectionStream(String query){
+  void _updateField(){
+    widget.onUpdate(selected);
+  }
+  void _removeField(){
+    widget.onUpdate(selected);
+    setState(() {});
+  }
+
+  queryHashtagData(String query) {
     return hashtagsRef
         .where('hashtag_name', isGreaterThanOrEqualTo: query.trim())
         .where('hashtag_name', isLessThan: query.trim() + 'z')
-        .snapshots();
+        .get()
+        .then((value) {
+      snapshotData = value;
+    }).whenComplete(() {
+      setState(() {
+        isExecuted = true;
+      });
+    });
   }
 
   @override
@@ -49,8 +57,10 @@ class _HashtagFieldState extends State<HashtagField> {
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                   controller: hashtagController,
+                  onChanged: queryHashtagData,
                   decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
+                      border: const OutlineInputBorder(
+                      ),
                       contentPadding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                       prefixIcon: selected.isEmpty
                           ? null
@@ -61,111 +71,68 @@ class _HashtagFieldState extends State<HashtagField> {
                                   spacing: 5,
                                   runSpacing: 5,
                                   children: selected.map((s) {
-                                    return Chip(
-                                        backgroundColor: kBlue,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(7),
-                                        ),
-                                        label: Text(s,
-                                            style: const TextStyle(
-                                                color: Colors.white)),
-                                        onDeleted: () {
-                                          setState(() {
-                                            selected.remove(s);
-                                          });
-                                        });
+                                    return StreamBuilder<DocumentSnapshot>(
+                                      stream: hashtagsRef.doc(s).snapshots().asBroadcastStream(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return const CircularProgressIndicator();
+                                        } else {
+                                          _updateField();
+                                          return Chip(
+                                              backgroundColor: kBlue,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius.circular(7),
+                                              ),
+                                              label: Text(snapshot.data!['hashtag_name'],
+                                                  style: const TextStyle(
+                                                      color: Colors.white)),
+                                              onDeleted: () {
+                                                setState(() {
+                                                  selected.remove(s);
+                                                });
+                                                _removeField();
+                                              });
+                                        }
+                                      },
+                                    );
                                   }).toList()),
                             ))),
             ),
             const SizedBox(height: 20),
-            
             SizedBox(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: hashtagsRef.snapshots().asBroadcastStream(),
-                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) { 
-                if(snapshot.hasError){
-                  return const Text('Something went wrong');
-                }
-                if (snapshot.connectionState == ConnectionState.waiting){
-                  return const CircularProgressIndicator(
-                    backgroundColor: Colors.cyanAccent,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.yellow),
-                  );
-                }
-                if(snapshot.hasData){
-                  return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: snapshot.data!.docs.length,
-                      physics: const ScrollPhysics(),
-                      itemBuilder: (c, i) {
-                        return ListTile(
-                            title: Text(snapshot.data[i]['hashtag_name'],
-                                style: TextStyle(color: Colors.blue[900])),
-                            onTap: () {
-                              setState(() {
-                                if (!selected.contains(snapshot.data[i]['hashtag_name']) && selected.length < 4) {
-                                  selected.add(snapshot.data[i]['hashtag_name']);
-                                }
-                              });
-                            });
-                      });
-                }
-                return const Text('Error');
-              },
-              ),
+              child: isExecuted
+                  ? searchedData()
+                  : const Text('Nothing to show here'),
             ),
-            // ListView.builder(
-            //     shrinkWrap: true,
-            //     itemCount: list.length,
-            //     physics: const ScrollPhysics(),
-            //     itemBuilder: (c, i) {
-            //       return ListTile(
-            //           title: Text(list[i],
-            //               style: TextStyle(color: Colors.blue[900])),
-            //           onTap: () {
-            //             setState(() {
-            //               if (!selected.contains(list[i]) && selected.length < 4) {
-            //                 selected.add(list[i]);
-            //               }
-            //             });
-            //           });
-            //     })
           ]),
     );
   }
 
-
-}
-
-class Hashtag {
-  final String name;
-  final String id;
-  final String collectionId;
-
-  const Hashtag(
-      {required this.name, required this.id, required this.collectionId});
-
-  factory Hashtag.fromDocument(DocumentSnapshot doc) {
-    return Hashtag(
-      id: doc['hashtag_id'],
-      collectionId: doc['collection_id'],
-      name: doc['hashtag_name'],
-    );
-  }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Hashtag &&
-          runtimeType == other.runtimeType &&
-          name == other.name;
-
-  @override
-  int get hashCode => name.hashCode;
-
-  @override
-  String toString() {
-    return 'Profile{$name}';
+  Widget searchedData() {
+    return hashtagController!.text.isNotEmpty
+        ? ListView.builder(
+            shrinkWrap: true,
+            itemCount: snapshotData?.docs.length,
+            physics: const ScrollPhysics(),
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                  title: Text(snapshotData?.docs[index]['hashtag_name'],
+                      style: TextStyle(color: Colors.blue[900])),
+                  onTap: () {
+                    setState(() {
+                      if (!selected.contains(
+                              snapshotData?.docs[index]['hashtag_id']) &&
+                          selected.length < 4) {
+                        selected.add(snapshotData?.docs[index]['hashtag_id']);
+                      }
+                    });
+                  });
+            })
+        : const SizedBox(
+            height: 0.0,
+            width: 0.0,
+          );
   }
 }

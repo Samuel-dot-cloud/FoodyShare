@@ -151,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         decoration: const BoxDecoration(
                           border: Border(
-                            bottom: BorderSide(width: 1.0, color: kWhite),
+                            bottom: BorderSide(width: 1.0, color: Colors.white),
                           ),
                         ),
                       ),

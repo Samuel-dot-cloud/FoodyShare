@@ -23,7 +23,7 @@ class _RecipeFormState extends State<RecipeForm> {
   bool _isUploading = false;
 
   submitRecipeValues(){
-    if(values.name!.isNotEmpty && values.description!.isNotEmpty && values.cookingTime!.isNotEmpty && values.servings!.isNotEmpty && values.ingredients!.isNotEmpty && values.preparation!.isNotEmpty){
+    if(values.name!.isNotEmpty && values.description!.isNotEmpty && values.cookingTime!.isNotEmpty && values.servings!.isNotEmpty && values.ingredients!.isNotEmpty && values.preparation!.isNotEmpty && values.hashtagId!.isNotEmpty){
       setState(() {
         _isUploading = true;
       });
@@ -113,9 +113,13 @@ class _RecipeFormState extends State<RecipeForm> {
                 ),
                 const SizedBox(height: 20.0),
                 SizedBox(
-                  height: SizeConfig.defaultSize * 30,
+                  height: SizeConfig.defaultSize * 20,
                   width: SizeConfig.defaultSize * 80,
-                    child: const HashtagField(),
+                    child: HashtagField(
+                      onUpdate: (value) {
+                        values.hashtagId = value;
+                      },
+                    ),
                 ),
                 const SizedBox(height: 40.0),
                 RoundedButton(

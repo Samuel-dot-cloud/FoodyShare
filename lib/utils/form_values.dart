@@ -6,7 +6,8 @@ class FormValues {
 
   List<Map<String, String>>? ingredients;
   List<Map<String, String>>? preparation;
+  List<String>? hashtagId;
 
   @override
-  String toString() => '$name, $description, $cookingTime, $servings, $ingredients, $preparation';
+  String toString() => '$name, $description, $cookingTime, $servings, $ingredients, $preparation, $hashtagId';
 }

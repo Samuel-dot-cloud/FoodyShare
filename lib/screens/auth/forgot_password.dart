@@ -80,7 +80,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               },
               icon: const Icon(
                 Icons.arrow_back_ios,
-                color: kWhite,
+                color: Colors.white,
               ),
             ),
             title: const Text(
