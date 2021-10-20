@@ -265,8 +265,7 @@ class _RecipeCardState extends State<RecipeCard> {
                                     width: 0.0,
                                   ),
                                 );
-                              } else if (snapshot.data!.exists){
-                                likeCount = 100;
+                              } else {
                                 return LikeButton(
                                   size: 30.0,
                                   isLiked: _isLiked,
@@ -335,133 +334,35 @@ class _RecipeCardState extends State<RecipeCard> {
                                     return Icon(
                                       Icons.favorite,
                                       color:
-                                          isLiked ? Colors.red : Colors.black,
+                                          isLiked ? Colors.red : Colors.grey,
                                       size: 25.0,
                                     );
                                   },
-                                  likeCount: likeCount,
+                                  likeCount: snapshot.data!.exists ? snapshot.data!['count'] : 0,
                                   countBuilder:
                                       (int? count, bool isLiked, String text) {
                                     var color =
-                                        isLiked ? Colors.red : Colors.black;
+                                        isLiked ? Colors.black : Colors.grey;
                                     Widget result;
-                                    if (count == 0 || count!.isNaN) {
+                                    if (count == 0) {
                                       result = Text(
                                         "like",
                                         style: TextStyle(color: color),
                                       );
                                     } else {
                                       result = Text(
-                                        text,
-                                        style: TextStyle(color: color),
+                                        NumberFormatter.formatter(text),
+                                        style: TextStyle(
+                                          fontSize: 15.0,
+                                            color: color),
                                       );
                                     }
                                     return result;
                                   },
                                 );
                               }
-                              return const Text('Error');
                             },
                           ),
-
-                          // InkWell(
-                          //   onTap: _isButtonDisabled
-                          //       ? null
-                          //       : () {
-                          //           setState(() {
-                          //             _isButtonDisabled = true;
-                          //           });
-                          //           _isLiked
-                          //               ? Provider.of<FirebaseOperations>(
-                          //                       context,
-                          //                       listen: false)
-                          //                   .removeLike(
-                          //                   context,
-                          //                   widget.recipeDoc['postId'],
-                          //                   Provider.of<FirebaseOperations>(
-                          //                           context,
-                          //                           listen: false)
-                          //                       .getUserId,
-                          //                 )
-                          //                   .whenComplete(() {
-                          //                   setState(() {
-                          //                     _isLiked = false;
-                          //                     _isButtonDisabled = false;
-                          //                   });
-                          //                 })
-                          //               : Provider.of<FirebaseOperations>(
-                          //                       context,
-                          //                       listen: false)
-                          //                   .addLike(
-                          //                   context,
-                          //                   widget.recipeDoc['postId'],
-                          //                   Provider.of<FirebaseOperations>(
-                          //                           context,
-                          //                           listen: false)
-                          //                       .getUserId,
-                          //                 )
-                          //                   .whenComplete(() {
-                          //                   setState(() {
-                          //                     _isLiked = true;
-                          //                     _isButtonDisabled = false;
-                          //                   });
-                          //                   if (_isNotPostOwner) {
-                          //                     Provider.of<FirebaseOperations>(
-                          //                             context,
-                          //                             listen: false)
-                          //                         .addLikeToActivityFeed(
-                          //                       widget.recipeDoc['authorId'],
-                          //                       widget.recipeDoc['postId'],
-                          //                       {
-                          //                         'type': 'like',
-                          //                         'userUID': Provider.of<
-                          //                                     FirebaseOperations>(
-                          //                                 context,
-                          //                                 listen: false)
-                          //                             .getUserId,
-                          //                         'postId': widget
-                          //                             .recipeDoc['postId'],
-                          //                         'timestamp': Timestamp.now(),
-                          //                       },
-                          //                     );
-                          //                   }
-                          //                 });
-                          //         },
-                          //   child: FaIcon(
-                          //     FontAwesomeIcons.heart,
-                          //     color: _isLiked ? Colors.red : Colors.black,
-                          //   ),
-                          // ),
-                          // StreamBuilder<DocumentSnapshot>(
-                          //   stream: FirebaseFirestore.instance
-                          //       .collection('recipes')
-                          //       .doc(widget.recipeDoc['postId'])
-                          //       .collection('likes')
-                          //       .doc('like_count')
-                          //       .snapshots(),
-                          //   builder: (context, snapshot) {
-                          //     if (snapshot.connectionState ==
-                          //         ConnectionState.waiting) {
-                          //       return const Center(
-                          //         child: Text(''),
-                          //       );
-                          //     } else {
-                          //       return Padding(
-                          //         padding: const EdgeInsets.only(left: 4.0),
-                          //         child: Text(
-                          //           snapshot.data!.exists
-                          //               ? NumberFormatter.formatter(snapshot.data!['count'].toString())
-                          //               : '0',
-                          //           style: const TextStyle(
-                          //             color: Colors.black,
-                          //             fontWeight: FontWeight.normal,
-                          //             fontSize: 15.0,
-                          //           ),
-                          //         ),
-                          //       );
-                          //     }
-                          //   },
-                          // ),
                         ],
                       ),
                     ),
