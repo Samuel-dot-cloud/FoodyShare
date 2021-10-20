@@ -35,51 +35,53 @@ class HashtagRecipesScreen extends StatelessWidget {
           style: kBodyText.copyWith(
             color: Colors.black,
             fontSize: 25.0,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.normal,
           ),
         ),
         centerTitle: true,
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: collectionsRef
-            .doc(arguments.collectionDocId)
-            .collection('hashtags')
-            .doc(arguments.hashtagId)
-            .collection('recipes')
-            .orderBy('timestamp', descending: true)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return const Text('Error');
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return loadingAnimation('Loading recipes...');
-          }
-          if (snapshot.hasData) {
-            return StaggeredGridView.countBuilder(
-              crossAxisCount: 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 12,
-              staggeredTileBuilder: (int index) {
-                return StaggeredTile.count(
-                    1, index.isEven ? 1.2 : 1.8);
-              },
-              physics: const ScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (BuildContext context, int index) =>
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12.0,
-                      vertical: 12.0,
+      body: SafeArea(
+        child: StreamBuilder<QuerySnapshot>(
+          stream: collectionsRef
+              .doc(arguments.collectionDocId)
+              .collection('hashtags')
+              .doc(arguments.hashtagId)
+              .collection('recipes')
+              .orderBy('timestamp', descending: true)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Text('Error');
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return loadingAnimation('Loading recipes...');
+            }
+            if (snapshot.hasData) {
+              return StaggeredGridView.countBuilder(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 12,
+                staggeredTileBuilder: (int index) {
+                  return StaggeredTile.count(
+                      1, index.isEven ? 1.2 : 1.8);
+                },
+                physics: const ScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (BuildContext context, int index) =>
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12.0,
+                        vertical: 12.0,
+                      ),
+                      child: RecipePostImage(
+                          recipeDoc: snapshot.data!.docs[index]),
                     ),
-                    child: RecipePostImage(
-                        recipeDoc: snapshot.data!.docs[index]),
-                  ),
-            );
-          }
-          return const Text('Loading ...');
-        },
+              );
+            }
+            return const Text('Loading ...');
+          },
+        ),
       ),
     );
   }

@@ -98,7 +98,7 @@ class RecipePostImage extends StatelessWidget {
               : GestureDetector(
                   onTap: () => Fluttertoast.showToast(
                       msg:
-                          'Recipe cannot be found. \n It may have been deleted by the author.',
+                          'Recipe cannot be found. \n It may have been deleted.',
                       toastLength: Toast.LENGTH_SHORT,
                       gravity: ToastGravity.BOTTOM,
                       timeInSecForIosWeb: 1,
@@ -135,36 +135,47 @@ class RecipePostImage extends StatelessWidget {
             child: CircularProgressIndicator(),
           );
         } else {
-          return InputChip(
-            backgroundColor: Colors.white,
-            avatar: CircleAvatar(
-              backgroundColor: kBlue,
-              backgroundImage:
-                  CachedNetworkImageProvider(snapshot.data!['photoUrl']),
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[600]!.withOpacity(0.8),
+              borderRadius: BorderRadius.circular(16.0),
             ),
-            label: Text(
-              _isNotProfileOwner ? '@' + snapshot.data!['username'] : 'You',
-              style: TextStyle(
-                color: _isNotProfileOwner ? Colors.black : kBlue,
+            child: Theme(
+              data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
+              child: InputChip(
+                backgroundColor: Colors.transparent,
+                avatar: CircleAvatar(
+                  backgroundColor: kBlue,
+                  backgroundImage:
+                      CachedNetworkImageProvider(snapshot.data!['photoUrl']),
+                ),
+                label: Text(
+                  _isNotProfileOwner ? '@' + snapshot.data!['username'] : 'You',
+                  style: TextStyle(
+                    fontSize: _isNotProfileOwner ? 14.5 : 17.0,
+                    fontWeight: FontWeight.w600,
+                    color: _isNotProfileOwner ? Colors.white : Colors.yellow,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                onPressed: () {
+                  if (_isNotProfileOwner) {
+                    final args = AltProfileArguments(
+                      userUID: snapshot.data!['id'],
+                      authorImage: snapshot.data!['photoUrl'],
+                      authorUsername: snapshot.data!['username'],
+                      authorDisplayName: snapshot.data!['displayName'],
+                      authorBio: snapshot.data!['bio'],
+                    );
+                    Navigator.pushNamed(
+                      context,
+                      AppRoutes.altProfile,
+                      arguments: args,
+                    );
+                  }
+                },
               ),
-              overflow: TextOverflow.ellipsis,
             ),
-            onPressed: () {
-              if (_isNotProfileOwner) {
-                final args = AltProfileArguments(
-                  userUID: snapshot.data!['id'],
-                  authorImage: snapshot.data!['photoUrl'],
-                  authorUsername: snapshot.data!['username'],
-                  authorDisplayName: snapshot.data!['displayName'],
-                  authorBio: snapshot.data!['bio'],
-                );
-                Navigator.pushNamed(
-                  context,
-                  AppRoutes.altProfile,
-                  arguments: args,
-                );
-              }
-            },
           );
         }
       },
