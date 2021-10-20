@@ -30,7 +30,6 @@ class _HashtagFieldState extends State<HashtagField> {
   }
   void _removeField(){
     widget.onUpdate(selected);
-    setState(() {});
   }
 
   queryHashtagData(String query) {

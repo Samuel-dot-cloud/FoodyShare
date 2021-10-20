@@ -51,13 +51,13 @@ void main() async {
           create: (context) => ConnectivityProvider(),
         ),
       ],
-      child: const MyApp(),
+      child: const FoodyShareApp(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class FoodyShareApp extends StatelessWidget {
+  const FoodyShareApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
