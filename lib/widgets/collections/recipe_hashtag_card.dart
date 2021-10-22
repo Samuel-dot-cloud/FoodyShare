@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class RecipeHashtagCard extends StatelessWidget {
-  const RecipeHashtagCard(
+  const  RecipeHashtagCard(
       {Key? key, required this.hashtagDoc, required this.collectionId})
       : super(key: key);
 

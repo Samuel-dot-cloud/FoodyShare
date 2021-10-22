@@ -10,6 +10,7 @@ import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/bottom_nav.dart';
 import 'package:food_share/widgets/recipe/comments_section.dart';
 import 'package:food_share/widgets/recipe/ingredients_section.dart';
+import 'package:food_share/widgets/recipe/like_button.dart';
 import 'package:food_share/widgets/recipe/preparation_section.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -33,7 +34,6 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   @override
   void initState() {
     checkIfLiked();
-    _isButtonDisabled = false;
     checkIfAddedToFavorites();
     super.initState();
   }
@@ -41,7 +41,6 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   bool _isAdded = false;
   bool _isLiked = false;
   bool _isDeleting = false;
-  late bool _isButtonDisabled;
 
   checkIfLiked() async {
     DocumentSnapshot doc = await FirebaseFirestore.instance
@@ -89,7 +88,8 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                           height: (size.height / 2) + 50,
                           width: double.infinity,
                           fit: BoxFit.cover,
-                          image: CachedNetworkImageProvider(widget.arguments.recipeImage),
+                          image: CachedNetworkImageProvider(
+                              widget.arguments.recipeImage),
                         )
                       : const Center(
                           child: CircularProgressIndicator(
@@ -230,100 +230,12 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        InkWell(
-                          onTap: _isButtonDisabled
-                              ? null
-                              : () {
-                                  setState(() {
-                                    _isButtonDisabled = true;
-                                  });
-                                  _isLiked
-                                      ? Provider.of<FirebaseOperations>(context,
-                                              listen: false)
-                                          .removeLike(
-                                          context,
-                                          widget.arguments.postID,
-                                          Provider.of<FirebaseOperations>(
-                                                  context,
-                                                  listen: false)
-                                              .getUserId,
-                                        )
-                                          .whenComplete(() {
-                                          setState(() {
-                                            _isLiked = false;
-                                            _isButtonDisabled = false;
-                                          });
-                                        })
-                                      : Provider.of<FirebaseOperations>(context,
-                                              listen: false)
-                                          .addLike(
-                                          context,
-                                          widget.arguments.postID,
-                                          Provider.of<FirebaseOperations>(
-                                                  context,
-                                                  listen: false)
-                                              .getUserId,
-                                        )
-                                          .whenComplete(() {
-                                          setState(() {
-                                            _isLiked = true;
-                                            _isButtonDisabled = false;
-                                          });
-                                          if (_isNotPostOwner) {
-                                            Provider.of<FirebaseOperations>(
-                                                    context,
-                                                    listen: false)
-                                                .addLikeToActivityFeed(
-                                              widget.arguments.authorUserUID,
-                                              widget.arguments.postID,
-                                              {
-                                                'type': 'like',
-                                                'userUID': Provider.of<
-                                                            FirebaseOperations>(
-                                                        context,
-                                                        listen: false)
-                                                    .getUserId,
-                                                'postId':
-                                                    widget.arguments.postID,
-                                                'timestamp': Timestamp.now(),
-                                              },
-                                            );
-                                          }
-                                        });
-                                },
-                          child: FaIcon(
-                            FontAwesomeIcons.heart,
-                            color: _isLiked ? Colors.red : Colors.black,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 5.0,
-                        ),
-                        StreamBuilder<DocumentSnapshot>(
-                          stream: FirebaseFirestore.instance
-                              .collection('recipes')
-                              .doc(widget.arguments.postID)
-                              .collection('likes')
-                              .doc('like_count')
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                child: Text(''),
-                              );
-                            } else {
-                              return Text(
-                                snapshot.data!.exists
-                                    ? NumberFormatter.formatter(snapshot.data!['count'].toString())
-                                    : '0',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 15.0,
-                                ),
-                              );
-                            }
-                          },
+                        CustomLikeButton(
+                          isPostLiked: _isLiked,
+                          authorID: widget.arguments.authorUserUID,
+                          likeCount: 0,
+                          postID: widget.arguments.postID,
+                          isNotPostOwner: _isNotPostOwner,
                         ),
                         const SizedBox(
                           width: 10.0,
@@ -361,7 +273,8 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                             } else {
                               return Text(
                                 snapshot.data!.exists
-                                    ? NumberFormatter.formatter(snapshot.data!['count'].toString())
+                                    ? NumberFormatter.formatter(
+                                        snapshot.data!['count'].toString())
                                     : '0',
                               );
                             }
@@ -378,8 +291,9 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                         const SizedBox(
                           width: 5.0,
                         ),
-                        Text(timeago
-                            .format(widget.arguments.recipeTimestamp.toDate(), locale: 'en_short')),
+                        Text(timeago.format(
+                            widget.arguments.recipeTimestamp.toDate(),
+                            locale: 'en_short')),
                         const SizedBox(
                           width: 10.0,
                         ),
