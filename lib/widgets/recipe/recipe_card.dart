@@ -1,13 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:food_share/config/size_config.dart';
 import 'package:food_share/routes/alt_profile_arguments.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/recipe_details_arguments.dart';
 import 'package:food_share/services/firebase_operations.dart';
-import 'package:food_share/utils/number_formatter.dart';
 import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/widgets/recipe/like_button.dart';
 import 'package:provider/provider.dart';
 
 class RecipeCard extends StatefulWidget {
@@ -49,8 +49,64 @@ class _RecipeCardState extends State<RecipeCard> {
     });
   }
 
+  Future<bool> onLikeButtonTapped(bool isLiked) async {
+    _isButtonDisabled
+        ? null
+        : () {
+            setState(() {
+              _isButtonDisabled = true;
+            });
+            _isLiked
+                ? Provider.of<FirebaseOperations>(context, listen: false)
+                    .removeLike(
+                    context,
+                    widget.recipeDoc['postId'],
+                    Provider.of<FirebaseOperations>(context, listen: false)
+                        .getUserId,
+                  )
+                    .whenComplete(() {
+                    setState(() {
+                      _isLiked = false;
+                      _isButtonDisabled = false;
+                    });
+                  })
+                : Provider.of<FirebaseOperations>(context, listen: false)
+                    .addLike(
+                    context,
+                    widget.recipeDoc['postId'],
+                    Provider.of<FirebaseOperations>(context, listen: false)
+                        .getUserId,
+                  )
+                    .whenComplete(() {
+                    setState(() {
+                      _isLiked = true;
+                      _isButtonDisabled = false;
+                    });
+                    if (_isNotPostOwner) {
+                      Provider.of<FirebaseOperations>(context, listen: false)
+                          .addLikeToActivityFeed(
+                        widget.recipeDoc['authorId'],
+                        widget.recipeDoc['postId'],
+                        {
+                          'type': 'like',
+                          'userUID': Provider.of<FirebaseOperations>(context,
+                                  listen: false)
+                              .getUserId,
+                          'postId': widget.recipeDoc['postId'],
+                          'timestamp': Timestamp.now(),
+                        },
+                      );
+                    }
+                  });
+          };
+
+    return isLiked;
+  }
+
   @override
   Widget build(BuildContext context) {
+    SizeConfig.init(context);
+    double size = SizeConfig.defaultSize;
     return Column(
       children: [
         Stack(
@@ -78,12 +134,12 @@ class _RecipeCardState extends State<RecipeCard> {
                   );
                 },
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(24.0),
+                  borderRadius: BorderRadius.circular(size * 2.4),
                   child: Hero(
                     tag: widget.recipeDoc['mediaUrl'],
                     child: CachedNetworkImage(
-                      height: 320.0,
-                      width: 320.0,
+                      height: size * 30.0,
+                      width: size * 30.0,
                       fit: BoxFit.cover,
                       imageUrl: widget.recipeDoc['mediaUrl'],
                       progressIndicatorBuilder:
@@ -103,8 +159,8 @@ class _RecipeCardState extends State<RecipeCard> {
             ),
           ],
         ),
-        const SizedBox(
-          height: 20.0,
+        SizedBox(
+          height: size * 2.0,
         ),
         StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance
@@ -118,8 +174,8 @@ class _RecipeCardState extends State<RecipeCard> {
               );
             } else {
               return Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24.0,
+                padding: EdgeInsets.symmetric(
+                  horizontal: size * 2.4,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -127,13 +183,14 @@ class _RecipeCardState extends State<RecipeCard> {
                     Flexible(
                       flex: 1,
                       child: CircleAvatar(
-                        radius: 18.0,
+                        radius: size * 1.8,
                         backgroundColor: kBlue,
-                        backgroundImage: CachedNetworkImageProvider(snapshot.data!['photoUrl']),
+                        backgroundImage: CachedNetworkImageProvider(
+                            snapshot.data!['photoUrl']),
                       ),
                     ),
                     Flexible(
-                    flex: 1,
+                      flex: 1,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -141,8 +198,8 @@ class _RecipeCardState extends State<RecipeCard> {
                             widget.recipeDoc['name'],
                             style: Theme.of(context).textTheme.subtitle1,
                           ),
-                          const SizedBox(
-                            height: 8.0,
+                          SizedBox(
+                            height: size * 0.8,
                           ),
                           GestureDetector(
                             onTap: () {
@@ -176,119 +233,27 @@ class _RecipeCardState extends State<RecipeCard> {
                       flex: 3,
                       child: Row(
                         children: [
-                          const SizedBox(
-                            width: 20.0,
+                          SizedBox(
+                            width: size * 1.0,
                           ),
                           const Icon(
                             Icons.timer,
                           ),
-                          const SizedBox(
-                            width: 4,
+                          SizedBox(
+                            width: size * 0.4,
                           ),
                           Text(
                             widget.recipeDoc['cookingTime'] + '\'',
                           ),
-                          const SizedBox(
-                            width: 20.0,
+                          SizedBox(
+                            width: size * 1.0,
                           ),
-                          InkWell(
-                            onTap: _isButtonDisabled
-                                ? null
-                                : () {
-                                    setState(() {
-                                      _isButtonDisabled = true;
-                                    });
-                                    _isLiked
-                                        ? Provider.of<FirebaseOperations>(
-                                                context,
-                                                listen: false)
-                                            .removeLike(
-                                            context,
-                                            widget.recipeDoc['postId'],
-                                            Provider.of<FirebaseOperations>(
-                                                    context,
-                                                    listen: false)
-                                                .getUserId,
-                                          )
-                                            .whenComplete(() {
-                                            setState(() {
-                                              _isLiked = false;
-                                              _isButtonDisabled = false;
-                                            });
-                                          })
-                                        : Provider.of<FirebaseOperations>(
-                                                context,
-                                                listen: false)
-                                            .addLike(
-                                            context,
-                                            widget.recipeDoc['postId'],
-                                            Provider.of<FirebaseOperations>(
-                                                    context,
-                                                    listen: false)
-                                                .getUserId,
-                                          )
-                                            .whenComplete(() {
-                                            setState(() {
-                                              _isLiked = true;
-                                              _isButtonDisabled = false;
-                                            });
-                                            if (_isNotPostOwner) {
-                                              Provider.of<FirebaseOperations>(
-                                                      context,
-                                                      listen: false)
-                                                  .addLikeToActivityFeed(
-                                                widget.recipeDoc['authorId'],
-                                                widget.recipeDoc['postId'],
-                                                {
-                                                  'type': 'like',
-                                                  'userUID': Provider.of<
-                                                              FirebaseOperations>(
-                                                          context,
-                                                          listen: false)
-                                                      .getUserId,
-                                                  'postId': widget
-                                                      .recipeDoc['postId'],
-                                                  'timestamp': Timestamp.now(),
-                                                },
-                                              );
-                                            }
-                                          });
-                                  },
-                            child: FaIcon(
-                              FontAwesomeIcons.heart,
-                              color: _isLiked ? Colors.red : Colors.black,
-                            ),
-                          ),
-                          StreamBuilder<DocumentSnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection('recipes')
-                                .doc(widget.recipeDoc['postId'])
-                                .collection('likes')
-                                .doc('like_count')
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                  child: Text(''),
-                                );
-                              } else {
-                                return Padding(
-                                  padding: const EdgeInsets.only(left: 4.0),
-                                  child: Text(
-                                    snapshot.data!.exists
-                                        ? NumberFormatter.formatter(snapshot.data!['count'].toString())
-                                        : '0',
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 15.0,
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                          ),
+                          CustomLikeButton(
+                              postID: widget.recipeDoc['postId'],
+                              isPostLiked: _isLiked,
+                              isNotPostOwner: _isNotPostOwner,
+                              authorID: widget.recipeDoc['authorId'],
+                              likeCount: 0),
                         ],
                       ),
                     ),
