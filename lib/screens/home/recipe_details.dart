@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:food_share/helpers/recipe_detail_helper.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/recipe_details_arguments.dart';
 import 'package:food_share/services/firebase_operations.dart';
@@ -442,7 +443,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                 ),
                 _buildOptionListTile(
                   () async {
-                    showFavoriteListsBottomSheet(context);
+                    Provider.of<RecipeDetailHelper>(context, listen: false).showFavoriteListsBottomSheet(context);
                   },
                   Icons.bookmark_border_outlined,
                   'Add to favorites',
@@ -553,22 +554,6 @@ class _RecipeDetailsState extends State<RecipeDetails> {
               ),
             ],
           );
-        });
-  }
-
-  showFavoriteListsBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-        context: context,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(15.0),
-          ),
-        ),
-        builder: (context) {
-          return SizedBox(
-              child: Column(
-
-          ));
         });
   }
 }
