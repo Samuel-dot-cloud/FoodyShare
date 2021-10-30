@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:food_share/helpers/activity_feed_helper.dart';
 import 'package:food_share/helpers/bottom_nav_helper.dart';
+import 'package:food_share/helpers/recipe_detail_helper.dart';
 import 'package:food_share/routes/route_generator.dart';
 import 'package:food_share/screens/auth/startup_view.dart';
 import 'package:food_share/screens/onboard/onboarding_screen.dart';
@@ -10,6 +11,7 @@ import 'package:food_share/services/connectivity_provider.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/helpers/profile_helper.dart';
 import 'package:food_share/utils/constants.dart';
+import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/utils/profile_util.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +33,9 @@ void main() async {
       providers: [
         ChangeNotifierProvider(
           create: (context) => ProfileHelper(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => RecipeDetailHelper(),
         ),
         ChangeNotifierProvider(
           create: (context) => ActivityFeedHelper(),
@@ -67,6 +72,7 @@ class FoodyShareApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: Constants.appName,
       theme: ThemeData(
+        primaryColor: kBlue,
         textTheme:
             GoogleFonts.josefinSansTextTheme(Theme.of(context).textTheme),
       ),

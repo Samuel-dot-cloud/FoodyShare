@@ -134,7 +134,7 @@ class _RecipeCardState extends State<RecipeCard> {
                   );
                 },
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(size * 2.4),
+                  borderRadius: BorderRadius.circular(24.0),
                   child: Hero(
                     tag: widget.recipeDoc['mediaUrl'],
                     child: CachedNetworkImage(

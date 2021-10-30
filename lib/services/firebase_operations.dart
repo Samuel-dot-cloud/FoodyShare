@@ -308,6 +308,14 @@ class FirebaseOperations with ChangeNotifier {
     });
   }
 
+  Future createFavoriteList(String currentUserId, String listID, dynamic listData){
+    return usersRef
+        .doc(currentUserId)
+        .collection('favorites')
+        .doc(listID)
+        .set(listData);
+  }
+
   Future addToFavorites(
       String currentUserId, String postId, dynamic recipeData) async {
     return usersRef
@@ -353,10 +361,6 @@ class FirebaseOperations with ChangeNotifier {
     await reference.child('recipe-images/$postId.jpg').delete();
   }
 
-  Future queryHashtagData(String query) {
-    return hashtagsRef
-        .where('hashtag_name', isGreaterThanOrEqualTo: query.trim())
-        .where('hashtag_name', isLessThan: query.trim() + 'z')
-        .get();
-  }
+
+
 }

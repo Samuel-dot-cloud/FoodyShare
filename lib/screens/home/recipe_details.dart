@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:food_share/helpers/recipe_detail_helper.dart';
+import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/recipe_details_arguments.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/number_formatter.dart';
@@ -405,50 +407,74 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   _showOptionsBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(15.0),
+        ),
+      ),
       builder: (context) {
         return Wrap(
           children: [
-            SizedBox(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text(
-                      'Options',
-                      style: TextStyle(
-                        fontSize: 22.0,
-                        fontWeight: FontWeight.bold,
-                      ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Text(
+                    'Options',
+                    style: TextStyle(
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Divider(
-                      height: 2.0,
-                    ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Divider(
+                    height: 2.0,
                   ),
-                  ListTile(
-                    onTap: () {
-                      showDeleteAlertDialog();
-                    },
-                    leading: const Icon(
-                      Icons.delete_forever,
-                      color: Colors.black,
-                    ),
-                    title: const Text(
-                      'Delete recipe',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+                _buildOptionListTile(
+                  () {
+                    showDeleteAlertDialog();
+                  },
+                  Icons.delete_forever,
+                  'Delete recipe',
+                ),
+                _buildOptionListTile(
+                  () async {
+                    Provider.of<RecipeDetailHelper>(context, listen: false).showFavoriteListsBottomSheet(context);
+                  },
+                  Icons.bookmark_border_outlined,
+                  'Add to favorites',
+                ),
+                _buildOptionListTile(
+                  () {},
+                  Icons.info_outline_rounded,
+                  'Report this recipe',
+                ),
+              ],
             ),
           ],
         );
       },
+    );
+  }
+
+  ListTile _buildOptionListTile(
+      GestureTapCallback onTap, IconData icon, String text) {
+    return ListTile(
+      onTap: onTap,
+      leading: Icon(
+        icon,
+        color: Colors.black,
+      ),
+      title: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 18.0,
+        ),
+      ),
     );
   }
 
@@ -514,11 +540,8 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                         backgroundColor: Colors.blue,
                         textColor: Colors.white,
                         fontSize: 16.0);
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const BottomNav()),
-                        (route) => false);
+                    Navigator.pushReplacementNamed(
+                        context, AppRoutes.bottomNav);
                   });
                 },
                 child: const Text(

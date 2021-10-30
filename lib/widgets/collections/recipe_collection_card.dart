@@ -5,7 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/config/size_config.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/recipe_hashtags_arguments.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class RecipeCollectionCard extends StatelessWidget {
   const RecipeCollectionCard({

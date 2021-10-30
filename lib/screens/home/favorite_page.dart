@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/home/favorite_post_image.dart';
+import 'package:food_share/widgets/home/list_card.dart';
 import 'package:food_share/widgets/refresh_widget.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -136,27 +137,38 @@ class FavoriteRecipes extends StatelessWidget {
                     if (snapshot.data!.isNotEmpty) {
                       return Column(
                         children: [
-                          StaggeredGridView.countBuilder(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 12,
-                            staggeredTileBuilder: (int index) {
-                              return StaggeredTile.count(
-                                  1, index.isEven ? 1.2 : 1.8);
-                            },
-                            physics: const ScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: snapshot.data!.length,
-                            itemBuilder: (BuildContext context, int index) =>
-                                Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12.0,
-                                vertical: 12.0,
-                              ),
-                              child: FavoritePostImage(
-                                  recipeDoc: snapshot.data![index]),
-                            ),
-                          ),
+                          ListView.builder(
+                              physics: const ScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (BuildContext context, int index) =>
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12.0,
+                                      vertical: 12.0,
+                                    ),
+                                    child: BookmarkListCard(favoriteDoc: snapshot.data![index], ),
+                                  )),
+                          // StaggeredGridView.countBuilder(
+                          //   crossAxisCount: 2,
+                          //   crossAxisSpacing: 10,
+                          //   mainAxisSpacing: 12,
+                          //   staggeredTileBuilder: (int index) {
+                          //     return StaggeredTile.count(
+                          //         1, index.isEven ? 1.2 : 1.8);
+                          //   },
+                          //   physics: const ScrollPhysics(),
+                          //   shrinkWrap: true,
+                          //   itemCount: snapshot.data!.length,
+                          //   itemBuilder: (BuildContext context, int index) =>
+                          //       const Padding(
+                          //     padding: EdgeInsets.symmetric(
+                          //       horizontal: 12.0,
+                          //       vertical: 12.0,
+                          //     ),
+                          //     child: BookmarkListCard(),
+                          //   ),
+                          // ),
                           const SizedBox(
                             height: 10.0,
                           ),
