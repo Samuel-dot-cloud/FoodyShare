@@ -85,7 +85,9 @@ class DiscoverRecipe extends StatelessWidget {
     return Scaffold(
       body: RefreshWidget(
         onRefresh: () async {
-          return getRecipes();
+          _allPagedResults.clear();
+          _lastDocument = null;
+          await getRecipes();
         },
         child: SingleChildScrollView(
           child: Column(

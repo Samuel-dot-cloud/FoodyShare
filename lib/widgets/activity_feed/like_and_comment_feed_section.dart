@@ -100,7 +100,9 @@ class _LikeAndCommentFeedSectionState extends State<LikeAndCommentFeedSection> {
   Widget build(BuildContext context) {
     return RefreshWidget(
       onRefresh: () async {
-        return _getFeed();
+        _allPagedResults.clear();
+        _lastDocument = null;
+        await _getFeed();
       },
       child: SingleChildScrollView(
         child: SizedBox(

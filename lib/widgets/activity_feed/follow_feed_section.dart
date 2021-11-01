@@ -99,7 +99,9 @@ class _FollowFeedSectionState extends State<FollowFeedSection> {
   Widget build(BuildContext context) {
     return RefreshWidget(
       onRefresh: () async {
-        return _getFeed();
+        _allPagedResults.clear();
+        _lastDocument = null;
+        await _getFeed();
       },
       child: SingleChildScrollView(
         child: SizedBox(

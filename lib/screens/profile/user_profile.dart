@@ -169,7 +169,9 @@ class _UserProfileState extends State<UserProfile> {
             Expanded(
               child: RefreshWidget(
                 onRefresh: () async {
-                  return getRecipeGrid();
+                  _allPagedResults.clear();
+                  _lastDocument = null;
+                  await getRecipeGrid();
                 },
                 child: SingleChildScrollView(
                   child: Padding(

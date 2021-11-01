@@ -205,7 +205,9 @@ class _AltProfileState extends State<AltProfile> {
             Expanded(
               child: RefreshWidget(
                 onRefresh: () async {
-                  return getRecipeGrid();
+                  _allPagedResults.clear();
+                  _lastDocument = null;
+                  await getRecipeGrid();
                 },
                 child: SingleChildScrollView(
                   child: Padding(
