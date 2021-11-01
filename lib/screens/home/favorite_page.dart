@@ -5,12 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
-import 'package:food_share/widgets/home/favorite_post_image.dart';
 import 'package:food_share/widgets/home/list_card.dart';
 import 'package:food_share/widgets/refresh_widget.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
 
@@ -117,7 +115,9 @@ class FavoriteRecipes extends StatelessWidget {
     return Scaffold(
       body: RefreshWidget(
         onRefresh: () async {
-          return getFavorites();
+          _allPagedResults.clear();
+          _lastDocument = null;
+          await getFavorites();
         },
         child: SingleChildScrollView(
           child: Column(

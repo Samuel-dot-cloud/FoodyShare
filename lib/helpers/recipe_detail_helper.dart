@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/recipe/create_list_form.dart';
+import 'package:food_share/widgets/recipe/lists_selection_view.dart';
 
 class RecipeDetailHelper with ChangeNotifier {
+
   showFavoriteListsBottomSheet(BuildContext context) {
     showModalBottomSheet(
         context: context,
@@ -84,6 +86,7 @@ class RecipeDetailHelper with ChangeNotifier {
                   color: Colors.grey[500],
                 ),
               ),
+              const Expanded(child: ListsSelectionView())
             ],
           ));
         });
