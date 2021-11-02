@@ -108,7 +108,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             Navigator.pop(context);
           },
         ),
-        title: const Text(
+        title: Text(
           'Edit Profile',
           style: kBodyText,
         ),

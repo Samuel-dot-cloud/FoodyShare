@@ -38,9 +38,8 @@ class _IngredientsFormState extends State<IngredientsForm> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text('Ingredients',
+        Text('Add Ingredients',
           style: kBodyText.copyWith(
-              color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),

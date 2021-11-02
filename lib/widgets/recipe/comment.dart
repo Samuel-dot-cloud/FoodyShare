@@ -76,7 +76,11 @@ class Comment extends StatelessWidget {
                   backgroundColor: kBlue,
                   backgroundImage: CachedNetworkImageProvider(snapshot.data!['photoUrl']),
                 ),
-                subtitle: Text(commentDoc['comment']),
+                subtitle: Text(
+                    commentDoc['comment'],
+                style: const TextStyle(
+                  fontWeight: FontWeight.normal,
+                ),),
                 trailing:
                 Text(timeago.format(commentDoc['timestamp'].toDate())),
               );

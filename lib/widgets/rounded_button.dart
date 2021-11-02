@@ -25,7 +25,10 @@ class RoundedButton extends StatelessWidget {
         onPressed: onPressed,
         child: Text(
           buttonName,
-          style: kBodyText.copyWith(fontWeight: FontWeight.bold),
+          style: kBodyText.copyWith(
+            color: Colors.white,
+              fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );

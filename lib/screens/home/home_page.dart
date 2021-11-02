@@ -23,7 +23,6 @@ class _HomePageState extends State<HomePage> {
         title: Text(
           Constants.appName,
           style: kBodyText.copyWith(
-            color: Colors.black,
             fontSize: 25.0,
             fontWeight: FontWeight.bold,
           ),
@@ -36,8 +35,7 @@ class _HomePageState extends State<HomePage> {
             ),
             child: IconButton(
               icon: const Icon(
-                Icons.grid_view_outlined,
-                color: Colors.black,
+                Icons.grid_view_rounded,
               ),
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.collections);

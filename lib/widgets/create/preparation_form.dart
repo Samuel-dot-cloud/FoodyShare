@@ -41,7 +41,6 @@ class _PreparationFormState extends State<PreparationForm> {
       children: [
         Text('Add Preparation steps',
           style: kBodyText.copyWith(
-            color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),

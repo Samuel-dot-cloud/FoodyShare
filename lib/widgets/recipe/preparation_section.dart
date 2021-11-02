@@ -36,9 +36,9 @@ class PreparationSection extends StatelessWidget {
                       ),
                       TextSpan(
                         text: preparationList[index].values.toString(),
-                        style: const TextStyle(
-                          color: Colors.black,
+                        style: TextStyle(
                           fontWeight: FontWeight.normal,
+                          color: Theme.of(context).colorScheme.onPrimary,
                         ),
                       ),
                     ],
