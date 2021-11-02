@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
 
-const TextStyle kBodyText = TextStyle(
+TextStyle kBodyText = const TextStyle(
   fontSize: 22,
-  color: Colors.white,
   height: 1.5,
 );
 

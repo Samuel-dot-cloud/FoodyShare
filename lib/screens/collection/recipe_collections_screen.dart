@@ -19,7 +19,6 @@ class RecipeCollectionsScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios,
-            color: Colors.black,
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -28,7 +27,6 @@ class RecipeCollectionsScreen extends StatelessWidget {
         title: Text(
           'Collections',
           style: kBodyText.copyWith(
-            color: Colors.black,
             fontSize: 25.0,
             fontWeight: FontWeight.bold,
           ),

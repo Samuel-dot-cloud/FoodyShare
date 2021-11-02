@@ -105,6 +105,7 @@ class _UserProfileState extends State<UserProfile> {
         minHeight: size.height * 0.36,
         maxHeight: size.height * 0.75,
         parallaxEnabled: true,
+        color: Theme.of(context).scaffoldBackgroundColor,
         body: SingleChildScrollView(
           physics: const ScrollPhysics(),
           child: Stack(

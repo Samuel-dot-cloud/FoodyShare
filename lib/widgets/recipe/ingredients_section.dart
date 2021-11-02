@@ -20,7 +20,10 @@ class IngredientsSection extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Text('⚫ ' + ingredientsList[index].values.toString()),
+                child: Text('⚫ ' + ingredientsList[index].values.toString(),
+                style: const TextStyle(
+                  fontWeight: FontWeight.normal,
+                ),),
               );
             },
             separatorBuilder: (BuildContext context, int index) {

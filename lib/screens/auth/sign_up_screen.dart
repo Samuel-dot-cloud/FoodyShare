@@ -228,9 +228,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text(
+                              Text(
                                 'Already have an account? ',
-                                style: kBodyText,
+                                style: kBodyText.copyWith(color: Colors.white),
                               ),
                               GestureDetector(
                                 onTap: () => Navigator.pushNamed(

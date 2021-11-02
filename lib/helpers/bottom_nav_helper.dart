@@ -13,6 +13,7 @@ class BottomNavHelper with ChangeNotifier {
       index: index,
       animationCurve: Curves.bounceIn,
       backgroundColor: kBlue,
+      color: Theme.of(context).scaffoldBackgroundColor,
       animationDuration: const Duration(
         milliseconds: 200,
       ),
@@ -25,22 +26,18 @@ class BottomNavHelper with ChangeNotifier {
       items: [
         const FaIcon(
           FontAwesomeIcons.home,
-          color: Colors.black,
           size: 20.0,
         ),
         const FaIcon(
           FontAwesomeIcons.search,
-          color: Colors.black,
           size: 20.0,
         ),
         const FaIcon(
           FontAwesomeIcons.utensils,
-          color: Colors.black,
           size: 20.0,
         ),
         const FaIcon(
           FontAwesomeIcons.solidBell,
-          color: Colors.black,
           size: 20.0,
         ),
         CircleAvatar(

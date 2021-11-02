@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/utils/pallete.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HashtagField extends StatefulWidget {
   const HashtagField({Key? key, required this.onUpdate}) : super(key: key);
@@ -50,8 +51,13 @@ class _HashtagFieldState extends State<HashtagField> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
-//         mainAxisSize:MainAxisSize.min,
           children: [
+            Text('Add Hashtags',
+              style: kBodyText.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 15.0),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
@@ -85,8 +91,7 @@ class _HashtagFieldState extends State<HashtagField> {
                                                 BorderRadius.circular(7),
                                               ),
                                               label: Text(snapshot.data!['hashtag_name'],
-                                                  style: const TextStyle(
-                                                      color: Colors.white)),
+                                              style: GoogleFonts.josefinSans(),),
                                               onDeleted: () {
                                                 setState(() {
                                                   selected.remove(s);

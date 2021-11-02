@@ -10,10 +10,9 @@ import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/services/connectivity_provider.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/helpers/profile_helper.dart';
+import 'package:food_share/services/theme_service.dart';
 import 'package:food_share/utils/constants.dart';
-import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/utils/profile_util.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
@@ -71,11 +70,9 @@ class FoodyShareApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: Constants.appName,
-      theme: ThemeData(
-        primaryColor: kBlue,
-        textTheme:
-            GoogleFonts.josefinSansTextTheme(Theme.of(context).textTheme),
-      ),
+      themeMode: ThemeMode.dark,
+      theme: AppThemes.lightTheme,
+      darkTheme: AppThemes.darkTheme,
       home: getInitialPage(),
       onGenerateRoute: RouteGenerator.generateRoute,
     );

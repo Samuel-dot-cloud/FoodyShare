@@ -123,9 +123,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         GestureDetector(
                           onTap: () =>
                               Navigator.pushNamed(context, AppRoutes.forgotPassword),
-                          child: const Text(
+                          child: Text(
                             'Forgot Password?',
-                            style: kBodyText,
+                            style: kBodyText.copyWith(color: Colors.white),
                           ),
                         ),
                         const SizedBox(
@@ -145,9 +145,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     GestureDetector(
                       onTap: () => Navigator.pushNamed(context, AppRoutes.register),
                       child: Container(
-                        child: const Text(
+                        child: Text(
                           'Create A New Account',
-                          style: kBodyText,
+                          style: kBodyText.copyWith(color: Colors.white),
                         ),
                         decoration: const BoxDecoration(
                           border: Border(

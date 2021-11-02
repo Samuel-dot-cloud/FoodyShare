@@ -78,6 +78,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
           topRight: Radius.circular(24.0),
         ),
         parallaxEnabled: true,
+        color: Theme.of(context).scaffoldBackgroundColor,
         body: SingleChildScrollView(
           child: Stack(
             children: [
@@ -254,7 +255,6 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                         ),
                         const FaIcon(
                           FontAwesomeIcons.commentDots,
-                          color: Colors.black,
                         ),
                         const SizedBox(
                           width: 5.0,
@@ -310,7 +310,6 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                       children: [
                         const FaIcon(
                           FontAwesomeIcons.pizzaSlice,
-                          color: Colors.black,
                         ),
                         const SizedBox(
                           width: 5.0,
@@ -345,7 +344,6 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                             text: 'Comments'.toUpperCase(),
                           ),
                         ],
-                        labelColor: Colors.black,
                         indicator: DotIndicator(
                           color: Colors.red,
                           distanceFromCenter: 16.0,
@@ -353,9 +351,10 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                           paintingStyle: PaintingStyle.fill,
                         ),
                         unselectedLabelColor: Colors.black.withOpacity(0.3),
-                        labelStyle: const TextStyle(
+                        labelStyle: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 12.0,
+                          color: Theme.of(context).iconTheme.color,
                         ),
                         labelPadding: const EdgeInsets.symmetric(
                           horizontal: 2.0,

@@ -18,7 +18,7 @@ class StartupView extends StatelessWidget {
         .initUserData(context)
         .whenComplete(() => Future.delayed(
                 const Duration(
-                  milliseconds: 3000,
+                  milliseconds: 1000,
                 ), () {
               if (auth.currentUser == null) {
                 Navigator.pushReplacementNamed(context, AppRoutes.login);
@@ -57,7 +57,6 @@ class StartupView extends StatelessWidget {
                 Text(
                   ' setting up...',
                   style: TextStyle(
-                    color: Colors.black,
                     fontWeight: FontWeight.normal,
                     fontSize: 25.0,
                   ),

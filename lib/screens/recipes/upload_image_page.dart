@@ -170,7 +170,7 @@ class _ImageUploadState extends State<ImageUpload> {
         title: Text(
           'Add New Recipe',
           style: kBodyText.copyWith(
-            color: Colors.black,
+            color: Theme.of(context).colorScheme.onPrimary,
             fontSize: 25.0,
             fontWeight: FontWeight.bold,
           ),

@@ -83,9 +83,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 color: Colors.white,
               ),
             ),
-            title: const Text(
+            title: Text(
               'Forgot Password',
-              style: kBodyText,
+              style: kBodyText.copyWith(color: Colors.white),
             ),
             centerTitle: true,
           ),
@@ -101,10 +101,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             ),
                             SizedBox(
                               width: size.width * 0.8,
-                              child: const Text(
+                              child: Text(
                                 'Enter your email address for which instructions to '
                                 'reset your password shall be sent.',
-                                style: kBodyText,
+                                style: kBodyText.copyWith(color: Colors.white),
                               ),
                             ),
                             const SizedBox(

@@ -7,10 +7,11 @@ import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/constants.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/profile/settings_menu.dart';
+import 'package:food_share/widgets/settings/theme_options.dart';
 import 'package:provider/provider.dart';
 
-class ProfileSettings extends StatelessWidget {
-  const ProfileSettings({Key? key}) : super(key: key);
+class Settings extends StatelessWidget {
+  const Settings({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +23,6 @@ class ProfileSettings extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios,
-            color: Colors.black,
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -31,7 +31,6 @@ class ProfileSettings extends StatelessWidget {
         title: Text(
           'Settings',
           style: kBodyText.copyWith(
-            color: Colors.black,
             fontSize: 25.0,
             fontWeight: FontWeight.w600,
           ),
@@ -64,9 +63,41 @@ class ProfileSettings extends StatelessWidget {
             ),
             SettingsMenu(
               size: size,
-              onPressed: () {},
-              text: 'General',
-              icon: FontAwesomeIcons.tools,
+              onPressed: () {
+                showModalBottomSheet(
+                    context: context,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(15.0),
+                      ),
+                    ),
+                    builder: (context){
+                  return SizedBox(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: const [
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: 20.0,
+                            top: 20.0,
+                            bottom: 20.0,
+                          ),
+                          child: Text(
+                            'Choose Theme Option:',
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Expanded(child: ThemeOptions())
+                      ],
+                    ),
+                  );
+                });
+              },
+              text: 'Themes',
+              icon: FontAwesomeIcons.palette,
             ),
             SettingsMenu(
               size: size,

@@ -30,7 +30,6 @@ class _ActivityFeedState extends State<ActivityFeed> {
           title: Text(
             'Activity Feed',
             style: kBodyText.copyWith(
-              color: Colors.black,
               fontSize: 25.0,
               fontWeight: FontWeight.bold,
             ),
@@ -40,6 +39,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
         body: Column(
           children: [
             Material(
+              color: Theme.of(context).scaffoldBackgroundColor,
               child: TabBar(
                 tabs: [
                   Tab(
@@ -49,7 +49,6 @@ class _ActivityFeedState extends State<ActivityFeed> {
                     text: 'Follows'.toUpperCase(),
                   ),
                 ],
-                labelColor: Colors.black,
                 indicator: MaterialIndicator(
                   height: 5.0,
                   topLeftRadius: 8.0,

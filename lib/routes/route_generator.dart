@@ -13,8 +13,8 @@ import 'package:food_share/screens/collection/recipe_collections_screen.dart';
 import 'package:food_share/screens/collection/recipe_hashtag_collection_screen.dart';
 import 'package:food_share/screens/profile/alt_profile.dart';
 import 'package:food_share/screens/home/recipe_details.dart';
-import 'package:food_share/screens/profile/settings/edit_profile.dart';
-import 'package:food_share/screens/profile/settings/profile_settings.dart';
+import 'package:food_share/screens/settings/edit_profile.dart';
+import 'package:food_share/screens/settings/settings.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/bottom_nav.dart';
 import 'package:lottie/lottie.dart';
@@ -43,7 +43,7 @@ class RouteGenerator {
         return buildRoute(HashtagRecipesScreen(arguments: arguments),
             settings: settings);
       case AppRoutes.settings:
-        return buildRoute(const ProfileSettings(), settings: settings);
+        return buildRoute(const Settings(), settings: settings);
       case AppRoutes.editProfile:
         return buildRoute(const EditProfilePage(), settings: settings);
       case AppRoutes.altProfile:
