@@ -406,6 +406,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   _showOptionsBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(15.0),

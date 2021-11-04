@@ -1,55 +1,70 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_share/services/theme_service.dart';
+import 'package:food_share/utils/pallete.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'labeled_radio.dart';
 
 class ThemeOptions extends StatefulWidget {
   const ThemeOptions({Key? key}) : super(key: key);
 
   @override
-  _ThemeOptionsState createState() => _ThemeOptionsState();
+  State<ThemeOptions> createState() => _ThemeOptionsState();
 }
 
 class _ThemeOptionsState extends State<ThemeOptions> {
-  bool _isRadioSelected = false;
+  bool _isSwitchedToDarkTheme = false;
+
+  @override
+  void initState() {
+    super.initState();
+    getSwitchValue();
+  }
+
+  getSwitchValue() async {
+    _isSwitchedToDarkTheme = await getSwitchState();
+    setState(() {});
+  }
+
+  Future<bool> saveSwitchState(bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool("switchState", value);
+    return prefs.setBool("switchState", value);
+  }
+
+  Future<bool> getSwitchState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _isSwitchedToDarkTheme = prefs.getBool("switchState")!;
+
+    return _isSwitchedToDarkTheme;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        LabeledRadio(
-          label: 'Light Theme',
-          padding: const EdgeInsets.symmetric(horizontal: 5.0),
-          groupValue: _isRadioSelected,
-          value: true,
-          onChanged: (bool newValue) {
-            setState(() {
-              _isRadioSelected = newValue;
-            });
-          },
-        ),
-        LabeledRadio(
-          label: 'Dark Theme',
-          padding: const EdgeInsets.symmetric(horizontal: 5.0),
-          groupValue: _isRadioSelected,
-          value: true,
-          onChanged: (bool newValue) {
-            setState(() {
-              _isRadioSelected = newValue;
-            });
-          },
-        ),
-        LabeledRadio(
-          label: 'Use System Default',
-          padding: const EdgeInsets.symmetric(horizontal: 5.0),
-          groupValue: _isRadioSelected,
-          value: true,
-          onChanged: (bool newValue) {
-            setState(() {
-              _isRadioSelected = newValue;
-            });
-          },
-        ),
-      ],
+    // final themeProvider = Provider.of<ThemeProvider>(context, listen: true);
+    return SwitchListTile(
+      title: const Text('Dark Mode'),
+      activeColor: kBlue,
+      value: _isSwitchedToDarkTheme,
+      onChanged: (bool value) {
+        setState(() {
+          _isSwitchedToDarkTheme = value;
+          saveSwitchState(value);
+        });
+        final provider = Provider.of<ThemeProvider>(context, listen: false);
+        provider.toggleTheme(value);
+        Fluttertoast.showToast(
+            msg: 'Restart app for changes to take effect.',
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: kBlue,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      },
+      secondary: const Icon(Icons.lightbulb_outline_rounded),
     );
+
   }
 }

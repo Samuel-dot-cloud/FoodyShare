@@ -111,6 +111,7 @@ class ProfileHelper with ChangeNotifier {
   showProfileUserAvatar(BuildContext context, String userUID) {
     return showModalBottomSheet(
       context: context,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       builder: (context) {
         return Container(
           height: MediaQuery.of(context).size.height * 0.30,
@@ -122,7 +123,7 @@ class ProfileHelper with ChangeNotifier {
                   padding: EdgeInsets.symmetric(horizontal: 150.0),
                   child: Divider(
                     thickness: 4.0,
-                    color: Colors.white54,
+                    color: Colors.black54,
                   ),
                 ),
                 CircleAvatar(
@@ -139,10 +140,10 @@ class ProfileHelper with ChangeNotifier {
                     child: const Text(
                       'Select',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontWeight: FontWeight.bold,
                         decoration: TextDecoration.underline,
-                        decorationColor: Colors.white,
+                        decorationColor: Colors.black,
                       ),
                     ),
                   ),
@@ -150,8 +151,8 @@ class ProfileHelper with ChangeNotifier {
               ],
             ),
           ),
-          decoration: const BoxDecoration(
-            color: Colors.black,
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.zero,
           ),
         );
@@ -252,7 +253,7 @@ class ProfileHelper with ChangeNotifier {
                   padding: EdgeInsets.symmetric(horizontal: 150.0),
                   child: Divider(
                     thickness: 4.0,
-                    color: Colors.white54,
+                    color: Colors.black54,
                   ),
                 ),
                 CircleAvatar(
@@ -273,10 +274,10 @@ class ProfileHelper with ChangeNotifier {
                         child: const Text(
                           'Select again',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.black,
                             fontWeight: FontWeight.bold,
                             decoration: TextDecoration.underline,
-                            decorationColor: Colors.white,
+                            decorationColor: Colors.black,
                           ),
                         ),
                       ),
@@ -304,8 +305,8 @@ class ProfileHelper with ChangeNotifier {
               ],
             ),
           ),
-          decoration: const BoxDecoration(
-            color: Colors.black,
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.zero,
           ),
         );

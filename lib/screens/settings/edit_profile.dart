@@ -47,9 +47,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       _isLoading = true;
     });
     DocumentSnapshot doc = await usersRef
-        .doc(Provider
-        .of<FirebaseOperations>(context, listen: false)
-        .getUserId)
+        .doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId)
         .get();
     currentUser = CustomUser.fromDocument(doc);
     _displayNameController.text = currentUser!.displayName;
@@ -61,15 +59,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   updateProfileData() {
     setState(() {
-      _displayNameController.text
-          .trim()
-          .length < 3 ||
-          _displayNameController.text.isEmpty
+      _displayNameController.text.trim().length < 3 ||
+              _displayNameController.text.isEmpty
           ? _displayNameValid = false
           : _displayNameValid = true;
-      _bioController.text
-          .trim()
-          .length > 75
+      _bioController.text.trim().length > 75
           ? _bioValid = false
           : _bioValid = true;
     });
@@ -77,9 +71,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (_displayNameValid && _bioValid) {
       usersRef
           .doc(
-          Provider
-              .of<FirebaseOperations>(context, listen: false)
-              .getUserId)
+              Provider.of<FirebaseOperations>(context, listen: false).getUserId)
           .update({
         'bio': _bioController.text,
         'displayName': _displayNameController.text,
@@ -98,11 +90,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: kBlue,
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios,
-            color: Colors.white,
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -110,166 +102,170 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
         title: Text(
           'Edit Profile',
-          style: kBodyText,
+          style: kBodyText.copyWith(
+            fontSize: 25.0,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         centerTitle: true,
       ),
       body: !_isLoading
           ? Container(
-        padding:
-        const EdgeInsets.only(left: 15.0, top: 20.0, right: 15.0),
-        child: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: ListView(
-            children: [
-              Center(
-                child: Stack(
+              padding:
+                  const EdgeInsets.only(left: 15.0, top: 20.0, right: 15.0),
+              child: GestureDetector(
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                },
+                child: ListView(
                   children: [
-                    Container(
-                      width: 130.0,
-                      height: 120.0,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          width: 4.0,
-                          color: Colors.white,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            spreadRadius: 2.0,
-                            blurRadius: 10.0,
-                            color: Colors.black.withOpacity(0.1),
+                    Center(
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 130.0,
+                            height: 120.0,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 4.0,
+                                color: Colors.white,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  spreadRadius: 2.0,
+                                  blurRadius: 10.0,
+                                  color: Colors.black.withOpacity(0.1),
+                                ),
+                              ],
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: CachedNetworkImageProvider(
+                                    Provider.of<FirebaseOperations>(context,
+                                            listen: false)
+                                        .getUserImage),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0.0,
+                            right: 0.0,
+                            child: GestureDetector(
+                              onTap: () {
+                                Provider.of<ProfileHelper>(context,
+                                        listen: false)
+                                    .showProfileUserAvatar(
+                                        context,
+                                        Provider.of<FirebaseOperations>(context,
+                                                listen: false)
+                                            .getUserId);
+                              },
+                              child: Container(
+                                height: 40.0,
+                                width: 40.0,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    width: 4.0,
+                                    color: Colors.white,
+                                  ),
+                                  color: kBlue,
+                                ),
+                                child: const Icon(
+                                  Icons.edit,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
                           ),
                         ],
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: CachedNetworkImageProvider(
-                              Provider.of<FirebaseOperations>(context, listen: false)
-                                  .getUserImage),
-                        ),
                       ),
                     ),
-                    Positioned(
-                      bottom: 0.0,
-                      right: 0.0,
-                      child: GestureDetector(
-                        onTap: () {
-                          Provider.of<ProfileHelper>(context,
-                              listen: false)
-                              .showProfileUserAvatar(
-                              context,
-                              Provider
-                                  .of<FirebaseOperations>(context,
-                                  listen: false)
-                                  .getUserId);
-                        },
-                        child: Container(
-                          height: 40.0,
-                          width: 40.0,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 4.0,
-                              color: Colors.white,
+                    const SizedBox(
+                      height: 30.0,
+                    ),
+                    buildTextField(
+                      labelText: 'Display Name',
+                      isPasswordTextField: false,
+                      controller: _displayNameController,
+                      errorText:
+                          _displayNameValid ? '' : 'Display name too short',
+                    ),
+                    buildTextField(
+                      labelText: 'Bio',
+                      isPasswordTextField: false,
+                      controller: _bioController,
+                      errorText: _bioValid ? '' : 'Bio too long',
+                    ),
+                    const SizedBox(
+                      height: 30.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        OutlinedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text(
+                            'CANCEL',
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              letterSpacing: 2.0,
+                              color: Colors.black,
                             ),
-                            color: kBlue,
                           ),
-                          child: const Icon(
-                            Icons.edit,
-                            color: Colors.white,
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                20.0,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        ElevatedButton(
+                          onPressed: () {
+                            updateProfileData();
+                          },
+                          child: const Text(
+                            'UPDATE',
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              letterSpacing: 2.0,
+                              color: Colors.white,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            primary: kBlue,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                20.0,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 30.0,
-              ),
-              buildTextField(
-                labelText: 'Display Name',
-                isPasswordTextField: false,
-                controller: _displayNameController,
-                errorText:
-                _displayNameValid ? '' : 'Display name too short',
-              ),
-              buildTextField(
-                labelText: 'Bio',
-                isPasswordTextField: false,
-                controller: _bioController,
-                errorText: _bioValid ? '' : 'Bio too long',
-              ),
-              const SizedBox(
-                height: 30.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  OutlinedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text(
-                      'CANCEL',
-                      style: TextStyle(
-                        fontSize: 15.0,
-                        letterSpacing: 2.0,
-                        color: Colors.black,
-                      ),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20.0,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          20.0,
-                        ),
-                      ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      updateProfileData();
-                    },
-                    child: const Text(
-                      'UPDATE',
-                      style: TextStyle(
-                        fontSize: 15.0,
-                        letterSpacing: 2.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      primary: kBlue,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20.0,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          20.0,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      )
+            )
           : loadingAnimation('Loading profile details...'),
     );
   }
 
-  Widget buildTextField({required TextEditingController controller,
-    required String labelText,
-    required String errorText,
-    required bool isPasswordTextField}) {
+  Widget buildTextField(
+      {required TextEditingController controller,
+      required String labelText,
+      required String errorText,
+      required bool isPasswordTextField}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 30.0),
       child: TextField(
@@ -278,16 +274,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
         decoration: InputDecoration(
           suffixIcon: isPasswordTextField
               ? IconButton(
-            onPressed: () {
-              setState(() {
-                isObscuredPassword = !isObscuredPassword;
-              });
-            },
-            icon: const Icon(
-              Icons.remove_red_eye,
-              color: Colors.grey,
-            ),
-          )
+                  onPressed: () {
+                    setState(() {
+                      isObscuredPassword = !isObscuredPassword;
+                    });
+                  },
+                  icon: const Icon(
+                    Icons.remove_red_eye,
+                    color: Colors.grey,
+                  ),
+                )
               : null,
           contentPadding: const EdgeInsets.only(bottom: 5.0),
           labelText: labelText,

@@ -2,6 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class ThemeProvider extends ChangeNotifier {
+  ThemeMode themeMode = ThemeMode.light;
+
+  bool get isDarkMode => themeMode == ThemeMode.dark;
+
+  void toggleTheme(bool isOn) async {
+    themeMode = isOn ? ThemeMode.dark : ThemeMode.light;
+    notifyListeners();
+  }
+}
 
 class AppThemes {
   static final darkTheme = ThemeData(
@@ -24,8 +36,7 @@ class AppThemes {
       canvasColor: Colors.black,
       textTheme: GoogleFonts.josefinSansTextTheme(),
       appBarTheme:
-          const AppBarTheme(systemOverlayStyle: SystemUiOverlayStyle.dark)
-      );
+          const AppBarTheme(systemOverlayStyle: SystemUiOverlayStyle.dark));
 
   static final lightTheme = ThemeData(
       primaryColor: Colors.white,
@@ -43,8 +54,7 @@ class AppThemes {
       brightness: Brightness.light,
       primaryColorDark: Colors.black,
       canvasColor: Colors.white,
-      textTheme: GoogleFonts.josefinSansTextTheme(
-      ),
+      textTheme: GoogleFonts.josefinSansTextTheme(),
       appBarTheme:
           const AppBarTheme(systemOverlayStyle: SystemUiOverlayStyle.light));
 }
