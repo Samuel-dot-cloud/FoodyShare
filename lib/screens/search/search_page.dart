@@ -175,71 +175,75 @@ class _SearchPageState extends State<SearchPage> {
   _showSearchSelectionBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(15.0),
+        ),
+      ),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       builder: (context) {
         return Wrap(
           children: [
-            SizedBox(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text(
-                      'Search',
-                      style: TextStyle(
-                        fontSize: 22.0,
-                        fontWeight: FontWeight.bold,
-                      ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Text(
+                    'Search',
+                    style: TextStyle(
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Divider(
-                      height: 2.0,
-                    ),
-                  ),
-                  ListTile(
-                    onTap: () {
-                      setState(() {
-                        searchUsers = true;
-                      });
-                      Navigator.pop(context);
-                    },
-                    leading: const Icon(
-                      Icons.alternate_email,
-                      color: Colors.black,
-                    ),
-                    title: const Text(
-                      'Search for users',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
+                ),
+                const Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Divider(
                     height: 2.0,
                   ),
-                  ListTile(
-                    onTap: () {
-                      setState(() {
-                        searchUsers = false;
-                      });
-                      Navigator.pop(context);
-                    },
-                    leading: const FaIcon(
-                      FontAwesomeIcons.utensils,
-                      color: Colors.black,
-                      size: 17.0,
-                    ),
-                    title: const Text(
-                      'Search for recipes',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                      ),
+                ),
+                ListTile(
+                  onTap: () {
+                    setState(() {
+                      searchUsers = true;
+                    });
+                    Navigator.pop(context);
+                  },
+                  leading: const Icon(
+                    Icons.alternate_email,
+                    color: Colors.black,
+                  ),
+                  title: const Text(
+                    'Search for users',
+                    style: TextStyle(
+                      fontSize: 18.0,
                     ),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(
+                  height: 2.0,
+                ),
+                ListTile(
+                  onTap: () {
+                    setState(() {
+                      searchUsers = false;
+                    });
+                    Navigator.pop(context);
+                  },
+                  leading: const FaIcon(
+                    FontAwesomeIcons.utensils,
+                    color: Colors.black,
+                    size: 17.0,
+                  ),
+                  title: const Text(
+                    'Search for recipes',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         );

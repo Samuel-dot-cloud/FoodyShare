@@ -19,6 +19,7 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 int? isViewed;
+bool? darkModeOn;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +28,7 @@ void main() async {
       .activate(webRecaptchaSiteKey: 'recaptcha-v3-site-key');
   SharedPreferences prefs = await SharedPreferences.getInstance();
   isViewed = prefs.getInt('onboard');
+  darkModeOn = prefs.getBool("switchState")!;
   runApp(
     MultiProvider(
       providers: [
@@ -54,6 +56,9 @@ void main() async {
         ChangeNotifierProvider(
           create: (context) => ConnectivityProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => ThemeProvider(),
+        ),
       ],
       child: const FoodyShareApp(),
     ),
@@ -67,10 +72,11 @@ class FoodyShareApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    // final themeProvider = Provider.of<ThemeProvider>(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: Constants.appName,
-      themeMode: ThemeMode.dark,
+      themeMode: changeTheme(),
       theme: AppThemes.lightTheme,
       darkTheme: AppThemes.darkTheme,
       home: getInitialPage(),
@@ -80,6 +86,10 @@ class FoodyShareApp extends StatelessWidget {
 
   Widget getInitialPage() {
     return isViewed != 0 ? const OnboardingScreen() : const Home();
+  }
+
+  ThemeMode changeTheme(){
+    return darkModeOn == true ? ThemeMode.dark : ThemeMode.light;
   }
 }
 

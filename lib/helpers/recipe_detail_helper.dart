@@ -8,6 +8,7 @@ class RecipeDetailHelper with ChangeNotifier {
   showFavoriteListsBottomSheet(BuildContext context) {
     showModalBottomSheet(
         context: context,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(15.0),
@@ -94,6 +95,7 @@ class RecipeDetailHelper with ChangeNotifier {
   createListBottomSheetForm(BuildContext context) {
     showModalBottomSheet(
         context: context,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(15.0),

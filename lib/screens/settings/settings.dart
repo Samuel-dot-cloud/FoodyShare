@@ -66,6 +66,7 @@ class Settings extends StatelessWidget {
               onPressed: () {
                 showModalBottomSheet(
                     context: context,
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.vertical(
                         top: Radius.circular(15.0),
@@ -83,7 +84,7 @@ class Settings extends StatelessWidget {
                             bottom: 20.0,
                           ),
                           child: Text(
-                            'Choose Theme Option:',
+                            'Set Theme:',
                             style: TextStyle(
                               fontSize: 20.0,
                               fontWeight: FontWeight.bold,
