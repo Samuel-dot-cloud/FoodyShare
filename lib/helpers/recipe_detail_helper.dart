@@ -4,8 +4,7 @@ import 'package:food_share/widgets/recipe/create_list_form.dart';
 import 'package:food_share/widgets/recipe/lists_selection_view.dart';
 
 class RecipeDetailHelper with ChangeNotifier {
-
-  showFavoriteListsBottomSheet(BuildContext context) {
+  showFavoriteListsBottomSheet(BuildContext context, String postID) {
     showModalBottomSheet(
         context: context,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -86,7 +85,10 @@ class RecipeDetailHelper with ChangeNotifier {
                   color: Colors.grey[500],
                 ),
               ),
-              const Expanded(child: ListsSelectionView())
+              Expanded(
+                  child: ListsSelectionView(
+                postID: postID,
+              ))
             ],
           ));
         });

@@ -35,11 +35,9 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   @override
   void initState() {
     checkIfLiked();
-    checkIfAddedToFavorites();
     super.initState();
   }
 
-  bool _isAdded = false;
   bool _isLiked = false;
   bool _isDeleting = false;
 
@@ -62,9 +60,6 @@ class _RecipeDetailsState extends State<RecipeDetails> {
     bool _isNotPostOwner =
         Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
             widget.arguments.authorUserUID;
-
-    final String currentUserId =
-        Provider.of<FirebaseOperations>(context, listen: false).getUserId;
 
     Size size = MediaQuery.of(context).size;
     final _textTheme = Theme.of(context).textTheme;
@@ -381,19 +376,6 @@ class _RecipeDetailsState extends State<RecipeDetails> {
     );
   }
 
-  ///Checking if post is already added to favorites
-  checkIfAddedToFavorites() async {
-    DocumentSnapshot doc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId)
-        .collection('favorites')
-        .doc(widget.arguments.postID)
-        .get();
-    setState(() {
-      _isAdded = doc.exists;
-    });
-  }
-
   _showOptionsBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -445,7 +427,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                         () async {
                           Provider.of<RecipeDetailHelper>(context,
                                   listen: false)
-                              .showFavoriteListsBottomSheet(context);
+                              .showFavoriteListsBottomSheet(context, widget.arguments.postID);
                         },
                         Icons.bookmark_border_outlined,
                         'Add to favorites',
