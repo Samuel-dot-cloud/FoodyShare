@@ -308,7 +308,8 @@ class FirebaseOperations with ChangeNotifier {
     });
   }
 
-  Future createFavoriteList(String currentUserId, String listID, dynamic listData){
+  Future createFavoriteList(
+      String currentUserId, String listID, dynamic listData) {
     return usersRef
         .doc(currentUserId)
         .collection('favorites')
@@ -316,21 +317,41 @@ class FirebaseOperations with ChangeNotifier {
         .set(listData);
   }
 
-  Future addToFavorites(
-      String currentUserId, String postId, dynamic recipeData) async {
+  Future addToFavorites(String currentUserId, String listID, String postId,
+      dynamic recipeData) async {
     return usersRef
         .doc(currentUserId)
         .collection('favorites')
+        .doc(listID)
+        .collection('bookmarked')
         .doc(postId)
-        .set(recipeData);
+        .set(recipeData).whenComplete(() {
+      return usersRef
+          .doc(currentUserId)
+          .collection('favorites')
+          .doc(listID)
+          .update({
+        'recipe_count': FieldValue.increment(1),
+      });
+    });
   }
 
-  Future removeFromFavorites(String currentUserId, String postId) async {
+  Future removeFromFavorites(String currentUserId, String listID, String postId) async {
     return usersRef
         .doc(currentUserId)
         .collection('favorites')
+        .doc(listID)
+        .collection('bookmarked')
         .doc(postId)
-        .delete();
+        .delete().whenComplete(() {
+      return usersRef
+          .doc(currentUserId)
+          .collection('favorites')
+          .doc(listID)
+          .update({
+        'recipe_count': FieldValue.increment(-1),
+      });
+    });
   }
 
   Future deleteRecipe(String postId) async {
@@ -360,7 +381,4 @@ class FirebaseOperations with ChangeNotifier {
       String postId, firebase_storage.Reference reference) async {
     await reference.child('recipe-images/$postId.jpg').delete();
   }
-
-
-
 }

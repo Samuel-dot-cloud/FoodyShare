@@ -9,7 +9,6 @@ import 'package:food_share/routes/recipe_details_arguments.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/number_formatter.dart';
 import 'package:food_share/utils/pallete.dart';
-import 'package:food_share/viewmodel/bottom_nav.dart';
 import 'package:food_share/widgets/recipe/comments_section.dart';
 import 'package:food_share/widgets/recipe/ingredients_section.dart';
 import 'package:food_share/widgets/recipe/like_button.dart';
@@ -36,11 +35,9 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   @override
   void initState() {
     checkIfLiked();
-    checkIfAddedToFavorites();
     super.initState();
   }
 
-  bool _isAdded = false;
   bool _isLiked = false;
   bool _isDeleting = false;
 
@@ -63,9 +60,6 @@ class _RecipeDetailsState extends State<RecipeDetails> {
     bool _isNotPostOwner =
         Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
             widget.arguments.authorUserUID;
-
-    final String currentUserId =
-        Provider.of<FirebaseOperations>(context, listen: false).getUserId;
 
     Size size = MediaQuery.of(context).size;
     final _textTheme = Theme.of(context).textTheme;
@@ -108,64 +102,56 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                 right: 40.0,
                 child: InkWell(
                   onTap: () {
-                    if (_isNotPostOwner) {
-                      _isAdded
-                          ? Provider.of<FirebaseOperations>(context,
-                                  listen: false)
-                              .removeFromFavorites(
-                                  currentUserId, widget.arguments.postID)
-                              .whenComplete(() {
-                              setState(() {
-                                _isAdded = false;
-                              });
-                              Fluttertoast.showToast(
-                                  msg: 'Removed from favorites',
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM,
-                                  timeInSecForIosWeb: 1,
-                                  backgroundColor: kBlue,
-                                  textColor: Colors.white,
-                                  fontSize: 16.0);
-                            })
-                          : Provider.of<FirebaseOperations>(context,
-                                  listen: false)
-                              .addToFavorites(
-                              currentUserId,
-                              widget.arguments.postID,
-                              {
-                                'postId': widget.arguments.postID,
-                                'timestamp': Timestamp.now(),
-                              },
-                            ).whenComplete(() {
-                              setState(() {
-                                _isAdded = true;
-                              });
-                              Fluttertoast.showToast(
-                                  msg: 'Added to favorites',
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM,
-                                  timeInSecForIosWeb: 1,
-                                  backgroundColor: kBlue,
-                                  textColor: Colors.white,
-                                  fontSize: 16.0);
-                            });
-                    } else {
-                      _showOptionsBottomSheet(context);
-                    }
+                    // if (_isNotPostOwner) {
+                    //   _isAdded
+                    //       ? Provider.of<FirebaseOperations>(context,
+                    //               listen: false)
+                    //           .removeFromFavorites(
+                    //               currentUserId, widget.arguments.postID)
+                    //           .whenComplete(() {
+                    //           setState(() {
+                    //             _isAdded = false;
+                    //           });
+                    //           Fluttertoast.showToast(
+                    //               msg: 'Removed from favorites',
+                    //               toastLength: Toast.LENGTH_SHORT,
+                    //               gravity: ToastGravity.BOTTOM,
+                    //               timeInSecForIosWeb: 1,
+                    //               backgroundColor: kBlue,
+                    //               textColor: Colors.white,
+                    //               fontSize: 16.0);
+                    //         })
+                    //       : Provider.of<FirebaseOperations>(context,
+                    //               listen: false)
+                    //           .addToFavorites(
+                    //           currentUserId,
+                    //           widget.arguments.postID,
+                    //           {
+                    //             'postId': widget.arguments.postID,
+                    //             'timestamp': Timestamp.now(),
+                    //           },
+                    //         ).whenComplete(() {
+                    //           setState(() {
+                    //             _isAdded = true;
+                    //           });
+                    //           Fluttertoast.showToast(
+                    //               msg: 'Added to favorites',
+                    //               toastLength: Toast.LENGTH_SHORT,
+                    //               gravity: ToastGravity.BOTTOM,
+                    //               timeInSecForIosWeb: 1,
+                    //               backgroundColor: kBlue,
+                    //               textColor: Colors.white,
+                    //               fontSize: 16.0);
+                    //         });
+                    // } else {
+                    _showOptionsBottomSheet(context);
+                    // }
                   },
-                  child: _isNotPostOwner
-                      ? FaIcon(
-                          !_isAdded
-                              ? FontAwesomeIcons.bookmark
-                              : FontAwesomeIcons.solidBookmark,
-                          color: Colors.white,
-                          size: 28.0,
-                        )
-                      : const Icon(
-                          Icons.more_vert,
-                          color: Colors.white,
-                          size: 32.0,
-                        ),
+                  child: const Icon(
+                    Icons.more_vert,
+                    color: Colors.white,
+                    size: 32.0,
+                  ),
                 ),
               ),
               Positioned(
@@ -390,29 +376,19 @@ class _RecipeDetailsState extends State<RecipeDetails> {
     );
   }
 
-  ///Checking if post is already added to favorites
-  checkIfAddedToFavorites() async {
-    DocumentSnapshot doc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId)
-        .collection('favorites')
-        .doc(widget.arguments.postID)
-        .get();
-    setState(() {
-      _isAdded = doc.exists;
-    });
-  }
-
   _showOptionsBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(15.0),
         ),
       ),
       builder: (context) {
+        bool _isNotPostOwner =
+            Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
+                widget.arguments.authorUserUID;
         return Wrap(
           children: [
             Column(
@@ -434,25 +410,42 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                     height: 2.0,
                   ),
                 ),
-                _buildOptionListTile(
-                  () {
-                    showDeleteAlertDialog();
-                  },
-                  Icons.delete_forever,
-                  'Delete recipe',
-                ),
-                _buildOptionListTile(
-                  () async {
-                    Provider.of<RecipeDetailHelper>(context, listen: false).showFavoriteListsBottomSheet(context);
-                  },
-                  Icons.bookmark_border_outlined,
-                  'Add to favorites',
-                ),
-                _buildOptionListTile(
-                  () {},
-                  Icons.info_outline_rounded,
-                  'Report this recipe',
-                ),
+                _isNotPostOwner
+                    ? const SizedBox(
+                        height: 0.0,
+                        width: 0.0,
+                      )
+                    : _buildOptionListTile(
+                        () {
+                          showDeleteAlertDialog();
+                        },
+                        Icons.delete_forever,
+                        'Delete recipe',
+                      ),
+                _isNotPostOwner
+                    ? _buildOptionListTile(
+                        () async {
+                          Provider.of<RecipeDetailHelper>(context,
+                                  listen: false)
+                              .showFavoriteListsBottomSheet(context, widget.arguments.postID);
+                        },
+                        Icons.bookmark_border_outlined,
+                        'Add to favorites',
+                      )
+                    : const SizedBox(
+                        height: 0.0,
+                        width: 0.0,
+                      ),
+                _isNotPostOwner
+                    ? _buildOptionListTile(
+                        () {},
+                        Icons.info_outline_rounded,
+                        'Report this recipe',
+                      )
+                    : const SizedBox(
+                        height: 0.0,
+                        width: 0.0,
+                      ),
               ],
             ),
           ],
@@ -537,7 +530,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                         toastLength: Toast.LENGTH_LONG,
                         gravity: ToastGravity.BOTTOM,
                         timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.blue,
+                        backgroundColor: kBlue,
                         textColor: Colors.white,
                         fontSize: 16.0);
                     Navigator.pushReplacementNamed(

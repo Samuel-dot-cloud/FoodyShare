@@ -9,6 +9,8 @@ import 'package:food_share/widgets/recipe/comment.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
+import '../refresh_widget.dart';
+
 final commentsRef = FirebaseFirestore.instance.collection('comments');
 
 class CommentsSection extends StatefulWidget {
@@ -121,51 +123,58 @@ class _CommentsSectionState extends State<CommentsSection> {
   }
 
   _displayComments() {
-    return SingleChildScrollView(
-      child: StreamBuilder<List<DocumentSnapshot>>(
-        stream: listenToCommentsRealTime(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return _defaultNoComment();
-          } else {
-            return Column(
-              children: [
-                ListView.builder(
-                  physics: const ScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (BuildContext context, int index) => Comment(
-                    commentDoc: snapshot.data![index],
-                    authorId: widget.authorId,
-                  ),
-                ),
-                const SizedBox(
-                  height: 10.0,
-                ),
-                OutlinedButton(
-                  onPressed: () {
-                    _getComments();
-                  },
-                  child: const Text(
-                    'SEE MORE',
-                    style: TextStyle(
-                      fontSize: 12.0,
-                      fontWeight: FontWeight.w700,
+    return RefreshWidget(
+      onRefresh: () async {
+        _allPagedResults.clear();
+        _lastDocument = null;
+        await _getComments();
+      },
+      child: SingleChildScrollView(
+        child: StreamBuilder<List<DocumentSnapshot>>(
+          stream: listenToCommentsRealTime(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return _defaultNoComment();
+            } else {
+              return Column(
+                children: [
+                  ListView.builder(
+                    physics: const ScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (BuildContext context, int index) => Comment(
+                      commentDoc: snapshot.data![index],
+                      authorId: widget.authorId,
                     ),
                   ),
-                  style: ButtonStyle(
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0),
-                        side: const BorderSide(color: kBlue),
+                  const SizedBox(
+                    height: 10.0,
+                  ),
+                  OutlinedButton(
+                    onPressed: () {
+                      _getComments();
+                    },
+                    child: const Text(
+                      'SEE MORE',
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                          side: const BorderSide(color: kBlue),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            );
-          }
-        },
+                ],
+              );
+            }
+          },
+        ),
       ),
     );
   }
@@ -205,7 +214,7 @@ class _CommentsSectionState extends State<CommentsSection> {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.30,
             width: MediaQuery.of(context).size.width * 0.80,
-            child: Lottie.asset('assets/lottie/cooking.json'),
+            child: Lottie.asset('assets/lottie/no-comment.json'),
           ),
           const SizedBox(
             height: 20.0,

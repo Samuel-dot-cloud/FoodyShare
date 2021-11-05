@@ -95,6 +95,7 @@ class _CreateListFormState extends State<CreateListForm> {
                         listID,
                         {
                           'name': _name,
+                          'id': listID,
                           'description': _description,
                           'recipe_count': 0,
                           'timestamp': timestamp,

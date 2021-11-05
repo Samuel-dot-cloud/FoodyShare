@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
-import 'package:food_share/widgets/recipe/labeled_checkbox.dart';
+import 'package:food_share/widgets/recipe/labeled_bookmark_box.dart';
 import 'package:food_share/widgets/refresh_widget.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class ListsSelectionView extends StatelessWidget {
-  const ListsSelectionView({Key? key})
-      : super(key: key);
+  const ListsSelectionView({Key? key, required this.postID}) : super(key: key);
 
+  final String postID;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,6 @@ class ListsSelectionView extends StatelessWidget {
         .collection('users')
         .doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId)
         .collection('favorites');
-    bool _checkedValue = false;
 
     final StreamController<List<DocumentSnapshot>> _favoriteListController =
         StreamController<List<DocumentSnapshot>>.broadcast();
@@ -139,14 +138,10 @@ class ListsSelectionView extends StatelessWidget {
                           shrinkWrap: true,
                           itemCount: snapshot.data!.length,
                           itemBuilder: (BuildContext context, int index) =>
-                              LabeledCheckbox(
-                                  label: snapshot.data![index]['name'],
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20.0),
-                                  value: _checkedValue,
-                                  onChanged: (bool newValue) {
-                                    _checkedValue = newValue;
-                                  })),
+                              LabeledBookmarkBox(
+                                postID: postID,
+                                listDoc: snapshot.data![index],
+                              )),
                       const SizedBox(
                         height: 10.0,
                       ),
@@ -176,7 +171,7 @@ class ListsSelectionView extends StatelessWidget {
                   );
                 }
               }
-              return const Text('Loading ...');
+              return const Text('ERROR');
             }),
       ),
     );

@@ -28,7 +28,7 @@ void main() async {
       .activate(webRecaptchaSiteKey: 'recaptcha-v3-site-key');
   SharedPreferences prefs = await SharedPreferences.getInstance();
   isViewed = prefs.getInt('onboard');
-  darkModeOn = prefs.getBool("switchState")!;
+  darkModeOn = prefs.getBool("switchState") ?? false;
   runApp(
     MultiProvider(
       providers: [
