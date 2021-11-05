@@ -27,6 +27,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0.0,
+          automaticallyImplyLeading: false,
           title: Text(
             'Activity Feed',
             style: kBodyText.copyWith(

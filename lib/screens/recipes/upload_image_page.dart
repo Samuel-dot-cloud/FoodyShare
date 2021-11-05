@@ -167,6 +167,7 @@ class _ImageUploadState extends State<ImageUpload> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0.0,
+        automaticallyImplyLeading: false,
         title: Text(
           'Add New Recipe',
           style: kBodyText.copyWith(

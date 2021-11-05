@@ -57,6 +57,7 @@ class _SearchPageState extends State<SearchPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         systemOverlayStyle: SystemUiOverlayStyle.light,
+        automaticallyImplyLeading: false,
         elevation: 0.0,
         actions: [
           Padding(

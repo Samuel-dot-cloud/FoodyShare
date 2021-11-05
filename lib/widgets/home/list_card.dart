@@ -79,21 +79,24 @@ class BookmarkListCard extends StatelessWidget {
     );
   }
 
-  SizedBox buildListImageSizedBox(Size size, String imageUrl) {
-    return SizedBox(
-      height: 80.0,
-      width: size.width * 0.3,
-      child: CachedNetworkImage(
-        fit: BoxFit.cover,
-        alignment: Alignment.centerLeft,
-        imageUrl: imageUrl,
-        progressIndicatorBuilder: (context, url, downloadProgress) =>
-            CircularProgressIndicator(
-          value: downloadProgress.progress,
-          backgroundColor: Colors.cyanAccent,
-          valueColor: const AlwaysStoppedAnimation<Color>(Colors.yellow),
+  ClipRRect buildListImageSizedBox(Size size, String imageUrl) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(15.0),
+      child: SizedBox(
+        height: 80.0,
+        width: size.width * 0.3,
+        child: CachedNetworkImage(
+          fit: BoxFit.cover,
+          alignment: Alignment.centerLeft,
+          imageUrl: imageUrl,
+          progressIndicatorBuilder: (context, url, downloadProgress) =>
+              CircularProgressIndicator(
+            value: downloadProgress.progress,
+            backgroundColor: Colors.cyanAccent,
+            valueColor: const AlwaysStoppedAnimation<Color>(Colors.yellow),
+          ),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
         ),
-        errorWidget: (context, url, error) => const Icon(Icons.error),
       ),
     );
   }

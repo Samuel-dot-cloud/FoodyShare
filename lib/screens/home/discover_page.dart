@@ -15,14 +15,16 @@ class DiscoverRecipe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     CollectionReference recipesRef =
-    FirebaseFirestore.instance.collection('recipes');
+        FirebaseFirestore.instance.collection('recipes');
 
     final StreamController<List<DocumentSnapshot>> _recipeController =
-    StreamController<List<DocumentSnapshot>>.broadcast();
+        StreamController<List<DocumentSnapshot>>.broadcast();
 
-    final List<List<DocumentSnapshot>> _allPagedResults = [<DocumentSnapshot>[]];
+    final List<List<DocumentSnapshot>> _allPagedResults = [
+      <DocumentSnapshot>[]
+    ];
 
-    const int recipeLimit = 5;
+    const int recipeLimit = 10;
     DocumentSnapshot? _lastDocument;
     bool _hasMoreData = true;
 
@@ -49,7 +51,7 @@ class DiscoverRecipe extends StatelessWidget {
 
       var currentRequestIndex = _allPagedResults.length;
       pageRecipeQuery.snapshots().listen(
-            (snapshot) {
+        (snapshot) {
           if (snapshot.docs.isNotEmpty) {
             var generalRecipes = snapshot.docs.toList();
 
@@ -63,7 +65,7 @@ class DiscoverRecipe extends StatelessWidget {
 
             var allRecipes = _allPagedResults.fold<List<DocumentSnapshot>>(
                 <DocumentSnapshot>[],
-                    (initialValue, pageItems) => initialValue..addAll(pageItems));
+                (initialValue, pageItems) => initialValue..addAll(pageItems));
 
             _recipeController.add(allRecipes);
 
@@ -90,22 +92,19 @@ class DiscoverRecipe extends StatelessWidget {
           await getRecipes();
         },
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              StreamBuilder<List<DocumentSnapshot>>(
-                stream: listenToRecipesRealTime(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return const Text('Error');
-                  }
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return loadingAnimation('Loading recipes...');
-                  }
-                  if (snapshot.hasData) {
-                    return ListView.builder(
+          child: StreamBuilder<List<DocumentSnapshot>>(
+            stream: listenToRecipesRealTime(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Text('Error');
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return loadingAnimation('Loading recipes...');
+              }
+              if (snapshot.hasData) {
+                return Column(
+                  children: [
+                    ListView.builder(
                         physics: const ScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: snapshot.data!.length,
@@ -115,35 +114,35 @@ class DiscoverRecipe extends StatelessWidget {
                                 vertical: 12.0,
                               ),
                               child: RecipeCard(recipeDoc: snapshot.data![index]),
-                            ));
-                  }
-                  return const Text('Loading ...');
-                },
-              ),
-              const SizedBox(
-                height: 10.0,
-              ),
-              OutlinedButton(
-                onPressed: () {
-                  getRecipes();
-                },
-                child: const Text(
-                  'SEE MORE',
-                  style: TextStyle(
-                    fontSize: 12.0,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      side: const BorderSide(color: kBlue),
+                            )),
+                    const SizedBox(
+                      height: 10.0,
                     ),
-                  ),
-                ),
-              ),
-            ],
+                    OutlinedButton(
+                      onPressed: () {
+                        getRecipes();
+                      },
+                      child: const Text(
+                        'SEE MORE',
+                        style: TextStyle(
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                            side: const BorderSide(color: kBlue),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }
+              return const Text('Loading ...');
+            },
           ),
         ),
       ),
