@@ -82,7 +82,7 @@ class FavoritePostImage extends StatelessWidget {
               : GestureDetector(
                   onTap: () => Fluttertoast.showToast(
                       msg:
-                          'Recipe cannot be found. \n It may have been deleted by the author.',
+                          'Recipe cannot be found. \n It may have been deleted.',
                       toastLength: Toast.LENGTH_SHORT,
                       gravity: ToastGravity.BOTTOM,
                       timeInSecForIosWeb: 1,

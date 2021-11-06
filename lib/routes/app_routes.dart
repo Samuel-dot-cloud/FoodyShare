@@ -14,5 +14,6 @@ class AppRoutes{
   static const editProfile = '/editProfile';
   static const altProfile = '/altProfile';
   static const recipeDetails = '/recipeDetails';
+  static const listRecipes = '/listRecipes';
 
 }

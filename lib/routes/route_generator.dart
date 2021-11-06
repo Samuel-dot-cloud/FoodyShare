@@ -11,6 +11,7 @@ import 'package:food_share/screens/auth/startup_view.dart';
 import 'package:food_share/screens/collection/hashtag_recipes_screen.dart';
 import 'package:food_share/screens/collection/recipe_collections_screen.dart';
 import 'package:food_share/screens/collection/recipe_hashtag_collection_screen.dart';
+import 'package:food_share/screens/home/list_recipes_screen.dart';
 import 'package:food_share/screens/profile/alt_profile.dart';
 import 'package:food_share/screens/home/recipe_details.dart';
 import 'package:food_share/screens/settings/edit_profile.dart';
@@ -18,6 +19,8 @@ import 'package:food_share/screens/settings/settings.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/viewmodel/bottom_nav.dart';
 import 'package:lottie/lottie.dart';
+
+import 'list_recipes_arguments.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -52,6 +55,10 @@ class RouteGenerator {
       case AppRoutes.recipeDetails:
         final arguments = settings.arguments as RecipeDetailsArguments;
         return buildRoute(RecipeDetails(arguments: arguments),
+            settings: settings);
+      case AppRoutes.listRecipes:
+        final arguments = settings.arguments as ListRecipesArguments;
+        return buildRoute(ListRecipesScreen(arguments: arguments),
             settings: settings);
       default:
         return _errorRoute();
