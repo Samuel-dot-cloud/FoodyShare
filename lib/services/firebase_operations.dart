@@ -317,6 +317,24 @@ class FirebaseOperations with ChangeNotifier {
         .set(listData);
   }
 
+  Future editFavoriteList(
+      String currentUserId, String listID, dynamic listData) {
+    return usersRef
+        .doc(currentUserId)
+        .collection('favorites')
+        .doc(listID)
+        .update(listData);
+  }
+
+  Future deleteFavoriteList(
+      String currentUserId, String listID, dynamic listData) {
+    return usersRef
+        .doc(currentUserId)
+        .collection('favorites')
+        .doc(listID)
+        .delete();
+  }
+
   Future addToFavorites(String currentUserId, String listID, String postId,
       dynamic recipeData) async {
     return usersRef

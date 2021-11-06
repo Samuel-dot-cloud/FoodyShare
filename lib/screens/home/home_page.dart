@@ -35,6 +35,7 @@ class _HomePageState extends State<HomePage> {
               right: 16.0,
             ),
             child: IconButton(
+              tooltip: 'View collections',
               icon: const Icon(
                 Icons.grid_view_rounded,
               ),

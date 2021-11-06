@@ -91,6 +91,8 @@ class BookmarkListCard extends StatelessWidget {
         children: [
           Text(
             listName,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 20.0,
               fontWeight: FontWeight.bold,

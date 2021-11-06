@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:food_share/helpers/activity_feed_helper.dart';
 import 'package:food_share/helpers/bottom_nav_helper.dart';
+import 'package:food_share/helpers/list_recipes_helper.dart';
 import 'package:food_share/helpers/recipe_detail_helper.dart';
 import 'package:food_share/routes/route_generator.dart';
 import 'package:food_share/screens/auth/startup_view.dart';
@@ -34,6 +35,9 @@ void main() async {
       providers: [
         ChangeNotifierProvider(
           create: (context) => ProfileHelper(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ListRecipesHelper(),
         ),
         ChangeNotifierProvider(
           create: (context) => RecipeDetailHelper(),

@@ -4,12 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_share/helpers/list_recipes_helper.dart';
+import 'package:food_share/models/recipe_list_choice.dart';
 import 'package:food_share/routes/list_recipes_arguments.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/home/favorite_post_image.dart';
 import 'package:food_share/widgets/home/list_flexible_appbar.dart';
 import 'package:food_share/widgets/refresh_widget.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +22,7 @@ class ListRecipesScreen extends StatelessWidget {
 
   final ListRecipesArguments arguments;
 
+
   @override
   Widget build(BuildContext context) {
     CollectionReference bookmarkedRef = FirebaseFirestore.instance
@@ -27,6 +31,24 @@ class ListRecipesScreen extends StatelessWidget {
         .collection('favorites')
         .doc(arguments.listDoc['id'])
         .collection('bookmarked');
+
+     List<RecipeListChoice> choices = <RecipeListChoice>[
+      RecipeListChoice(title: 'Edit list info', onTap: () {
+        Provider.of<ListRecipesHelper>(context, listen: false).editListBottomSheetForm(context, arguments.listDoc['id']);
+      }),
+      RecipeListChoice(title: 'Delete list', onTap: () {
+        showModalBottomSheet(context: context, builder: (context){
+          return DraggableScrollableSheet(builder: (BuildContext context, ScrollController scrollController) {
+            return SingleChildScrollView(
+              controller: scrollController,
+                child: const SizedBox(),
+            );
+          },
+           );
+        });
+      }),
+    ];
+
 
     final StreamController<List<DocumentSnapshot>> _bookmarkedController =
         StreamController<List<DocumentSnapshot>>.broadcast();
@@ -138,12 +160,14 @@ class ListRecipesScreen extends StatelessWidget {
               expandedHeight: 210.0,
               title: Text(
                 arguments.listDoc['name'],
+                overflow: TextOverflow.fade,
                 style: kBodyText.copyWith(
                   fontSize: 25.0,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               leading: IconButton(
+                tooltip: 'Go back',
                 icon: const Icon(
                   Icons.arrow_back_ios,
                 ),
@@ -151,6 +175,19 @@ class ListRecipesScreen extends StatelessWidget {
                   Navigator.pop(context);
                 },
               ),
+              actions: [
+                PopupMenuButton<RecipeListChoice>(
+                    tooltip: 'More options',
+                    itemBuilder: (BuildContext context) {
+                  return choices.map((RecipeListChoice choice) {
+                    return PopupMenuItem<RecipeListChoice>(
+                      value: choice,
+                      onTap: choice.onTap,
+                      child: Text(choice.title),
+                    );
+                  }).toList();
+                })
+              ],
               flexibleSpace: FlexibleSpaceBar(
                 background: ListFlexibleAppBar(
                   listName: arguments.listDoc['name'],
@@ -178,19 +215,21 @@ class ListRecipesScreen extends StatelessWidget {
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 12,
                           staggeredTileBuilder: (int index) {
-                            return StaggeredTile.count(1, index.isEven ? 1.2 : 1.8);
+                            return StaggeredTile.count(
+                                1, index.isEven ? 1.2 : 1.8);
                           },
                           physics: const ScrollPhysics(),
                           shrinkWrap: true,
                           primary: false,
                           itemCount: snapshot.data!.length,
-                          itemBuilder: (BuildContext context, int index) => Padding(
+                          itemBuilder: (BuildContext context, int index) =>
+                              Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 12.0,
                               vertical: 12.0,
                             ),
-                            child:
-                                FavoritePostImage(recipeDoc: snapshot.data![index]),
+                            child: FavoritePostImage(
+                                recipeDoc: snapshot.data![index]),
                           ),
                         ),
                         const SizedBox(
@@ -208,7 +247,8 @@ class ListRecipesScreen extends StatelessWidget {
                             ),
                           ),
                           style: ButtonStyle(
-                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30.0),
                                 side: const BorderSide(color: kBlue),

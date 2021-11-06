@@ -65,6 +65,7 @@ class _SearchPageState extends State<SearchPage> {
               right: 16.0,
             ),
             child: IconButton(
+              tooltip: 'Search options',
               icon: const Icon(
                 Icons.search,
                 color: Colors.black,

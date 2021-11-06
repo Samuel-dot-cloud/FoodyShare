@@ -43,19 +43,8 @@ class ListFlexibleAppBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  listName,
-                  maxLines: 2,
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 28.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
                   "\"" + listDescription + "\"",
-                  maxLines: 3,
+                  maxLines: 4,
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.robotoMono(
@@ -68,7 +57,7 @@ class ListFlexibleAppBar extends StatelessWidget {
                 ),
                 ListTile(
                   leading: CircleAvatar(
-                    radius: 16.5,
+                    radius: 20.0,
                     backgroundColor: kBlue,
                     backgroundImage: CachedNetworkImageProvider(
                         Provider.of<FirebaseOperations>(context, listen: true)
