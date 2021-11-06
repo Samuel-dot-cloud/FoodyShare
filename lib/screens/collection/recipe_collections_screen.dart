@@ -4,14 +4,14 @@ import 'package:food_share/utils/loading_animation.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/collections/recipe_collection_card.dart';
 
-CollectionReference collectionsRef =
-    FirebaseFirestore.instance.collection('collections');
-
 class RecipeCollectionsScreen extends StatelessWidget {
   const RecipeCollectionsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    CollectionReference collectionsRef =
+        FirebaseFirestore.instance.collection('collections');
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,

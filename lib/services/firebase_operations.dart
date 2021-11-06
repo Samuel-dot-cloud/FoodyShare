@@ -325,14 +325,16 @@ class FirebaseOperations with ChangeNotifier {
         .doc(listID)
         .collection('bookmarked')
         .doc(postId)
-        .set(recipeData).whenComplete(() {
-      return usersRef
+        .set(recipeData).whenComplete(() async {
+      await usersRef
           .doc(currentUserId)
           .collection('favorites')
           .doc(listID)
           .update({
+        'lastEdited': Timestamp.now(),
         'recipe_count': FieldValue.increment(1),
       });
+      notifyListeners();
     });
   }
 
@@ -343,14 +345,16 @@ class FirebaseOperations with ChangeNotifier {
         .doc(listID)
         .collection('bookmarked')
         .doc(postId)
-        .delete().whenComplete(() {
-      return usersRef
+        .delete().whenComplete(() async {
+      await usersRef
           .doc(currentUserId)
           .collection('favorites')
           .doc(listID)
           .update({
+        'lastEdited': Timestamp.now(),
         'recipe_count': FieldValue.increment(-1),
       });
+      notifyListeners();
     });
   }
 

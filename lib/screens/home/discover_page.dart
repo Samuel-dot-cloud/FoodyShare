@@ -123,7 +123,7 @@ class DiscoverRecipe extends StatelessWidget {
                         getRecipes();
                       },
                       child: const Text(
-                        'SEE MORE',
+                        'LOAD MORE',
                         style: TextStyle(
                           fontSize: 12.0,
                           fontWeight: FontWeight.w700,

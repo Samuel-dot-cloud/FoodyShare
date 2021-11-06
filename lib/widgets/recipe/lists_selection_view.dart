@@ -45,7 +45,7 @@ class ListsSelectionView extends StatelessWidget {
 
       if (!_hasMoreData) {
         Fluttertoast.showToast(
-            msg: 'No more lists to display',
+            msg: 'No more lists to display.',
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
@@ -94,7 +94,7 @@ class ListsSelectionView extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.60,
+              height: MediaQuery.of(context).size.height * 0.30,
               width: MediaQuery.of(context).size.width * 0.80,
               child: Lottie.asset('assets/lottie/no-favorite.json'),
             ),

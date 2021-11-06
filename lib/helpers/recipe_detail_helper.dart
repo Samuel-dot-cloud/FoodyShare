@@ -20,8 +20,8 @@ class RecipeDetailHelper with ChangeNotifier {
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Padding(
+                children: [
+                  const Padding(
                     padding: EdgeInsets.only(
                       left: 20.0,
                       top: 20.0,
@@ -35,9 +35,10 @@ class RecipeDetailHelper with ChangeNotifier {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(right: 20.0, top: 20.0),
+                    padding: const EdgeInsets.only(right: 20.0, top: 20.0),
                     child: InkWell(
-                      child: Text(
+                      onTap: () => Navigator.pop(context),
+                      child: const Text(
                         'Done',
                         style: TextStyle(
                           color: kBlue,

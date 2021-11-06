@@ -102,50 +102,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                 right: 40.0,
                 child: InkWell(
                   onTap: () {
-                    // if (_isNotPostOwner) {
-                    //   _isAdded
-                    //       ? Provider.of<FirebaseOperations>(context,
-                    //               listen: false)
-                    //           .removeFromFavorites(
-                    //               currentUserId, widget.arguments.postID)
-                    //           .whenComplete(() {
-                    //           setState(() {
-                    //             _isAdded = false;
-                    //           });
-                    //           Fluttertoast.showToast(
-                    //               msg: 'Removed from favorites',
-                    //               toastLength: Toast.LENGTH_SHORT,
-                    //               gravity: ToastGravity.BOTTOM,
-                    //               timeInSecForIosWeb: 1,
-                    //               backgroundColor: kBlue,
-                    //               textColor: Colors.white,
-                    //               fontSize: 16.0);
-                    //         })
-                    //       : Provider.of<FirebaseOperations>(context,
-                    //               listen: false)
-                    //           .addToFavorites(
-                    //           currentUserId,
-                    //           widget.arguments.postID,
-                    //           {
-                    //             'postId': widget.arguments.postID,
-                    //             'timestamp': Timestamp.now(),
-                    //           },
-                    //         ).whenComplete(() {
-                    //           setState(() {
-                    //             _isAdded = true;
-                    //           });
-                    //           Fluttertoast.showToast(
-                    //               msg: 'Added to favorites',
-                    //               toastLength: Toast.LENGTH_SHORT,
-                    //               gravity: ToastGravity.BOTTOM,
-                    //               timeInSecForIosWeb: 1,
-                    //               backgroundColor: kBlue,
-                    //               textColor: Colors.white,
-                    //               fontSize: 16.0);
-                    //         });
-                    // } else {
                     _showOptionsBottomSheet(context);
-                    // }
                   },
                   child: const Icon(
                     Icons.more_vert,
