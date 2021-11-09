@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:food_share/models/favorite_list.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/loading_animation.dart';
 import 'package:food_share/utils/pallete.dart';
@@ -21,8 +22,45 @@ class _EditListFormState extends State<EditListForm> {
   late String _description;
   final Timestamp timestamp = Timestamp.now();
   bool _isSaving = false;
+  final TextEditingController _listNameController = TextEditingController();
+  final TextEditingController _listDescriptionController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  FavoriteList? favoriteList;
+
+  @override
+  void initState() {
+    super.initState();
+    getListDetails();
+  }
+
+
+  getListDetails() async {
+    setState(() {
+      _isSaving = true;
+    });
+    DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId)
+        .collection('favorites')
+        .doc(widget.listID)
+        .get();
+    favoriteList = FavoriteList.fromDocument(doc);
+    _listNameController.text = favoriteList!.name;
+    _listDescriptionController.text = favoriteList!.description;
+    setState(() {
+      _isSaving = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    _listNameController.dispose();
+    _listDescriptionController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return !_isSaving
@@ -32,9 +70,8 @@ class _EditListFormState extends State<EditListForm> {
         key: _formKey,
         child: Column(
           children: [
-            // _buildFormField('List name', 'List name is required', _name),
             TextFormField(
-              // cursorColor: kBlue,
+              controller: _listNameController,
               decoration: const InputDecoration(
                 labelText: 'List name',
                 enabledBorder: UnderlineInputBorder(
@@ -57,9 +94,8 @@ class _EditListFormState extends State<EditListForm> {
             const SizedBox(
               height: 30.0,
             ),
-            // _buildFormField('Description (optional)', '', _description),
             TextFormField(
-              cursorColor: kBlue,
+              controller: _listDescriptionController,
               decoration: const InputDecoration(
                 labelText: 'Description (optional)',
                 enabledBorder: UnderlineInputBorder(
@@ -113,6 +149,6 @@ class _EditListFormState extends State<EditListForm> {
         ),
       ),
     )
-        : loadingAnimation('Saving changes...');
+        : loadingAnimation('Loading...');
   }
 }

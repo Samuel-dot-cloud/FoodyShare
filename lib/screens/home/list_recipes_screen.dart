@@ -5,14 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/helpers/list_recipes_helper.dart';
-import 'package:food_share/models/recipe_list_choice.dart';
+import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/list_recipes_arguments.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/home/favorite_post_image.dart';
 import 'package:food_share/widgets/home/list_flexible_appbar.dart';
 import 'package:food_share/widgets/refresh_widget.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +21,6 @@ class ListRecipesScreen extends StatelessWidget {
 
   final ListRecipesArguments arguments;
 
-
   @override
   Widget build(BuildContext context) {
     CollectionReference bookmarkedRef = FirebaseFirestore.instance
@@ -31,24 +29,6 @@ class ListRecipesScreen extends StatelessWidget {
         .collection('favorites')
         .doc(arguments.listDoc['id'])
         .collection('bookmarked');
-
-     List<RecipeListChoice> choices = <RecipeListChoice>[
-      RecipeListChoice(title: 'Edit list info', onTap: () {
-        Provider.of<ListRecipesHelper>(context, listen: false).editListBottomSheetForm(context, arguments.listDoc['id']);
-      }),
-      RecipeListChoice(title: 'Delete list', onTap: () {
-        showModalBottomSheet(context: context, builder: (context){
-          return DraggableScrollableSheet(builder: (BuildContext context, ScrollController scrollController) {
-            return SingleChildScrollView(
-              controller: scrollController,
-                child: const SizedBox(),
-            );
-          },
-           );
-        });
-      }),
-    ];
-
 
     final StreamController<List<DocumentSnapshot>> _bookmarkedController =
         StreamController<List<DocumentSnapshot>>.broadcast();
@@ -143,6 +123,83 @@ class ListRecipesScreen extends StatelessWidget {
       );
     }
 
+    Future<void> showDeleteAlertDialog() async {
+      return showDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (context) {
+            return AlertDialog(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(20.0),
+                ),
+              ),
+              title: const Text(
+                'Delete list?',
+                style: TextStyle(
+                  fontSize: 23.0,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              content: const Text(
+                'This is an irreversible action!!',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 20.0,
+                ),
+              ),
+              actions: [
+                MaterialButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline,
+                      decorationColor: Colors.black,
+                    ),
+                  ),
+                ),
+                MaterialButton(
+                  color: kBlue,
+                  onPressed: () {
+                    Provider.of<FirebaseOperations>(context, listen: false)
+                        .deleteFavoriteList(
+                            Provider.of<FirebaseOperations>(context,
+                                    listen: false)
+                                .getUserId,
+                            arguments.listDoc['id'])
+                        .whenComplete(() {
+                      Navigator.pop(context);
+                      Fluttertoast.showToast(
+                          msg: 'List successfully deleted',
+                          toastLength: Toast.LENGTH_LONG,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: kBlue,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                      Navigator.pushReplacementNamed(
+                          context, AppRoutes.bottomNav);
+                    });
+                  },
+                  child: const Text(
+                    'Go Ahead',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          });
+    }
+
     return Scaffold(
       body: RefreshWidget(
         onRefresh: () async {
@@ -176,17 +233,35 @@ class ListRecipesScreen extends StatelessWidget {
                 },
               ),
               actions: [
-                PopupMenuButton<RecipeListChoice>(
+                PopupMenuButton<int>(
                     tooltip: 'More options',
-                    itemBuilder: (BuildContext context) {
-                  return choices.map((RecipeListChoice choice) {
-                    return PopupMenuItem<RecipeListChoice>(
-                      value: choice,
-                      onTap: choice.onTap,
-                      child: Text(choice.title),
-                    );
-                  }).toList();
-                })
+                    onSelected: (value) {
+                      if (value == 1) {
+                        Provider.of<ListRecipesHelper>(context, listen: false)
+                            .editListBottomSheetForm(
+                                context, arguments.listDoc['id']);
+                      } else if (value == 2) {
+                        showDeleteAlertDialog();
+                      }
+                    },
+                    itemBuilder: (BuildContext context) => [
+                          const PopupMenuItem(
+                            value: 1,
+                            child: Text('Edit list info'),
+                          ),
+                          const PopupMenuItem(
+                            value: 2,
+                            child: Text('Delete list'),
+                          ),
+                        ]
+                    // return choices.map((RecipeListChoice choice) {
+                    //   return PopupMenuItem<RecipeListChoice>(
+                    //     value: choice,
+                    //     onTap: choice.onTap,
+                    //     child: Text(choice.title),
+                    //   );
+                    // }).toList();
+                    )
               ],
               flexibleSpace: FlexibleSpaceBar(
                 background: ListFlexibleAppBar(
