@@ -51,6 +51,12 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     SizeConfig.init(context);
     return Scaffold(
@@ -116,7 +122,7 @@ class _SearchPageState extends State<SearchPage> {
                   width: MediaQuery.of(context).size.width * 0.80,
                 ),
                 Text(
-                  'Search for all things recipes!!!',
+                  searchUsers? 'Search for all things users!!!' : 'Search for all things recipes!!!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.black,
@@ -131,47 +137,37 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   buildSearchResults() {
-    return searchUsers
-        ? FutureBuilder(
-            future: searchResultsFuture,
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (!snapshot.hasData) {
-                return loadingAnimation('Loading users...');
-              } else if (snapshot.data?.docs.isEmpty) {
-                return _nothingFound(
-                    'No users found matching the username provided...');
-              } else {
-                List<UserResult> searchResults = [];
-                snapshot.data?.docs.forEach((doc) {
-                  CustomUser customUser = CustomUser.fromDocument(doc);
-                  UserResult searchResult = UserResult(customUser: customUser);
-                  searchResults.add(searchResult);
-                });
-                return ListView(
-                  children: searchResults,
-                );
+    return
+        StreamBuilder<QuerySnapshot>(
+            stream: searchUsers? usersRef.where('username', isGreaterThanOrEqualTo: searchController.text.trim())
+            .where('username', isLessThan: searchController.text.trim() + 'z').snapshots().asBroadcastStream() : recipesRef
+                .where('name', isGreaterThanOrEqualTo: searchController.text.trim())
+                .where('name', isLessThan: searchController.text.trim() + 'z').snapshots().asBroadcastStream(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Text('Error');
               }
-            })
-        : FutureBuilder(
-            future: searchResultsFuture,
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (!snapshot.hasData) {
-                return loadingAnimation('Loading recipes...');
-              } else if (snapshot.data?.docs.isEmpty) {
-                return _nothingFound('No recipes found yet..');
-              } else {
-                List<RecipeResult> searchResults = [];
-                snapshot.data?.docs.forEach((doc) {
-                  RecipeModel recipeModel = RecipeModel.fromDocument(doc);
-                  RecipeResult searchResult =
-                      RecipeResult(recipeModel: recipeModel);
-                  searchResults.add(searchResult);
-                });
-                return ListView(
-                  children: searchResults,
-                );
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return loadingAnimation(searchUsers? 'Searching users...' : 'Searching recipes');
               }
-            });
+              if (snapshot.hasData) {
+                if(snapshot.data!.docs.isEmpty){
+                  return _nothingFound(
+                      searchUsers ? 'No users found matching the username provided...' : 'No recipes found yet...');
+                }
+                return ListView.builder(
+                    physics: const ScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return searchUsers? UserResult(
+                        userDoc: snapshot.data!.docs[index],
+                      ) : RecipeResult(recipeDoc: snapshot.data!.docs[index]);
+                    });
+              }
+              return const Text('Error');
+            },
+          );
   }
 
   _showSearchSelectionBottomSheet(BuildContext context) {

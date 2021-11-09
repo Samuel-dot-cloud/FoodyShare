@@ -91,7 +91,7 @@ class _HashtagFieldState extends State<HashtagField> {
                                                 BorderRadius.circular(7),
                                               ),
                                               label: Text(snapshot.data!['hashtag_name'],
-                                              style: GoogleFonts.josefinSans(),),
+                                              ),
                                               onDeleted: () {
                                                 setState(() {
                                                   selected.remove(s);
