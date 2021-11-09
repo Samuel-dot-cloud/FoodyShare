@@ -64,7 +64,7 @@ class RecipeCollectionsScreen extends StatelessWidget {
           child: StreamBuilder<QuerySnapshot>(
             stream: collectionsRef
                 .orderBy('timestamp', descending: true)
-                .snapshots(),
+                .snapshots().asBroadcastStream(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return const Text('Error');
