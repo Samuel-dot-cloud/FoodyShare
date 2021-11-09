@@ -63,7 +63,7 @@ class _ThemeOptionsState extends State<ThemeOptions> {
             textColor: Colors.white,
             fontSize: 16.0);
       },
-      secondary: const Icon(Icons.lightbulb_outline_rounded),
+      secondary: const Icon(Icons.dark_mode_outlined),
     );
 
   }

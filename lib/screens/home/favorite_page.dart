@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_share/helpers/recipe_detail_helper.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/home/list_card.dart';
@@ -113,6 +114,13 @@ class FavoriteRecipes extends StatelessWidget {
     }
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Create list',
+        backgroundColor: kBlue,
+        child: const Icon(Icons.create_rounded),
+          onPressed: (){
+          Provider.of<RecipeDetailHelper>(context, listen: false).createListBottomSheetForm(context);
+          }),
       body: RefreshWidget(
         onRefresh: () async {
           _allPagedResults.clear();
@@ -149,26 +157,7 @@ class FavoriteRecipes extends StatelessWidget {
                                     ),
                                     child: BookmarkListCard(favoriteDoc: snapshot.data![index], ),
                                   )),
-                          // StaggeredGridView.countBuilder(
-                          //   crossAxisCount: 2,
-                          //   crossAxisSpacing: 10,
-                          //   mainAxisSpacing: 12,
-                          //   staggeredTileBuilder: (int index) {
-                          //     return StaggeredTile.count(
-                          //         1, index.isEven ? 1.2 : 1.8);
-                          //   },
-                          //   physics: const ScrollPhysics(),
-                          //   shrinkWrap: true,
-                          //   itemCount: snapshot.data!.length,
-                          //   itemBuilder: (BuildContext context, int index) =>
-                          //       const Padding(
-                          //     padding: EdgeInsets.symmetric(
-                          //       horizontal: 12.0,
-                          //       vertical: 12.0,
-                          //     ),
-                          //     child: BookmarkListCard(),
-                          //   ),
-                          // ),
+
                           const SizedBox(
                             height: 10.0,
                           ),
@@ -177,7 +166,7 @@ class FavoriteRecipes extends StatelessWidget {
                               getFavorites();
                             },
                             child: const Text(
-                              'SEE MORE',
+                              'LOAD MORE',
                               style: TextStyle(
                                 fontSize: 12.0,
                                 fontWeight: FontWeight.w700,
