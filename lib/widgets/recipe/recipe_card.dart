@@ -44,9 +44,11 @@ class _RecipeCardState extends State<RecipeCard> {
           Provider.of<FirebaseOperations>(context, listen: false).getUserId,
         )
         .get();
-    setState(() {
-      _isLiked = doc.exists;
-    });
+    if(mounted){
+      setState(() {
+        _isLiked = doc.exists;
+      });
+    }
   }
 
   Future<bool> onLikeButtonTapped(bool isLiked) async {

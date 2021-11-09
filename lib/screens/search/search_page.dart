@@ -31,9 +31,11 @@ class _SearchPageState extends State<SearchPage> {
         .where('username', isGreaterThanOrEqualTo: query.trim())
         .where('username', isLessThan: query.trim() + 'z')
         .get();
-    setState(() {
-      searchResultsFuture = users;
-    });
+    if (mounted) {
+      setState(() {
+        searchResultsFuture = users;
+      });
+    }
   }
 
   handleRecipeSearch(String query) {
@@ -41,9 +43,11 @@ class _SearchPageState extends State<SearchPage> {
         .where('name', isGreaterThanOrEqualTo: query.trim())
         .where('name', isLessThan: query.trim() + 'z')
         .get();
-    setState(() {
-      searchResultsFuture = recipes;
-    });
+    if (mounted) {
+      setState(() {
+        searchResultsFuture = recipes;
+      });
+    }
   }
 
   clearSearch() {
@@ -122,7 +126,9 @@ class _SearchPageState extends State<SearchPage> {
                   width: MediaQuery.of(context).size.width * 0.80,
                 ),
                 Text(
-                  searchUsers? 'Search for all things users!!!' : 'Search for all things recipes!!!',
+                  searchUsers
+                      ? 'Search for all things users!!!'
+                      : 'Search for all things recipes!!!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.black,
@@ -137,37 +143,37 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   buildSearchResults() {
-    return
-        StreamBuilder<QuerySnapshot>(
-            stream: searchUsers? usersRef.where('username', isGreaterThanOrEqualTo: searchController.text.trim())
-            .where('username', isLessThan: searchController.text.trim() + 'z').snapshots().asBroadcastStream() : recipesRef
-                .where('name', isGreaterThanOrEqualTo: searchController.text.trim())
-                .where('name', isLessThan: searchController.text.trim() + 'z').snapshots().asBroadcastStream(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return const Text('Error');
-              }
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return loadingAnimation(searchUsers? 'Searching users...' : 'Searching recipes');
-              }
-              if (snapshot.hasData) {
-                if(snapshot.data!.docs.isEmpty){
-                  return _nothingFound(
-                      searchUsers ? 'No users found matching the username provided...' : 'No recipes found yet...');
-                }
-                return ListView.builder(
-                    physics: const ScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: snapshot.data!.docs.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return searchUsers? UserResult(
+    return StreamBuilder<QuerySnapshot>(
+      stream:  searchResultsFuture?.asStream().asBroadcastStream(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Text('Error');
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return loadingAnimation(
+              searchUsers ? 'Searching users...' : 'Searching recipes');
+        }
+        if (snapshot.hasData) {
+          if (snapshot.data!.docs.isEmpty) {
+            return _nothingFound(searchUsers
+                ? 'No users found matching the username provided...'
+                : 'No recipes found yet...');
+          }
+          return ListView.builder(
+              physics: const ScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (BuildContext context, int index) {
+                return searchUsers
+                    ? UserResult(
                         userDoc: snapshot.data!.docs[index],
-                      ) : RecipeResult(recipeDoc: snapshot.data!.docs[index]);
-                    });
-              }
-              return const Text('Error');
-            },
-          );
+                      )
+                    : RecipeResult(recipeDoc: snapshot.data!.docs[index]);
+              });
+        }
+        return const Text('Error');
+      },
+    );
   }
 
   _showSearchSelectionBottomSheet(BuildContext context) {
