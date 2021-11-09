@@ -327,7 +327,7 @@ class FirebaseOperations with ChangeNotifier {
   }
 
   Future deleteFavoriteList(
-      String currentUserId, String listID, dynamic listData) {
+      String currentUserId, String listID) {
     return usersRef
         .doc(currentUserId)
         .collection('favorites')

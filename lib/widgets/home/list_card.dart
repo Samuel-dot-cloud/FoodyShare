@@ -57,7 +57,7 @@ class BookmarkListCard extends StatelessWidget {
                     return const Text('Error');
                   }
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return loadingAnimation('Loading images...');
+                    return const CircularProgressIndicator();
                   }
                   if (snapshot.hasData) {
                     return Row(
