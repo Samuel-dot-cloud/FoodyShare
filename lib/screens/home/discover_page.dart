@@ -44,7 +44,7 @@ class DiscoverRecipe extends StatelessWidget {
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
-            backgroundColor: Colors.blueAccent,
+            backgroundColor: kBlue,
             textColor: Colors.white,
             fontSize: 16.0);
       }
