@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:food_share/utils/loading_animation.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/collections/recipe_collection_card.dart';
+import 'package:lottie/lottie.dart';
 
 class RecipeCollectionsScreen extends StatelessWidget {
   const RecipeCollectionsScreen({Key? key}) : super(key: key);
@@ -11,6 +12,31 @@ class RecipeCollectionsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     CollectionReference collectionsRef =
         FirebaseFirestore.instance.collection('collections');
+
+    Center _defaultNoCollections() {
+      return Center(
+        child: Column(
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.60,
+              width: MediaQuery.of(context).size.width * 0.80,
+              child: Lottie.asset('assets/lottie/no-favorite.json'),
+            ),
+            const SizedBox(
+              height: 20.0,
+            ),
+            const Text(
+              'No collections here...',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 23.0,
+                fontWeight: FontWeight.w600,
+              ),
+            )
+          ],
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -60,6 +86,8 @@ class RecipeCollectionsScreen extends StatelessWidget {
                             collectionDoc: snapshot.data!.docs[index],
                           ),
                         ));
+              } else {
+                _defaultNoCollections();
               }
               return const Text('Loading ...');
             },
