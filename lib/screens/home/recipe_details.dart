@@ -50,9 +50,11 @@ class _RecipeDetailsState extends State<RecipeDetails> {
           Provider.of<FirebaseOperations>(context, listen: false).getUserId,
         )
         .get();
-    setState(() {
-      _isLiked = doc.exists;
-    });
+    if (mounted) {
+      setState(() {
+        _isLiked = doc.exists;
+      });
+    }
   }
 
   @override
@@ -384,7 +386,8 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                         () async {
                           Provider.of<RecipeDetailHelper>(context,
                                   listen: false)
-                              .showFavoriteListsBottomSheet(context, widget.arguments.postID);
+                              .showFavoriteListsBottomSheet(
+                                  context, widget.arguments.postID);
                         },
                         Icons.bookmark_border_outlined,
                         'Add to favorites',

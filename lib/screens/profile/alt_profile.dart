@@ -122,9 +122,11 @@ class _AltProfileState extends State<AltProfile> {
           Provider.of<FirebaseOperations>(context, listen: false).getUserId,
         )
         .get();
-    setState(() {
-      _isFollowing = doc.exists;
-    });
+    if(mounted){
+      setState(() {
+        _isFollowing = doc.exists;
+      });
+    }
   }
 
   @override
