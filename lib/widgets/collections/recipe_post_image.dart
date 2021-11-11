@@ -164,6 +164,8 @@ class RecipePostImage extends StatelessWidget {
                 ),
                 onPressed: () {
                   if (_isNotProfileOwner) {
+                    Provider.of<AnalyticsService>(context, listen: false)
+                        .logSelectContent('user', snapshot.data!['username']);
                     final args = AltProfileArguments(
                       userUID: snapshot.data!['id'],
                       authorImage: snapshot.data!['photoUrl'],

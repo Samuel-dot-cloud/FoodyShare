@@ -9,81 +9,86 @@ import 'package:food_share/widgets/refresh_widget.dart';
 
 import '../../utils/loading_animation.dart';
 
-class DiscoverRecipe extends StatelessWidget {
+class DiscoverRecipe extends StatefulWidget {
   const DiscoverRecipe({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    CollectionReference recipesRef =
-        FirebaseFirestore.instance.collection('recipes');
+  State<DiscoverRecipe> createState() => _DiscoverRecipeState();
+}
 
-    final StreamController<List<DocumentSnapshot>> _recipeController =
-        StreamController<List<DocumentSnapshot>>.broadcast();
+class _DiscoverRecipeState extends State<DiscoverRecipe>
+    with AutomaticKeepAliveClientMixin<DiscoverRecipe> {
+  CollectionReference recipesRef =
+      FirebaseFirestore.instance.collection('recipes');
 
-    final List<List<DocumentSnapshot>> _allPagedResults = [
-      <DocumentSnapshot>[]
-    ];
+  final StreamController<List<DocumentSnapshot>> _recipeController =
+      StreamController<List<DocumentSnapshot>>.broadcast();
 
-    const int recipeLimit = 10;
-    DocumentSnapshot? _lastDocument;
-    bool _hasMoreData = true;
+  final List<List<DocumentSnapshot>> _allPagedResults = [<DocumentSnapshot>[]];
 
-    getRecipes() async {
-      final CollectionReference _recipeCollectionReference = recipesRef;
-      var pageRecipeQuery = _recipeCollectionReference
-          .orderBy('timestamp', descending: true)
-          .limit(recipeLimit);
+  static const int recipeLimit = 10;
+  DocumentSnapshot? _lastDocument;
+  bool _hasMoreData = true;
 
-      if (_lastDocument != null) {
-        pageRecipeQuery = pageRecipeQuery.startAfterDocument(_lastDocument!);
-      }
+  getRecipes() async {
+    final CollectionReference _recipeCollectionReference = recipesRef;
+    var pageRecipeQuery = _recipeCollectionReference
+        .orderBy('timestamp', descending: true)
+        .limit(recipeLimit);
 
-      if (!_hasMoreData) {
-        Fluttertoast.showToast(
-            msg: 'No more recipes to display',
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: kBlue,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      }
+    if (_lastDocument != null) {
+      pageRecipeQuery = pageRecipeQuery.startAfterDocument(_lastDocument!);
+    }
 
-      var currentRequestIndex = _allPagedResults.length;
-      pageRecipeQuery.snapshots().listen(
-        (snapshot) {
-          if (snapshot.docs.isNotEmpty) {
-            var generalRecipes = snapshot.docs.toList();
+    if (!_hasMoreData) {
+      Fluttertoast.showToast(
+          msg: 'No more recipes to display',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: kBlue,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
 
-            var pageExists = currentRequestIndex < _allPagedResults.length;
+    var currentRequestIndex = _allPagedResults.length;
+    pageRecipeQuery.snapshots().listen(
+      (snapshot) {
+        if (snapshot.docs.isNotEmpty) {
+          var generalRecipes = snapshot.docs.toList();
 
-            if (pageExists) {
-              _allPagedResults[currentRequestIndex] = generalRecipes;
-            } else {
-              _allPagedResults.add(generalRecipes);
-            }
+          var pageExists = currentRequestIndex < _allPagedResults.length;
 
-            var allRecipes = _allPagedResults.fold<List<DocumentSnapshot>>(
-                <DocumentSnapshot>[],
-                (initialValue, pageItems) => initialValue..addAll(pageItems));
-
-            _recipeController.add(allRecipes);
-
-            if (currentRequestIndex == _allPagedResults.length - 1) {
-              _lastDocument = snapshot.docs.last;
-            }
-
-            _hasMoreData = generalRecipes.length == recipeLimit;
+          if (pageExists) {
+            _allPagedResults[currentRequestIndex] = generalRecipes;
+          } else {
+            _allPagedResults.add(generalRecipes);
           }
-        },
-      );
-    }
 
-    Stream<List<DocumentSnapshot>> listenToRecipesRealTime() {
-      getRecipes();
-      return _recipeController.stream;
-    }
+          var allRecipes = _allPagedResults.fold<List<DocumentSnapshot>>(
+              <DocumentSnapshot>[],
+              (initialValue, pageItems) => initialValue..addAll(pageItems));
 
+          _recipeController.add(allRecipes);
+
+          if (currentRequestIndex == _allPagedResults.length - 1) {
+            _lastDocument = snapshot.docs.last;
+          }
+
+          _hasMoreData = generalRecipes.length == recipeLimit;
+        }
+      },
+    );
+  }
+
+  Stream<List<DocumentSnapshot>> listenToRecipesRealTime() {
+    getRecipes();
+    return _recipeController.stream;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: RefreshWidget(
         onRefresh: () async {
@@ -108,12 +113,14 @@ class DiscoverRecipe extends StatelessWidget {
                         physics: const ScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: snapshot.data!.length,
-                        itemBuilder: (BuildContext context, int index) => Padding(
+                        itemBuilder: (BuildContext context, int index) =>
+                            Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 12.0,
                                 vertical: 12.0,
                               ),
-                              child: RecipeCard(recipeDoc: snapshot.data![index]),
+                              child:
+                                  RecipeCard(recipeDoc: snapshot.data![index]),
                             )),
                     const SizedBox(
                       height: 10.0,
@@ -130,7 +137,8 @@ class DiscoverRecipe extends StatelessWidget {
                         ),
                       ),
                       style: ButtonStyle(
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30.0),
                             side: const BorderSide(color: kBlue),
@@ -148,4 +156,7 @@ class DiscoverRecipe extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

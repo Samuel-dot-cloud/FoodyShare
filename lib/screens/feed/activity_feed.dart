@@ -9,14 +9,9 @@ import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
 final activityFeedRef = FirebaseFirestore.instance.collection('feed');
 
-class ActivityFeed extends StatefulWidget {
+class ActivityFeed extends StatelessWidget {
   const ActivityFeed({Key? key}) : super(key: key);
 
-  @override
-  State<ActivityFeed> createState() => _ActivityFeedState();
-}
-
-class _ActivityFeedState extends State<ActivityFeed> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -87,33 +82,5 @@ class _ActivityFeedState extends State<ActivityFeed> {
         ),
       ),
     ));
-  }
-
-  defaultNoNotification(String text) {
-    return SingleChildScrollView(
-      child: Center(
-        child: Column(
-          children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.60,
-              width: MediaQuery.of(context).size.width * 0.80,
-              child: Lottie.asset('assets/lottie/no-feed.json'),
-            ),
-            const SizedBox(
-              height: 20.0,
-            ),
-            Text(
-              text,
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 23.0,
-                fontWeight: FontWeight.w600,
-              ),
-              textAlign: TextAlign.center,
-            )
-          ],
-        ),
-      ),
-    );
   }
 }

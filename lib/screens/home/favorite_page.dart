@@ -13,113 +13,118 @@ import 'package:provider/provider.dart';
 
 CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
 
-class FavoriteRecipes extends StatelessWidget {
+class FavoriteRecipes extends StatefulWidget {
   const FavoriteRecipes({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final StreamController<List<DocumentSnapshot>> _favoriteController =
-        StreamController<List<DocumentSnapshot>>.broadcast();
+  State<FavoriteRecipes> createState() => _FavoriteRecipesState();
+}
 
-    final List<List<DocumentSnapshot>> _allPagedResults = [
-      <DocumentSnapshot>[]
-    ];
+class _FavoriteRecipesState extends State<FavoriteRecipes>
+    with AutomaticKeepAliveClientMixin<FavoriteRecipes> {
+  final StreamController<List<DocumentSnapshot>> _favoriteController =
+      StreamController<List<DocumentSnapshot>>.broadcast();
 
-    const int favoriteRecipeLimit = 5;
-    DocumentSnapshot? _lastDocument;
-    bool _hasMoreData = true;
+  final List<List<DocumentSnapshot>> _allPagedResults = [<DocumentSnapshot>[]];
 
-    getFavorites() async {
-      final CollectionReference _favoriteCollectionReference = usersRef
-          .doc(
-              Provider.of<FirebaseOperations>(context, listen: false).getUserId)
-          .collection('favorites');
-      var pageRecipeQuery = _favoriteCollectionReference
-          .orderBy('timestamp', descending: true)
-          .limit(favoriteRecipeLimit);
+  static const int favoriteRecipeLimit = 5;
+  DocumentSnapshot? _lastDocument;
+  bool _hasMoreData = true;
 
-      if (_lastDocument != null) {
-        pageRecipeQuery = pageRecipeQuery.startAfterDocument(_lastDocument!);
-      }
+  getFavorites() async {
+    final CollectionReference _favoriteCollectionReference = usersRef
+        .doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId)
+        .collection('favorites');
+    var pageRecipeQuery = _favoriteCollectionReference
+        .orderBy('timestamp', descending: true)
+        .limit(favoriteRecipeLimit);
 
-      if (!_hasMoreData) {
-        Fluttertoast.showToast(
-            msg: 'No more favorites to display',
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.blueAccent,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      }
+    if (_lastDocument != null) {
+      pageRecipeQuery = pageRecipeQuery.startAfterDocument(_lastDocument!);
+    }
 
-      var currentRequestIndex = _allPagedResults.length;
-      pageRecipeQuery.snapshots().listen(
-        (snapshot) {
-          if (snapshot.docs.isNotEmpty) {
-            var generalRecipes = snapshot.docs.toList();
+    if (!_hasMoreData) {
+      Fluttertoast.showToast(
+          msg: 'No more favorites to display',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.blueAccent,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
 
-            var pageExists = currentRequestIndex < _allPagedResults.length;
+    var currentRequestIndex = _allPagedResults.length;
+    pageRecipeQuery.snapshots().listen(
+      (snapshot) {
+        if (snapshot.docs.isNotEmpty) {
+          var generalRecipes = snapshot.docs.toList();
 
-            if (pageExists) {
-              _allPagedResults[currentRequestIndex] = generalRecipes;
-            } else {
-              _allPagedResults.add(generalRecipes);
-            }
+          var pageExists = currentRequestIndex < _allPagedResults.length;
 
-            var allRecipes = _allPagedResults.fold<List<DocumentSnapshot>>(
-                <DocumentSnapshot>[],
-                (initialValue, pageItems) => initialValue..addAll(pageItems));
-
-            _favoriteController.add(allRecipes);
-
-            if (currentRequestIndex == _allPagedResults.length - 1) {
-              _lastDocument = snapshot.docs.last;
-            }
-
-            _hasMoreData = generalRecipes.length == favoriteRecipeLimit;
+          if (pageExists) {
+            _allPagedResults[currentRequestIndex] = generalRecipes;
+          } else {
+            _allPagedResults.add(generalRecipes);
           }
-        },
-      );
-    }
 
-    Stream<List<DocumentSnapshot>> listenToFavoritesRealTime() {
-      getFavorites();
-      return _favoriteController.stream;
-    }
+          var allRecipes = _allPagedResults.fold<List<DocumentSnapshot>>(
+              <DocumentSnapshot>[],
+              (initialValue, pageItems) => initialValue..addAll(pageItems));
 
-    Center _defaultNoFavorites() {
-      return Center(
-        child: Column(
-          children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.60,
-              width: MediaQuery.of(context).size.width * 0.80,
-              child: Lottie.asset('assets/lottie/no-favorite.json'),
+          _favoriteController.add(allRecipes);
+
+          if (currentRequestIndex == _allPagedResults.length - 1) {
+            _lastDocument = snapshot.docs.last;
+          }
+
+          _hasMoreData = generalRecipes.length == favoriteRecipeLimit;
+        }
+      },
+    );
+  }
+
+  Stream<List<DocumentSnapshot>> listenToFavoritesRealTime() {
+    getFavorites();
+    return _favoriteController.stream;
+  }
+
+  Center _defaultNoFavorites() {
+    return Center(
+      child: Column(
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.60,
+            width: MediaQuery.of(context).size.width * 0.80,
+            child: Lottie.asset('assets/lottie/no-favorite.json'),
+          ),
+          const SizedBox(
+            height: 20.0,
+          ),
+          const Text(
+            'Nothing in favorites...',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 23.0,
+              fontWeight: FontWeight.w600,
             ),
-            const SizedBox(
-              height: 20.0,
-            ),
-            const Text(
-              'Nothing in favorites...',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 23.0,
-                fontWeight: FontWeight.w600,
-              ),
-            )
-          ],
-        ),
-      );
-    }
+          )
+        ],
+      ),
+    );
+  }
 
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        tooltip: 'Create list',
-        backgroundColor: kBlue,
-        child: const Icon(Icons.create_rounded),
-          onPressed: (){
-          Provider.of<RecipeDetailHelper>(context, listen: false).createListBottomSheetForm(context);
+          tooltip: 'Create list',
+          backgroundColor: kBlue,
+          child: const Icon(Icons.create_rounded),
+          onPressed: () {
+            Provider.of<RecipeDetailHelper>(context, listen: false)
+                .createListBottomSheetForm(context);
           }),
       body: RefreshWidget(
         onRefresh: () async {
@@ -155,9 +160,10 @@ class FavoriteRecipes extends StatelessWidget {
                                       horizontal: 12.0,
                                       vertical: 12.0,
                                     ),
-                                    child: BookmarkListCard(favoriteDoc: snapshot.data![index], ),
+                                    child: BookmarkListCard(
+                                      favoriteDoc: snapshot.data![index],
+                                    ),
                                   )),
-
                           const SizedBox(
                             height: 10.0,
                           ),
@@ -197,4 +203,7 @@ class FavoriteRecipes extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
