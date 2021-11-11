@@ -112,7 +112,7 @@ class Settings extends StatelessWidget {
                 showLicensePage(
                   context: context,
                   applicationName: Constants.appName,
-                  applicationVersion: '0.0.1',
+                  applicationVersion: '1.0.0',
                   applicationLegalese: 'Copyright Samuel Wahome',
                   applicationIcon: Padding(
                     padding: const EdgeInsets.all(8.0),

@@ -7,12 +7,14 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/models/user_model.dart';
 import 'package:food_share/routes/app_routes.dart';
+import 'package:food_share/services/analytics_service.dart';
 import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/auth/background_image.dart';
 import 'package:food_share/widgets/rounded_button.dart';
 import 'package:food_share/widgets/auth/text_input_field.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 final usersRef = FirebaseFirestore.instance.collection('users');
 CustomUser? currentUser;
@@ -99,6 +101,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             setState(() {
               isLoading = false;
             });
+            Provider.of<AnalyticsService>(context, listen: false).logSignUp();
             Fluttertoast.showToast(
                 msg: value,
                 toastLength: Toast.LENGTH_SHORT,

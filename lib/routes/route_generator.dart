@@ -14,7 +14,6 @@ import 'package:food_share/screens/collection/recipe_hashtag_collection_screen.d
 import 'package:food_share/screens/home/list_recipes_screen.dart';
 import 'package:food_share/screens/profile/alt_profile.dart';
 import 'package:food_share/screens/home/recipe_details.dart';
-import 'package:food_share/screens/profile/user_profile.dart';
 import 'package:food_share/screens/settings/edit_profile.dart';
 import 'package:food_share/screens/settings/settings.dart';
 import 'package:food_share/utils/pallete.dart';

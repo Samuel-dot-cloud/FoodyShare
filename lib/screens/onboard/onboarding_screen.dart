@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:food_share/config/size_config.dart';
 import 'package:food_share/models/onboarding_model.dart';
+import 'package:food_share/services/analytics_service.dart';
 import 'package:food_share/viewmodel/main.dart';
 import 'package:food_share/widgets/rounded_button.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'components/main_content.dart';
@@ -24,12 +26,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   late final Function showAnimatedContainerCallBack;
 
   @override
+  void initState() {
+    Provider.of<AnalyticsService>(context, listen: false).logOnboardBegin();
+    super.initState();
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
 
-  _storeOnbooardInfo() async {
+  _storeOnboardInfo() async {
     int isViewed = 0;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt('onboard', isViewed);
@@ -73,7 +81,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                       showGetStartedButton ? RoundedButton(
                           buttonName: 'Get Started', onPressed: () async {
-                            await _storeOnbooardInfo();
+                            await _storeOnboardInfo();
+                            Provider.of<AnalyticsService>(context, listen: false).logOnboardComplete();
                             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Home()));
                       }) : StepsContainer(
                           page: page,

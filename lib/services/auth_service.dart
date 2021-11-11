@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'analytics_service.dart';
 import 'firebase_operations.dart';
 
 class AuthService with ChangeNotifier {
@@ -26,7 +27,8 @@ class AuthService with ChangeNotifier {
             'id': value.user!.uid,
             'username': username,
             'email': email,
-            'photoUrl': 'https://cdn.icon-icons.com/icons2/2506/PNG/512/user_icon_150670.png',
+            'photoUrl':
+                'https://cdn.icon-icons.com/icons2/2506/PNG/512/user_icon_150670.png',
             'displayName': displayName,
             'bio': 'I\'m new here',
             'timestamp': Timestamp.now(),
@@ -34,6 +36,8 @@ class AuthService with ChangeNotifier {
           },
           username,
         );
+        Provider.of<AnalyticsService>(context, listen: false).setUserProperties(
+            userID: value.user!.uid, userRole: 'normal_user');
       });
 
       return 'Account created';
@@ -50,13 +54,16 @@ class AuthService with ChangeNotifier {
   }
 
   /// Login user
-  Future<String> loginUser(String email, String password) async {
+  Future<String> loginUser(
+      BuildContext context, String email, String password) async {
     try {
       await auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
       notifyListeners();
+      Provider.of<AnalyticsService>(context, listen: false).setUserProperties(
+          userID: auth.currentUser!.uid, userRole: 'normal_user');
 
       return 'Welcome';
     } on FirebaseAuthException catch (e) {

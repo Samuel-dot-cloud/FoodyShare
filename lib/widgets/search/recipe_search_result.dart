@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:food_share/models/recipe_model.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/recipe_details_arguments.dart';
+import 'package:food_share/services/analytics_service.dart';
+import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class RecipeResult extends StatelessWidget {
@@ -19,6 +21,8 @@ class RecipeResult extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () {
+              Provider.of<AnalyticsService>(context, listen: false)
+                  .logViewSearchResults(recipeDoc['name']);
               final args = RecipeDetailsArguments(
                 servings: recipeDoc['servings'],
                 recipeName: recipeDoc['name'],
@@ -49,7 +53,8 @@ class RecipeResult extends StatelessWidget {
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: CachedNetworkImageProvider(recipeDoc['mediaUrl']),
+                          image:
+                              CachedNetworkImageProvider(recipeDoc['mediaUrl']),
                         ),
                       ),
                     ),

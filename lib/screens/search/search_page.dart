@@ -5,10 +5,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/config/size_config.dart';
 import 'package:food_share/models/recipe_model.dart';
 import 'package:food_share/models/user_model.dart';
+import 'package:food_share/services/analytics_service.dart';
 import 'package:food_share/utils/loading_animation.dart';
 import 'package:food_share/widgets/search/recipe_search_result.dart';
 import 'package:food_share/widgets/search/user_result.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -31,6 +33,8 @@ class _SearchPageState extends State<SearchPage> {
         .where('username', isGreaterThanOrEqualTo: query.trim())
         .where('username', isLessThan: query.trim() + 'z')
         .get();
+    Provider.of<AnalyticsService>(context, listen: false)
+        .logSearch(query, 'users');
     if (mounted) {
       setState(() {
         searchResultsFuture = users;
@@ -43,6 +47,8 @@ class _SearchPageState extends State<SearchPage> {
         .where('name', isGreaterThanOrEqualTo: query.trim())
         .where('name', isLessThan: query.trim() + 'z')
         .get();
+    Provider.of<AnalyticsService>(context, listen: false)
+        .logSearch(query, 'recipes');
     if (mounted) {
       setState(() {
         searchResultsFuture = recipes;
@@ -144,7 +150,7 @@ class _SearchPageState extends State<SearchPage> {
 
   buildSearchResults() {
     return StreamBuilder<QuerySnapshot>(
-      stream:  searchResultsFuture?.asStream().asBroadcastStream(),
+      stream: searchResultsFuture?.asStream().asBroadcastStream(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return const Text('Error');

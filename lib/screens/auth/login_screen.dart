@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/routes/app_routes.dart';
+import 'package:food_share/services/analytics_service.dart';
 import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/auth/background_image.dart';
 import 'package:food_share/widgets/rounded_button.dart';
 import 'package:food_share/widgets/auth/text_input_field.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -39,12 +41,13 @@ class _LoginScreenState extends State<LoginScreen> {
         isLoading = true;
       });
       AuthService()
-          .loginUser(_emailController.text, _passwordController.text)
+          .loginUser(context, _emailController.text, _passwordController.text)
           .then((value) {
         if (value == 'Welcome') {
           setState(() {
             isLoading = false;
           });
+          Provider.of<AnalyticsService>(context, listen: false).logLogin();
           Fluttertoast.showToast(
               msg: value,
               toastLength: Toast.LENGTH_SHORT,

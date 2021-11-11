@@ -5,6 +5,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/config/size_config.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/recipe_hashtags_arguments.dart';
+import 'package:food_share/services/analytics_service.dart';
+import 'package:provider/provider.dart';
 
 class RecipeCollectionCard extends StatelessWidget {
   const RecipeCollectionCard({
@@ -20,6 +22,8 @@ class RecipeCollectionCard extends StatelessWidget {
     double size = SizeConfig.defaultSize;
     return GestureDetector(
       onTap: () {
+        Provider.of<AnalyticsService>(context, listen: false)
+            .logSelectContent('collection', collectionDoc['name']);
         final args = RecipeHashtagsArguments(
             collectionName: collectionDoc['name'],
             collectionDocId: collectionDoc['collection_id']);
@@ -94,21 +98,20 @@ class RecipeCollectionCard extends StatelessWidget {
                 ),
                 AspectRatio(
                   aspectRatio: 0.71,
-                  child:
-                  CachedNetworkImage(
+                  child: CachedNetworkImage(
                     fit: BoxFit.cover,
                     alignment: Alignment.centerLeft,
                     imageUrl: collectionDoc['imageUrl'],
                     progressIndicatorBuilder:
                         (context, url, downloadProgress) =>
-                        CircularProgressIndicator(
-                          value: downloadProgress.progress,
-                          backgroundColor: Colors.cyanAccent,
-                          valueColor:
+                            CircularProgressIndicator(
+                      value: downloadProgress.progress,
+                      backgroundColor: Colors.cyanAccent,
+                      valueColor:
                           const AlwaysStoppedAnimation<Color>(Colors.yellow),
-                        ),
+                    ),
                     errorWidget: (context, url, error) =>
-                    const Icon(Icons.error),
+                        const Icon(Icons.error),
                   ),
                 ),
               ],
