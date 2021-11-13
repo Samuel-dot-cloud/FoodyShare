@@ -11,6 +11,7 @@ class AppRoutes{
   static const create = '/create';
   static const feed = '/feed';
   static const settings = '/settings';
+  static const about = '/about';
   static const editProfile = '/editProfile';
   static const altProfile = '/altProfile';
   static const recipeDetails = '/recipeDetails';

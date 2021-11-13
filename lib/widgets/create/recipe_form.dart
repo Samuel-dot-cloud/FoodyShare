@@ -22,13 +22,19 @@ class _RecipeFormState extends State<RecipeForm> {
   final values = FormValues();
   bool _isUploading = false;
 
-  submitRecipeValues(){
-    if(values.name!.isNotEmpty && values.description!.isNotEmpty && values.cookingTime!.isNotEmpty && values.servings!.isNotEmpty && values.ingredients!.isNotEmpty && values.preparation!.isNotEmpty && values.hashtagId!.isNotEmpty){
+  submitRecipeValues() {
+    if (values.name!.isNotEmpty &&
+        values.description!.isNotEmpty &&
+        values.cookingTime!.isNotEmpty &&
+        values.servings!.isNotEmpty &&
+        values.ingredients!.isNotEmpty &&
+        values.preparation!.isNotEmpty &&
+        values.hashtagId!.isNotEmpty) {
       setState(() {
         _isUploading = true;
       });
       widget.onSubmit(values);
-    } else{
+    } else {
       setState(() {
         _isUploading = false;
       });
@@ -62,6 +68,7 @@ class _RecipeFormState extends State<RecipeForm> {
                 ),
                 const SizedBox(height: 10.0),
                 TextFormField(
+                  maxLines: 5,
                   decoration: const InputDecoration(
                     hintText: 'Description',
                     filled: true,
@@ -115,11 +122,11 @@ class _RecipeFormState extends State<RecipeForm> {
                 SizedBox(
                   height: SizeConfig.defaultSize * 20,
                   width: SizeConfig.defaultSize * 80,
-                    child: HashtagField(
-                      onUpdate: (value) {
-                        values.hashtagId = value;
-                      },
-                    ),
+                  child: HashtagField(
+                    onUpdate: (value) {
+                      values.hashtagId = value;
+                    },
+                  ),
                 ),
                 const SizedBox(height: 40.0),
                 RoundedButton(

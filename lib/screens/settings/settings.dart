@@ -109,20 +109,7 @@ class Settings extends StatelessWidget {
             SettingsMenu(
               size: size,
               onPressed: () {
-                showLicensePage(
-                  context: context,
-                  applicationName: Constants.appName,
-                  applicationVersion: '1.0.0',
-                  applicationLegalese: 'Copyright Samuel Wahome',
-                  applicationIcon: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image.asset(
-                      'assets/icons/launch_image.png',
-                      width: 48.0,
-                      height: 48.0,
-                    ),
-                  ),
-                );
+                Navigator.pushNamed(context, AppRoutes.about);
               },
               text: 'About ' + Constants.appName,
               icon: Icons.info_outline,

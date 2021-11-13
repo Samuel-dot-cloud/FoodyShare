@@ -14,6 +14,7 @@ import 'package:food_share/screens/collection/recipe_hashtag_collection_screen.d
 import 'package:food_share/screens/home/list_recipes_screen.dart';
 import 'package:food_share/screens/profile/alt_profile.dart';
 import 'package:food_share/screens/home/recipe_details.dart';
+import 'package:food_share/screens/settings/about_app.dart';
 import 'package:food_share/screens/settings/edit_profile.dart';
 import 'package:food_share/screens/settings/settings.dart';
 import 'package:food_share/utils/pallete.dart';
@@ -49,6 +50,8 @@ class RouteGenerator {
         return buildRoute(const Settings(), settings: settings);
       case AppRoutes.editProfile:
         return buildRoute(const EditProfilePage(), settings: settings);
+      case AppRoutes.about:
+        return buildRoute(const AboutApp(), settings: settings);
       case AppRoutes.altProfile:
         final arguments = settings.arguments as AltProfileArguments;
         return buildRoute(AltProfile(arguments: arguments), settings: settings);
