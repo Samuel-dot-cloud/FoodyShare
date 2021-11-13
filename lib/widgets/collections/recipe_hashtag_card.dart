@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:food_share/config/size_config.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/hashtag_recipes_arguments.dart';
+import 'package:food_share/services/analytics_service.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class RecipeHashtagCard extends StatelessWidget {
-  const  RecipeHashtagCard(
+  const RecipeHashtagCard(
       {Key? key, required this.hashtagDoc, required this.collectionId})
       : super(key: key);
 
@@ -21,6 +23,8 @@ class RecipeHashtagCard extends StatelessWidget {
     double size = SizeConfig.defaultSize;
     return GestureDetector(
       onTap: () {
+        Provider.of<AnalyticsService>(context, listen: false)
+            .logSelectContent('hashtag', hashtagDoc['name']);
         final args = HashtagRecipesArguments(
             hashtagName: hashtagDoc['name'],
             collectionDocId: collectionId,

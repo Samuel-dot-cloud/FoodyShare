@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/routes/alt_profile_arguments.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/recipe_details_arguments.dart';
+import 'package:food_share/services/analytics_service.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -36,6 +37,8 @@ class RecipePostImage extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
+                        Provider.of<AnalyticsService>(context, listen: false)
+                            .logSelectContent('recipe', snapshot.data!['name']);
                         final args = RecipeDetailsArguments(
                           cookingTime: snapshot.data!['cookingTime'],
                           recipeName: snapshot.data!['name'],
@@ -161,6 +164,8 @@ class RecipePostImage extends StatelessWidget {
                 ),
                 onPressed: () {
                   if (_isNotProfileOwner) {
+                    Provider.of<AnalyticsService>(context, listen: false)
+                        .logSelectContent('user', snapshot.data!['username']);
                     final args = AltProfileArguments(
                       userUID: snapshot.data!['id'],
                       authorImage: snapshot.data!['photoUrl'],

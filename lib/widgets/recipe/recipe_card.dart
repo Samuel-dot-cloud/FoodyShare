@@ -5,6 +5,7 @@ import 'package:food_share/config/size_config.dart';
 import 'package:food_share/routes/alt_profile_arguments.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/recipe_details_arguments.dart';
+import 'package:food_share/services/analytics_service.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/recipe/like_button.dart';
@@ -117,6 +118,8 @@ class _RecipeCardState extends State<RecipeCard> {
               alignment: Alignment.topCenter,
               child: GestureDetector(
                 onTap: () {
+                  Provider.of<AnalyticsService>(context, listen: false)
+                      .logSelectContent('recipe', widget.recipeDoc['name']);
                   final args = RecipeDetailsArguments(
                     cookingTime: widget.recipeDoc['cookingTime'],
                     recipeName: widget.recipeDoc['name'],
@@ -206,6 +209,8 @@ class _RecipeCardState extends State<RecipeCard> {
                           GestureDetector(
                             onTap: () {
                               if (_isNotPostOwner) {
+                                Provider.of<AnalyticsService>(context, listen: false)
+                                    .logSelectContent('user', widget.recipeDoc['username']);
                                 final args = AltProfileArguments(
                                   userUID: widget.recipeDoc['authorId'],
                                   authorImage: snapshot.data!['photoUrl'],

@@ -7,6 +7,7 @@ import 'package:food_share/helpers/recipe_detail_helper.dart';
 import 'package:food_share/routes/route_generator.dart';
 import 'package:food_share/screens/auth/startup_view.dart';
 import 'package:food_share/screens/onboard/onboarding_screen.dart';
+import 'package:food_share/services/analytics_service.dart';
 import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/services/connectivity_provider.dart';
 import 'package:food_share/services/firebase_operations.dart';
@@ -63,6 +64,9 @@ void main() async {
         ChangeNotifierProvider(
           create: (context) => ThemeProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => AnalyticsService(),
+        ),
       ],
       child: const FoodyShareApp(),
     ),
@@ -84,6 +88,10 @@ class FoodyShareApp extends StatelessWidget {
       theme: AppThemes.lightTheme,
       darkTheme: AppThemes.darkTheme,
       home: getInitialPage(),
+      navigatorObservers: [
+        Provider.of<AnalyticsService>(context, listen: false)
+            .getAnalyticsObserver()
+      ],
       onGenerateRoute: RouteGenerator.generateRoute,
     );
   }
@@ -92,7 +100,7 @@ class FoodyShareApp extends StatelessWidget {
     return isViewed != 0 ? const OnboardingScreen() : const Home();
   }
 
-  ThemeMode changeTheme(){
+  ThemeMode changeTheme() {
     return darkModeOn == true ? ThemeMode.dark : ThemeMode.light;
   }
 }

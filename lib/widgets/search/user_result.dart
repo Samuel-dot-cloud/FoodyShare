@@ -5,6 +5,7 @@ import 'package:food_share/models/user_model.dart';
 import 'package:food_share/routes/alt_profile_arguments.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/screens/profile/alt_profile.dart';
+import 'package:food_share/services/analytics_service.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +26,8 @@ class UserResult extends StatelessWidget {
           GestureDetector(
             onTap: () {
               if (_isNotCurrentUser) {
+                Provider.of<AnalyticsService>(context, listen: false)
+                    .logViewSearchResults(userDoc['username']);
                 final args = AltProfileArguments(
                   userUID: userDoc['id'],
                   authorImage: userDoc['photoUrl'],

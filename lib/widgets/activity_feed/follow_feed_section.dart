@@ -21,7 +21,8 @@ class FollowFeedSection extends StatefulWidget {
   _FollowFeedSectionState createState() => _FollowFeedSectionState();
 }
 
-class _FollowFeedSectionState extends State<FollowFeedSection> {
+class _FollowFeedSectionState extends State<FollowFeedSection>
+    with AutomaticKeepAliveClientMixin<FollowFeedSection> {
   final activityFeedRef = FirebaseFirestore.instance.collection('feed');
 
   ///Follow Feed pagination logic
@@ -97,6 +98,7 @@ class _FollowFeedSectionState extends State<FollowFeedSection> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return RefreshWidget(
       onRefresh: () async {
         _allPagedResults.clear();
@@ -148,7 +150,8 @@ class _FollowFeedSectionState extends State<FollowFeedSection> {
                         ),
                       ),
                       style: ButtonStyle(
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30.0),
                             side: const BorderSide(color: kBlue),
@@ -166,4 +169,7 @@ class _FollowFeedSectionState extends State<FollowFeedSection> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

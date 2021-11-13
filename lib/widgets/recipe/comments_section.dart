@@ -25,7 +25,7 @@ class CommentsSection extends StatefulWidget {
   State<CommentsSection> createState() => _CommentsSectionState();
 }
 
-class _CommentsSectionState extends State<CommentsSection> {
+class _CommentsSectionState extends State<CommentsSection> with AutomaticKeepAliveClientMixin<CommentsSection> {
   final TextEditingController _commentController = TextEditingController();
 
   ///Comments pagination logic
@@ -55,16 +55,16 @@ class _CommentsSectionState extends State<CommentsSection> {
       pageCommentQuery = pageCommentQuery.startAfterDocument(_lastDocument!);
     }
 
-    if (!_hasMoreData) {
-      Fluttertoast.showToast(
-          msg: 'No more comments to display',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.blueAccent,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    }
+    // if (!_hasMoreData) {
+    //   Fluttertoast.showToast(
+    //       msg: 'No more comments to display',
+    //       toastLength: Toast.LENGTH_SHORT,
+    //       gravity: ToastGravity.BOTTOM,
+    //       timeInSecForIosWeb: 1,
+    //       backgroundColor: kBlue,
+    //       textColor: Colors.white,
+    //       fontSize: 16.0);
+    // }
 
     var currentRequestIndex = _allPagedResults.length;
     pageCommentQuery.snapshots().listen(
@@ -233,6 +233,7 @@ class _CommentsSectionState extends State<CommentsSection> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       children: [
         Expanded(
@@ -275,4 +276,7 @@ class _CommentsSectionState extends State<CommentsSection> {
       ],
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

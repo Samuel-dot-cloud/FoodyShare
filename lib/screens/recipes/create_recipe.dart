@@ -69,8 +69,8 @@ class _CreateRecipeState extends State<CreateRecipe> {
   processHashtags(String hashtagID, String postId) {
     return hashtagsRef.doc(hashtagID).get().then((value) {
       hashtagData = value;
-    }).whenComplete(() {
-      collectionsRef
+    }).whenComplete(() async {
+      return collectionsRef
           .doc(hashtagData!['collection_id'])
           .collection('hashtags')
           .doc(hashtagData!['hashtag_id'])
@@ -79,6 +79,10 @@ class _CreateRecipeState extends State<CreateRecipe> {
           .set({
         'post_id': postId,
         'timestamp': timestamp,
+      }).whenComplete(() async {
+        return collectionsRef.doc(hashtagData!['collection_id']).update({
+          'recipe_no': FieldValue.increment(1),
+        });
       });
     });
   }
@@ -233,7 +237,10 @@ class _CreateRecipeState extends State<CreateRecipe> {
                         valueColor:
                             AlwaysStoppedAnimation<Color>(Colors.yellow),
                       )
-                    : const Text(''),
+                    : const SizedBox(
+                        height: 0.0,
+                        width: 0.0,
+                      ),
                 SizedBox(
                   height: 220.0,
                   width: MediaQuery.of(context).size.width * 0.8,

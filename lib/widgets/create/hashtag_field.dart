@@ -26,10 +26,11 @@ class _HashtagFieldState extends State<HashtagField> {
     hashtagController = TextEditingController();
   }
 
-  void _updateField(){
+  void _updateField() {
     widget.onUpdate(selected);
   }
-  void _removeField(){
+
+  void _removeField() {
     widget.onUpdate(selected);
   }
 
@@ -50,67 +51,74 @@ class _HashtagFieldState extends State<HashtagField> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-          children: [
-            Text('Add Hashtags',
-              style: kBodyText.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 15.0),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                  controller: hashtagController,
-                  onChanged: queryHashtagData,
-                  decoration: InputDecoration(
-                      border: const OutlineInputBorder(
-                      ),
-                      contentPadding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                      prefixIcon: selected.isEmpty
-                          ? null
-                          : Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 10, right: 10),
-                              child: Wrap(
-                                  spacing: 5,
-                                  runSpacing: 5,
-                                  children: selected.map((s) {
-                                    return StreamBuilder<DocumentSnapshot>(
-                                      stream: hashtagsRef.doc(s).snapshots().asBroadcastStream(),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return const CircularProgressIndicator();
-                                        } else {
-                                          _updateField();
-                                          return Chip(
-                                              backgroundColor: kBlue,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
+      child: Column(children: [
+        Text(
+          'Add Hashtags',
+          style: kBodyText.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 15.0),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+              controller: hashtagController,
+              onChanged: queryHashtagData,
+              decoration: InputDecoration(
+                hintText: 'e.g #fingerfood',
+                  border: const OutlineInputBorder(
+                  ),
+                  contentPadding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  prefixIcon: selected.isEmpty
+                      ? null
+                      : Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          child: Wrap(
+                              spacing: 5,
+                              runSpacing: 5,
+                              children: selected.map((s) {
+                                return StreamBuilder<DocumentSnapshot>(
+                                  stream: hashtagsRef
+                                      .doc(s)
+                                      .snapshots()
+                                      .asBroadcastStream(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const CircularProgressIndicator();
+                                    } else {
+                                      _updateField();
+                                      return Chip(
+                                          backgroundColor: kBlue,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
                                                 BorderRadius.circular(7),
-                                              ),
-                                              label: Text(snapshot.data!['hashtag_name'],
-                                              ),
-                                              onDeleted: () {
-                                                setState(() {
-                                                  selected.remove(s);
-                                                });
-                                                _removeField();
-                                              });
-                                        }
-                                      },
-                                    );
-                                  }).toList()),
-                            ))),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              child: isExecuted
-                  ? searchedData()
-                  : const Text('Nothing to show here'),
-            ),
-          ]),
+                                          ),
+                                          label: Text(
+                                            snapshot.data!['hashtag_name'],
+                                          ),
+                                          onDeleted: () {
+                                            setState(() {
+                                              selected.remove(s);
+                                            });
+                                            _removeField();
+                                          });
+                                    }
+                                  },
+                                );
+                              }).toList()),
+                        ))),
+        ),
+        const SizedBox(height: 20),
+        SizedBox(
+          child: isExecuted
+              ? searchedData()
+              : const SizedBox(
+                  width: 0.0,
+                  height: 0.0,
+                ),
+        ),
+      ]),
     );
   }
 

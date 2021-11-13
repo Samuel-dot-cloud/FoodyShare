@@ -21,7 +21,8 @@ class LikeAndCommentFeedSection extends StatefulWidget {
       _LikeAndCommentFeedSectionState();
 }
 
-class _LikeAndCommentFeedSectionState extends State<LikeAndCommentFeedSection> {
+class _LikeAndCommentFeedSectionState extends State<LikeAndCommentFeedSection>
+    with AutomaticKeepAliveClientMixin<LikeAndCommentFeedSection> {
   final activityFeedRef = FirebaseFirestore.instance.collection('feed');
 
   ///Comments pagination logic
@@ -98,6 +99,7 @@ class _LikeAndCommentFeedSectionState extends State<LikeAndCommentFeedSection> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return RefreshWidget(
       onRefresh: () async {
         _allPagedResults.clear();
@@ -124,7 +126,8 @@ class _LikeAndCommentFeedSectionState extends State<LikeAndCommentFeedSection> {
                         physics: const ScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: snapshot.data!.length,
-                        itemBuilder: (BuildContext context, int index) => Padding(
+                        itemBuilder: (BuildContext context, int index) =>
+                            Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 12.0,
                                 vertical: 12.0,
@@ -148,7 +151,8 @@ class _LikeAndCommentFeedSectionState extends State<LikeAndCommentFeedSection> {
                         ),
                       ),
                       style: ButtonStyle(
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30.0),
                             side: const BorderSide(color: kBlue),
@@ -166,4 +170,7 @@ class _LikeAndCommentFeedSectionState extends State<LikeAndCommentFeedSection> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
