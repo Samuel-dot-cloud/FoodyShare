@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:food_share/helpers/recipe_detail_helper.dart';
 import 'package:food_share/utils/constants.dart';
 import 'package:food_share/utils/pallete.dart';
+import 'package:provider/provider.dart';
 
 class AboutApp extends StatefulWidget {
   const AboutApp({Key? key}) : super(key: key);
@@ -204,7 +206,14 @@ class _AboutAppState extends State<AboutApp> {
                   height: size.height * 0.01,
                 ),
                 _buildOptionsTile(Icons.bug_report_outlined, 'Report a bug',
-                    'Tell us if you found a bug.', () {}),
+                    'Tell us if you found a bug.', () {
+                      Provider.of<RecipeDetailHelper>(context,
+                          listen: false).launchEmail(
+                          email: 'samuelwahome.k5@gmail.com',
+                          subject:
+                          'App Bug report',
+                          message: '{ Report here }');
+                    }),
               ],
             ),
           ),

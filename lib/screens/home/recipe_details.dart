@@ -398,7 +398,14 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                       ),
                 _isNotPostOwner
                     ? _buildOptionListTile(
-                        () {},
+                        () {
+                          Provider.of<RecipeDetailHelper>(context,
+                              listen: false).launchEmail(
+                              email: 'samuelwahome.k5@gmail.com',
+                              subject:
+                                  'Report recipe ID ' + widget.arguments.postID,
+                              message: '{ Report here }');
+                        },
                         Icons.info_outline_rounded,
                         'Report this recipe',
                       )
