@@ -45,7 +45,7 @@ class _RecipeCardState extends State<RecipeCard> {
           Provider.of<FirebaseOperations>(context, listen: false).getUserId,
         )
         .get();
-    if(mounted){
+    if (mounted) {
       setState(() {
         _isLiked = doc.exists;
       });
@@ -178,6 +178,13 @@ class _RecipeCardState extends State<RecipeCard> {
                 child: CircularProgressIndicator(),
               );
             } else {
+              final args = AltProfileArguments(
+                userUID: widget.recipeDoc['authorId'],
+                authorImage: snapshot.data!['photoUrl'],
+                authorUsername: snapshot.data!['username'],
+                authorDisplayName: snapshot.data!['displayName'],
+                authorBio: snapshot.data!['bio'],
+              );
               return Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: size * 2.4,
@@ -187,11 +194,26 @@ class _RecipeCardState extends State<RecipeCard> {
                   children: [
                     Flexible(
                       flex: 1,
-                      child: CircleAvatar(
-                        radius: size * 1.8,
-                        backgroundColor: kBlue,
-                        backgroundImage: CachedNetworkImageProvider(
-                            snapshot.data!['photoUrl']),
+                      child: GestureDetector(
+                        onTap: () {
+                          if (_isNotPostOwner) {
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.altProfile,
+                              arguments: args,
+                            );
+                            Provider.of<AnalyticsService>(context,
+                                    listen: false)
+                                .logSelectContent(
+                                    'user', widget.recipeDoc['username']);
+                          }
+                        },
+                        child: CircleAvatar(
+                          radius: size * 1.8,
+                          backgroundColor: kBlue,
+                          backgroundImage: CachedNetworkImageProvider(
+                              snapshot.data!['photoUrl']),
+                        ),
                       ),
                     ),
                     Flexible(
@@ -209,21 +231,15 @@ class _RecipeCardState extends State<RecipeCard> {
                           GestureDetector(
                             onTap: () {
                               if (_isNotPostOwner) {
-                                Provider.of<AnalyticsService>(context, listen: false)
-                                    .logSelectContent('user', widget.recipeDoc['username']);
-                                final args = AltProfileArguments(
-                                  userUID: widget.recipeDoc['authorId'],
-                                  authorImage: snapshot.data!['photoUrl'],
-                                  authorUsername: snapshot.data!['username'],
-                                  authorDisplayName:
-                                      snapshot.data!['displayName'],
-                                  authorBio: snapshot.data!['bio'],
-                                );
                                 Navigator.pushNamed(
                                   context,
                                   AppRoutes.altProfile,
                                   arguments: args,
                                 );
+                                Provider.of<AnalyticsService>(context,
+                                        listen: false)
+                                    .logSelectContent(
+                                        'user', widget.recipeDoc['username']);
                               }
                             },
                             child: Text(

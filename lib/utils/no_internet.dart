@@ -24,6 +24,7 @@ class NoInternet extends StatelessWidget {
             ),
             const Text(
               'No internet connection!!!',
+              textAlign: TextAlign.center,
               style: TextStyle(
                 color: kBlue,
                 fontWeight: FontWeight.w600,
@@ -35,6 +36,7 @@ class NoInternet extends StatelessWidget {
                 padding: EdgeInsets.all(20.0),
             child: Text(
               'Please ensure Wi-Fi or mobile data is on.',
+              textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.normal,

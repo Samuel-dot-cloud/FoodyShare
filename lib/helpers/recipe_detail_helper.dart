@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/recipe/create_list_form.dart';
 import 'package:food_share/widgets/recipe/lists_selection_view.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RecipeDetailHelper with ChangeNotifier {
   showFavoriteListsBottomSheet(BuildContext context, String postID) {
@@ -144,5 +145,17 @@ class RecipeDetailHelper with ChangeNotifier {
             ),
           );
         });
+  }
+
+  Future launchEmail(
+      {required String email,
+        required String subject,
+        required String message}) async {
+    final url =
+        'mailto:$email?subject=${Uri.encodeFull(subject)}&body=${Uri.encodeFull(message)}';
+
+    if (await canLaunch(url)) {
+      await launch(url);
+    }
   }
 }
