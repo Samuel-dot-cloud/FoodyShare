@@ -83,7 +83,7 @@ class _EditListFormState extends State<EditListForm> {
                 ),
               ),
               validator: (value) {
-                if (value!.isEmpty) {
+                if (value!.trim().isEmpty) {
                   return 'List name is required';
                 }
               },

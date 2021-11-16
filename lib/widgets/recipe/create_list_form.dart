@@ -46,7 +46,7 @@ class _CreateListFormState extends State<CreateListForm> {
                       ),
                     ),
                     validator: (value) {
-                      if (value!.isEmpty) {
+                      if (value!.trim().isEmpty) {
                         return 'List name is required';
                       }
                     },
