@@ -43,16 +43,8 @@ class _FavoriteRecipesState extends State<FavoriteRecipes>
       pageRecipeQuery = pageRecipeQuery.startAfterDocument(_lastDocument!);
     }
 
-    if (!_hasMoreData) {
-      Fluttertoast.showToast(
-          msg: 'No more favorites to display',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.blueAccent,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    }
+    // if (!_hasMoreData) {
+    // }
 
     var currentRequestIndex = _allPagedResults.length;
     pageRecipeQuery.snapshots().listen(

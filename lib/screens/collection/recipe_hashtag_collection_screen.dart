@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_share/routes/app_routes.dart';
+import 'package:food_share/routes/curate_hashtag_arguments.dart';
 import 'package:food_share/routes/recipe_hashtags_arguments.dart';
 import 'package:food_share/utils/loading_animation.dart';
 import 'package:food_share/utils/pallete.dart';
@@ -17,25 +19,23 @@ class RecipeHashtagCollectionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     CollectionReference collectionsRef =
-    FirebaseFirestore.instance.collection('collections');
+        FirebaseFirestore.instance.collection('collections');
 
     final StreamController<List<DocumentSnapshot>> _hashtagController =
-    StreamController<List<DocumentSnapshot>>.broadcast();
+        StreamController<List<DocumentSnapshot>>.broadcast();
 
     final List<List<DocumentSnapshot>> _allPagedResults = [
       <DocumentSnapshot>[]
     ];
 
-    const int hashtagLimit = 10;
+    const int hashtagLimit = 20;
     DocumentSnapshot? _lastDocument;
     bool _hasMoreData = true;
 
     _getHashtags() async {
-      final CollectionReference _hashtagCollectionReference = collectionsRef
-          .doc(arguments.collectionDocId)
-          .collection('hashtags');
+      final CollectionReference _hashtagCollectionReference =
+          collectionsRef.doc(arguments.collectionDocId).collection('hashtags');
       var pageHashtagQuery = _hashtagCollectionReference
           .orderBy('timestamp', descending: true)
           .limit(hashtagLimit);
@@ -57,7 +57,7 @@ class RecipeHashtagCollectionScreen extends StatelessWidget {
 
       var currentRequestIndex = _allPagedResults.length;
       pageHashtagQuery.snapshots().listen(
-            (snapshot) {
+        (snapshot) {
           if (snapshot.docs.isNotEmpty) {
             var generalHashtags = snapshot.docs.toList();
 
@@ -71,7 +71,7 @@ class RecipeHashtagCollectionScreen extends StatelessWidget {
 
             var allHashtags = _allPagedResults.fold<List<DocumentSnapshot>>(
                 <DocumentSnapshot>[],
-                    (initialValue, pageItems) => initialValue..addAll(pageItems));
+                (initialValue, pageItems) => initialValue..addAll(pageItems));
 
             _hashtagController.add(allHashtags);
 
@@ -89,7 +89,6 @@ class RecipeHashtagCollectionScreen extends StatelessWidget {
       _getHashtags();
       return _hashtagController.stream;
     }
-
 
     return Scaffold(
       appBar: AppBar(
@@ -111,6 +110,18 @@ class RecipeHashtagCollectionScreen extends StatelessWidget {
           ),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.add_outlined,
+            ),
+            onPressed: () {
+              final args = CurateHashtagArguments(
+                  collectionID: arguments.collectionDocId);
+              Navigator.pushNamed(context, AppRoutes.curate, arguments: args);
+            },
+          ),
+        ],
       ),
       body: SafeArea(
         child: RefreshWidget(
@@ -136,7 +147,8 @@ class RecipeHashtagCollectionScreen extends StatelessWidget {
                         physics: const ScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: snapshot.data!.length,
-                        itemBuilder: (BuildContext context, int index) => Padding(
+                        itemBuilder: (BuildContext context, int index) =>
+                            Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12.0,
                             vertical: 12.0,
@@ -162,7 +174,8 @@ class RecipeHashtagCollectionScreen extends StatelessWidget {
                           ),
                         ),
                         style: ButtonStyle(
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30.0),
                               side: const BorderSide(color: kBlue),
