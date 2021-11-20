@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_share/routes/alt_profile_arguments.dart';
 import 'package:food_share/routes/app_routes.dart';
+import 'package:food_share/routes/curate_hashtag_arguments.dart';
 import 'package:food_share/routes/hashtag_recipes_arguments.dart';
 import 'package:food_share/routes/recipe_details_arguments.dart';
 import 'package:food_share/routes/recipe_hashtags_arguments.dart';
@@ -8,6 +9,7 @@ import 'package:food_share/screens/auth/forgot_password.dart';
 import 'package:food_share/screens/auth/login_screen.dart';
 import 'package:food_share/screens/auth/sign_up_screen.dart';
 import 'package:food_share/screens/auth/startup_view.dart';
+import 'package:food_share/screens/collection/curate_hashtag.dart';
 import 'package:food_share/screens/collection/hashtag_recipes_screen.dart';
 import 'package:food_share/screens/collection/recipe_collections_screen.dart';
 import 'package:food_share/screens/collection/recipe_hashtag_collection_screen.dart';
@@ -45,6 +47,10 @@ class RouteGenerator {
       case AppRoutes.hashtag:
         final arguments = settings.arguments as HashtagRecipesArguments;
         return buildRoute(HashtagRecipesScreen(arguments: arguments),
+            settings: settings);
+      case AppRoutes.curate:
+        final arguments = settings.arguments as CurateHashtagArguments;
+        return buildRoute(CurateHashtag(arguments: arguments),
             settings: settings);
       case AppRoutes.settings:
         return buildRoute(const Settings(), settings: settings);

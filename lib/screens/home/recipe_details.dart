@@ -401,7 +401,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                         () {
                           Provider.of<RecipeDetailHelper>(context,
                               listen: false).launchEmail(
-                              email: 'samuelwahome.k5@gmail.com',
+                              email: 'appfoodyshare@gmail.com',
                               subject:
                                   'Report recipe ID ' + widget.arguments.postID,
                               message: '{ Report here }');
