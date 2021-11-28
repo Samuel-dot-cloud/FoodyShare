@@ -23,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _emailValid = true;
   bool _passwordValid = true;
 
-  bool isLoading = false;
+  bool _isLoading = false;
 
   loginUser() {
     setState(() {
@@ -38,14 +38,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (_emailValid && _passwordValid) {
       setState(() {
-        isLoading = true;
+        _isLoading = true;
       });
       AuthService()
           .loginUser(context, _emailController.text, _passwordController.text)
           .then((value) {
         if (value == 'Welcome') {
           setState(() {
-            isLoading = false;
+            _isLoading = false;
           });
           Provider.of<AnalyticsService>(context, listen: false).logLogin();
           Fluttertoast.showToast(
@@ -59,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Navigator.pushReplacementNamed(context, AppRoutes.startupView);
         } else {
           setState(() {
-            isLoading = false;
+            _isLoading = false;
           });
           Fluttertoast.showToast(
               msg: value,
@@ -81,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
         const BackgroundImage(image: 'assets/images/img-5.jpg'),
         Scaffold(
           backgroundColor: Colors.transparent,
-          body: isLoading == false
+          body: _isLoading == false
               ? Column(
                   children: [
                     const Flexible(

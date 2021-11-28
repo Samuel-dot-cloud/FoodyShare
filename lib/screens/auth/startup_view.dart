@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:food_share/config/size_config.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/constants.dart';
@@ -12,7 +13,10 @@ class StartupView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    FirebaseAuth auth = FirebaseAuth.instance;
+    SizeConfig.init(context);
+    double _size = SizeConfig.defaultSize;
+
+    FirebaseAuth _auth = FirebaseAuth.instance;
 
     Provider.of<FirebaseOperations>(context, listen: false)
         .initUserData(context)
@@ -20,7 +24,7 @@ class StartupView extends StatelessWidget {
                 const Duration(
                   milliseconds: 1000,
                 ), () {
-              if (auth.currentUser == null) {
+              if (_auth.currentUser == null) {
                 Navigator.pushReplacementNamed(context, AppRoutes.login);
               } else {
                 Navigator.pushReplacementNamed(context, AppRoutes.bottomNav);
@@ -45,20 +49,20 @@ class StartupView extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
+              children:[
                 Text(
                   Constants.appName,
                   style: TextStyle(
                     color: kBlue,
                     fontWeight: FontWeight.bold,
-                    fontSize: 28.0,
+                    fontSize: _size * 2.8,
                   ),
                 ),
                 Text(
                   ' setting up...',
                   style: TextStyle(
                     fontWeight: FontWeight.normal,
-                    fontSize: 25.0,
+                    fontSize: _size * 2.5,
                   ),
                 ),
               ],

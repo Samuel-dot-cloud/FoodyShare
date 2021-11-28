@@ -7,13 +7,13 @@ import 'analytics_service.dart';
 import 'firebase_operations.dart';
 
 class AuthService with ChangeNotifier {
-  final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   ///Create Account
   Future<String> createAccount(BuildContext context, String email,
       String password, String username, String displayName) async {
     try {
-      await auth
+      await _auth
           .createUserWithEmailAndPassword(
         email: email,
         password: password,
@@ -57,13 +57,13 @@ class AuthService with ChangeNotifier {
   Future<String> loginUser(
       BuildContext context, String email, String password) async {
     try {
-      await auth.signInWithEmailAndPassword(
+      await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
       notifyListeners();
       Provider.of<AnalyticsService>(context, listen: false).setUserProperties(
-          userID: auth.currentUser!.uid, userRole: 'normal_user');
+          userID: _auth.currentUser!.uid, userRole: 'normal_user');
 
       return 'Welcome';
     } on FirebaseAuthException catch (e) {
@@ -79,7 +79,7 @@ class AuthService with ChangeNotifier {
   ///Reset password
   Future<String> resetPassword(String email) async {
     try {
-      await auth.sendPasswordResetEmail(
+      await _auth.sendPasswordResetEmail(
         email: email,
       );
       return 'Reset email sent';
@@ -90,6 +90,6 @@ class AuthService with ChangeNotifier {
 
   ///Log out
   void logOut() {
-    auth.signOut();
+    _auth.signOut();
   }
 }

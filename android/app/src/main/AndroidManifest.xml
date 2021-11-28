@@ -1,5 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.samwahome.foodshare.food_share">
+    
+    <uses-permission android:name="com.android.vending.BILLING"/>
+
    <application
         android:label="FoodyShare"
         android:icon="@mipmap/launcher_icon">

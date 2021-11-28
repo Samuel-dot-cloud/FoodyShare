@@ -19,7 +19,7 @@ class RecipeCollectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig.init(context);
-    double size = SizeConfig.defaultSize;
+    double _size = SizeConfig.defaultSize;
     return GestureDetector(
       onTap: () {
         Provider.of<AnalyticsService>(context, listen: false)
@@ -33,58 +33,59 @@ class RecipeCollectionCard extends StatelessWidget {
         aspectRatio: 1.65,
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: size * 1.0,
-            vertical: size * 1.0,
+            horizontal: _size * 1.0,
+            vertical: _size * 1.0,
           ),
           child: Container(
             decoration: BoxDecoration(
               color: _colorFromHex(collectionDoc['color']),
-              borderRadius: BorderRadius.circular(size * 1.8),
+              borderRadius: BorderRadius.circular(_size * 1.8),
             ),
             child: Row(
               children: [
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.all(size * 0.5),
+                    padding: EdgeInsets.all(_size * 0.5),
                     child: Column(
                       children: [
                         const Spacer(),
                         Text(
                           collectionDoc['name'],
                           style: TextStyle(
-                            fontSize: size * 2.2,
+                            fontSize: _size * 2.2,
                             color: Colors.white,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                         SizedBox(
-                          height: size * 0.1,
+                          height: _size * 0.1,
                         ),
                         Text(
                           collectionDoc['description'],
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white54,
+                            fontSize: _size * 1.5,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const Spacer(),
-                        _buildInfoRow(size,
-                            data: Icons.person,
-                            text: collectionDoc['author_no'].toString() +
-                                ' authors'),
-                        SizedBox(
-                          height: size * 0.1,
-                        ),
-                        _buildInfoRow(size,
+                        // _buildInfoRow(size,
+                        //     data: Icons.person,
+                        //     text: collectionDoc['author_no'].toString() +
+                        //         ' authors'),
+                        // SizedBox(
+                        //   height: size * 0.1,
+                        // ),
+                        _buildInfoRow(_size,
                             data: FontAwesomeIcons.utensils,
                             text: collectionDoc['recipe_no'].toString() +
                                 ' recipes'),
                         SizedBox(
-                          height: size * 0.1,
+                          height: _size * 0.1,
                         ),
-                        _buildInfoRow(size,
+                        _buildInfoRow(_size,
                             data: Icons.grid_3x3_outlined,
                             text: collectionDoc['hashtag_no'].toString() +
                                 ' hashtags'),
@@ -94,7 +95,7 @@ class RecipeCollectionCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  width: size * 0.5,
+                  width: _size * 0.5,
                 ),
                 AspectRatio(
                   aspectRatio: 0.71,
@@ -140,8 +141,9 @@ class RecipeCollectionCard extends StatelessWidget {
         ),
         Text(
           text,
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white,
+            fontSize: size * 1.1,
           ),
         ),
       ],
