@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:food_share/models/user_model.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/services/analytics_service.dart';
 import 'package:food_share/services/auth_service.dart';
@@ -15,10 +14,6 @@ import 'package:food_share/widgets/rounded_button.dart';
 import 'package:food_share/widgets/auth/text_input_field.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-
-final usersRef = FirebaseFirestore.instance.collection('users');
-CustomUser? currentUser;
-final Timestamp timestamp = Timestamp.now();
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -33,7 +28,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  bool isLoading = false;
+  bool _isLoading = false;
   bool _emailValid = true;
   bool _passwordValid = true;
   bool _displayNameValid = true;
@@ -61,7 +56,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     if (_emailValid && _passwordValid && _usernameValid && _displayNameValid) {
       setState(() {
-        isLoading = true;
+        _isLoading = true;
       });
       final DocumentSnapshot result = await Future.value(FirebaseFirestore
           .instance
@@ -78,7 +73,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             textColor: Colors.white,
             fontSize: 16.0);
         setState(() {
-          isLoading = false;
+          _isLoading = false;
         });
       } else {
         Fluttertoast.showToast(
@@ -99,7 +94,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             .then((value) {
           if (value == 'Account created') {
             setState(() {
-              isLoading = false;
+              _isLoading = false;
             });
             Provider.of<AnalyticsService>(context, listen: false).logSignUp();
             Fluttertoast.showToast(
@@ -113,7 +108,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             Navigator.pushReplacementNamed(context, AppRoutes.startupView);
           } else {
             setState(() {
-              isLoading = false;
+              _isLoading = false;
             });
             Fluttertoast.showToast(
                 msg: value,
@@ -131,25 +126,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    Size _size = MediaQuery.of(context).size;
     return Stack(
       children: [
         const BackgroundImage(image: 'assets/images/img-6.jpg'),
         Scaffold(
           backgroundColor: Colors.transparent,
-          body: isLoading == false
+          body: _isLoading == false
               ? SingleChildScrollView(
                   child: Column(
                     children: [
                       SizedBox(
-                        height: size.width * 0.1,
+                        height: _size.width * 0.1,
                       ),
                       Stack(
                         children: [
                           Center(
                             child: Container(
-                              width: size.width * 0.38,
-                              height: size.height * 0.18,
+                              width: _size.width * 0.38,
+                              height: _size.height * 0.18,
                               decoration: const BoxDecoration(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(100.0),
@@ -162,7 +157,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ],
                       ),
                       SizedBox(
-                        height: size.width * 0.1,
+                        height: _size.width * 0.1,
                       ),
                       Column(
                         children: [

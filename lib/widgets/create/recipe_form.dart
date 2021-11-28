@@ -19,21 +19,21 @@ class RecipeForm extends StatefulWidget {
 }
 
 class _RecipeFormState extends State<RecipeForm> {
-  final values = FormValues();
+  final _values = FormValues();
   bool _isUploading = false;
 
   submitRecipeValues() {
-    if (values.name!.isNotEmpty &&
-        values.description!.isNotEmpty &&
-        values.cookingTime!.isNotEmpty &&
-        values.servings!.isNotEmpty &&
-        values.ingredients!.isNotEmpty &&
-        values.preparation!.isNotEmpty &&
-        values.hashtagId!.isNotEmpty) {
+    if (_values.name!.isNotEmpty &&
+        _values.description!.isNotEmpty &&
+        _values.cookingTime!.isNotEmpty &&
+        _values.servings!.isNotEmpty &&
+        _values.ingredients!.isNotEmpty &&
+        _values.preparation!.isNotEmpty &&
+        _values.hashtagId!.isNotEmpty) {
       setState(() {
         _isUploading = true;
       });
-      widget.onSubmit(values);
+      widget.onSubmit(_values);
     } else {
       setState(() {
         _isUploading = false;
@@ -63,7 +63,7 @@ class _RecipeFormState extends State<RecipeForm> {
                   ),
                   keyboardType: TextInputType.text,
                   onChanged: (value) {
-                    values.name = value;
+                    _values.name = value;
                   },
                 ),
                 const SizedBox(height: 10.0),
@@ -75,7 +75,7 @@ class _RecipeFormState extends State<RecipeForm> {
                   ),
                   keyboardType: TextInputType.text,
                   onChanged: (value) {
-                    values.description = value;
+                    _values.description = value;
                   },
                 ),
                 const SizedBox(height: 10.0),
@@ -89,7 +89,7 @@ class _RecipeFormState extends State<RecipeForm> {
                     FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                   ],
                   onChanged: (value) {
-                    values.cookingTime = value;
+                    _values.cookingTime = value;
                   },
                 ),
                 const SizedBox(height: 10.0),
@@ -103,19 +103,19 @@ class _RecipeFormState extends State<RecipeForm> {
                     FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                   ],
                   onChanged: (value) {
-                    values.servings = value;
+                    _values.servings = value;
                   },
                 ),
                 const SizedBox(height: 30.0),
                 IngredientsForm(
                   onUpdate: (value) {
-                    values.ingredients = value;
+                    _values.ingredients = value;
                   },
                 ),
                 const SizedBox(height: 20.0),
                 PreparationForm(
                   onUpdate: (value) {
-                    values.preparation = value;
+                    _values.preparation = value;
                   },
                 ),
                 const SizedBox(height: 20.0),
@@ -124,7 +124,7 @@ class _RecipeFormState extends State<RecipeForm> {
                   width: SizeConfig.defaultSize * 80,
                   child: HashtagField(
                     onUpdate: (value) {
-                      values.hashtagId = value;
+                      _values.hashtagId = value;
                     },
                   ),
                 ),

@@ -102,8 +102,8 @@ class _UserProfileState extends State<UserProfile> {
           topLeft: Radius.circular(24.0),
           topRight: Radius.circular(24.0),
         ),
-        minHeight: size.height * 0.36,
-        maxHeight: size.height * 0.75,
+        minHeight: (size.height / 2.3),
+        maxHeight: (size.height / 1.2),
         parallaxEnabled: true,
         color: Theme.of(context).scaffoldBackgroundColor,
         body: SingleChildScrollView(

@@ -19,7 +19,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   final _emailController = TextEditingController();
   bool _emailValid = true;
 
-  bool isLoading = false;
+  bool _isLoading = false;
 
   resetPassword() {
     setState(() {
@@ -30,12 +30,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
     if (_emailValid) {
       setState(() {
-        isLoading = true;
+        _isLoading = true;
       });
       AuthService().resetPassword(_emailController.text).then((value) {
         if (value == 'Reset email sent') {
           setState(() {
-            isLoading = false;
+            _isLoading = false;
           });
           Fluttertoast.showToast(
               msg: value,
@@ -48,7 +48,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           Navigator.pushReplacementNamed(context, AppRoutes.login);
         } else {
           setState(() {
-            isLoading = false;
+            _isLoading = false;
           });
           Fluttertoast.showToast(
               msg: value,
@@ -89,7 +89,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             ),
             centerTitle: true,
           ),
-          body: isLoading == false
+          body: _isLoading == false
               ? SingleChildScrollView(
                   child: Column(
                     children: [

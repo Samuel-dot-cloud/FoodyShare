@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_share/config/size_config.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/form_values.dart';
@@ -204,6 +205,8 @@ class _CreateRecipeState extends State<CreateRecipe> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig.init(context);
+    double size = SizeConfig.defaultSize;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -241,8 +244,11 @@ class _CreateRecipeState extends State<CreateRecipe> {
                         height: 0.0,
                         width: 0.0,
                       ),
+                const SizedBox(
+                  height: 10.0,
+                ),
                 SizedBox(
-                  height: 220.0,
+                  height: size * 22.0,
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: Center(
                     child: ClipRRect(

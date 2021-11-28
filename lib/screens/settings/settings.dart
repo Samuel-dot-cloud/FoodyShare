@@ -15,7 +15,7 @@ class Settings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    Size _size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -41,8 +41,8 @@ class Settings extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(
-              height: size.height * 0.15,
-              width: size.width * 0.3,
+              height: _size.height * 0.15,
+              width: _size.width * 0.3,
               child: CircleAvatar(
                 backgroundColor: kBlue,
                 backgroundImage: CachedNetworkImageProvider(
@@ -51,10 +51,10 @@ class Settings extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: size.height * 0.05,
+              height: _size.height * 0.05,
             ),
             SettingsMenu(
-              size: size,
+              size: _size,
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.editProfile);
               },
@@ -62,7 +62,7 @@ class Settings extends StatelessWidget {
               icon: Icons.person,
             ),
             SettingsMenu(
-              size: size,
+              size: _size,
               onPressed: () {
                 showModalBottomSheet(
                     context: context,
@@ -101,13 +101,13 @@ class Settings extends StatelessWidget {
               icon: FontAwesomeIcons.palette,
             ),
             SettingsMenu(
-              size: size,
+              size: _size,
               onPressed: () {},
               text: 'In App Payments',
               icon: Icons.monetization_on_outlined,
             ),
             SettingsMenu(
-              size: size,
+              size: _size,
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.about);
               },
@@ -115,7 +115,7 @@ class Settings extends StatelessWidget {
               icon: Icons.info_outline,
             ),
             SettingsMenu(
-              size: size,
+              size: _size,
               onPressed: () {
                 Provider.of<AuthService>(context, listen: false).logOut();
                 Navigator.pushReplacementNamed(context, AppRoutes.login);

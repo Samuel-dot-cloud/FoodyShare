@@ -14,22 +14,22 @@ class IngredientsForm extends StatefulWidget {
 }
 
 class _IngredientsFormState extends State<IngredientsForm> {
-  final List<Map<String, String>> fields = [];
+  final List<Map<String, String>> _fields = [];
   
   void _addFields(){
-    fields.add({widget.uuid.v1(): ''});
+    _fields.add({widget.uuid.v1(): ''});
     setState(() {});
   }
 
   void _updateField(String value, int index){
-    final key = fields[index].keys.first;
-    fields[index][key] = value;
-    widget.onUpdate(fields);
+    final key = _fields[index].keys.first;
+    _fields[index][key] = value;
+    widget.onUpdate(_fields);
   }
 
   void _removeField(int index){
-    fields.removeAt(index);
-    widget.onUpdate(fields);
+    _fields.removeAt(index);
+    widget.onUpdate(_fields);
     setState(() {});
   }
 
@@ -45,9 +45,9 @@ class _IngredientsFormState extends State<IngredientsForm> {
         ),
         const SizedBox(height: 15.0),
 
-        for(var i = 0; i <fields.length; i++)
+        for(var i = 0; i <_fields.length; i++)
         Row(
-          key: ValueKey(fields[i].keys.first),
+          key: ValueKey(_fields[i].keys.first),
           children: [
             Expanded(
               child: Padding(

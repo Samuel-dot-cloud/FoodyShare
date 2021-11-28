@@ -34,14 +34,14 @@ class RecipeDetails extends StatefulWidget {
 class _RecipeDetailsState extends State<RecipeDetails> {
   @override
   void initState() {
-    checkIfLiked();
+    _checkIfLiked();
     super.initState();
   }
 
   bool _isLiked = false;
   bool _isDeleting = false;
 
-  checkIfLiked() async {
+  _checkIfLiked() async {
     DocumentSnapshot doc = await FirebaseFirestore.instance
         .collection('recipes')
         .doc(widget.arguments.postID)
@@ -63,12 +63,12 @@ class _RecipeDetailsState extends State<RecipeDetails> {
         Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
             widget.arguments.authorUserUID;
 
-    Size size = MediaQuery.of(context).size;
+    Size _size = MediaQuery.of(context).size;
     final _textTheme = Theme.of(context).textTheme;
     return Scaffold(
       body: SlidingUpPanel(
-        minHeight: (size.height / 2),
-        maxHeight: (size.height / 1.2),
+        minHeight: (_size.height / 2),
+        maxHeight: (_size.height / 1.2),
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(24.0),
           topRight: Radius.circular(24.0),
@@ -84,7 +84,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                   tag: widget.arguments.recipeImage,
                   child: !_isDeleting
                       ? Image(
-                          height: (size.height / 2) + 50,
+                          height: (_size.height / 2) + 50,
                           width: double.infinity,
                           fit: BoxFit.cover,
                           image: CachedNetworkImageProvider(

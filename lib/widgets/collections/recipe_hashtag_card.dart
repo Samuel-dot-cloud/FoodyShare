@@ -7,7 +7,6 @@ import 'package:food_share/routes/hashtag_recipes_arguments.dart';
 import 'package:food_share/services/analytics_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class RecipeHashtagCard extends StatelessWidget {
   const RecipeHashtagCard(
@@ -20,7 +19,7 @@ class RecipeHashtagCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig.init(context);
-    double size = SizeConfig.defaultSize;
+    double _size = SizeConfig.defaultSize;
     return GestureDetector(
       onTap: () {
         Provider.of<AnalyticsService>(context, listen: false)
@@ -32,8 +31,8 @@ class RecipeHashtagCard extends StatelessWidget {
         Navigator.pushNamed(context, AppRoutes.hashtag, arguments: args);
       },
       child: Container(
-        margin: EdgeInsets.all(size * 1.0),
-        height: 150.0,
+        margin: EdgeInsets.all(_size * 1.0),
+        height: _size * 15.0,
         child: Stack(
           children: [
             Positioned.fill(
@@ -78,18 +77,18 @@ class RecipeHashtagCard extends StatelessWidget {
             Positioned(
               bottom: 0.0,
               child: Padding(
-                padding: EdgeInsets.all(size * 1.0),
+                padding: EdgeInsets.all(_size * 1.0),
                 child: Row(
                   children: [
                     SizedBox(
-                      width: size * 1.0,
+                      width: _size * 1.0,
                     ),
                     Text(
                       hashtagDoc['name'],
                       style: GoogleFonts.robotoMono(
                         textStyle: TextStyle(
                           color: Colors.white,
-                          fontSize: size * 2.0,
+                          fontSize: _size * 2.0,
                         ),
                       ),
                     ),
