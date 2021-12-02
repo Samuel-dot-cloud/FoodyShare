@@ -39,7 +39,7 @@ class ListRecipesScreen extends StatelessWidget {
 
     const int bookmarkedRecipeLimit = 10;
     DocumentSnapshot? _lastDocument;
-    bool _hasMoreData = true;
+    // bool _hasMoreData = true;
 
     getBookmarkedRecipes() async {
       final CollectionReference _bookmarkedCollectionReference = bookmarkedRef;
@@ -52,16 +52,16 @@ class ListRecipesScreen extends StatelessWidget {
             pageBookmarkedQuery.startAfterDocument(_lastDocument!);
       }
 
-      if (!_hasMoreData) {
-        Fluttertoast.showToast(
-            msg: 'No more recipes to display',
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: kBlue,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      }
+      // if (!_hasMoreData) {
+      //   Fluttertoast.showToast(
+      //       msg: 'No more recipes to display',
+      //       toastLength: Toast.LENGTH_SHORT,
+      //       gravity: ToastGravity.BOTTOM,
+      //       timeInSecForIosWeb: 1,
+      //       backgroundColor: kBlue,
+      //       textColor: Colors.white,
+      //       fontSize: 16.0);
+      // }
 
       var currentRequestIndex = _allPagedResults.length;
       pageBookmarkedQuery.snapshots().listen(
@@ -87,7 +87,7 @@ class ListRecipesScreen extends StatelessWidget {
               _lastDocument = snapshot.docs.last;
             }
 
-            _hasMoreData = generalRecipes.length == bookmarkedRecipeLimit;
+            // _hasMoreData = generalRecipes.length == bookmarkedRecipeLimit;
           }
         },
       );
@@ -254,13 +254,6 @@ class ListRecipesScreen extends StatelessWidget {
                             child: Text('Delete list'),
                           ),
                         ]
-                    // return choices.map((RecipeListChoice choice) {
-                    //   return PopupMenuItem<RecipeListChoice>(
-                    //     value: choice,
-                    //     onTap: choice.onTap,
-                    //     child: Text(choice.title),
-                    //   );
-                    // }).toList();
                     )
               ],
               flexibleSpace: FlexibleSpaceBar(

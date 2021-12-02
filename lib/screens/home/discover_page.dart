@@ -28,7 +28,7 @@ class _DiscoverRecipeState extends State<DiscoverRecipe>
 
   static const int recipeLimit = 10;
   DocumentSnapshot? _lastDocument;
-  bool _hasMoreData = true;
+  // bool _hasMoreData = true;
 
   getRecipes() async {
     final CollectionReference _recipeCollectionReference = recipesRef;
@@ -40,16 +40,16 @@ class _DiscoverRecipeState extends State<DiscoverRecipe>
       pageRecipeQuery = pageRecipeQuery.startAfterDocument(_lastDocument!);
     }
 
-    if (!_hasMoreData) {
-      Fluttertoast.showToast(
-          msg: 'No more recipes to display',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: kBlue,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    }
+    // if (!_hasMoreData) {
+    //   Fluttertoast.showToast(
+    //       msg: 'No more recipes to display',
+    //       toastLength: Toast.LENGTH_SHORT,
+    //       gravity: ToastGravity.BOTTOM,
+    //       timeInSecForIosWeb: 1,
+    //       backgroundColor: kBlue,
+    //       textColor: Colors.white,
+    //       fontSize: 16.0);
+    // }
 
     var currentRequestIndex = _allPagedResults.length;
     pageRecipeQuery.snapshots().listen(
@@ -75,7 +75,7 @@ class _DiscoverRecipeState extends State<DiscoverRecipe>
             _lastDocument = snapshot.docs.last;
           }
 
-          _hasMoreData = generalRecipes.length == recipeLimit;
+          // _hasMoreData = generalRecipes.length == recipeLimit;
         }
       },
     );

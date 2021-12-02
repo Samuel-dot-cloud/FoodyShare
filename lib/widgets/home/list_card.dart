@@ -5,9 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/list_recipes_arguments.dart';
 import 'package:food_share/services/firebase_operations.dart';
-import 'package:food_share/utils/loading_animation.dart';
 import 'package:food_share/utils/number_formatter.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class BookmarkListCard extends StatelessWidget {
@@ -20,7 +18,7 @@ class BookmarkListCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    Size _size = MediaQuery.of(context).size;
     CollectionReference bookmarkedRecipesRef = FirebaseFirestore.instance
         .collection('users')
         .doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId)
@@ -33,8 +31,8 @@ class BookmarkListCard extends StatelessWidget {
         Navigator.pushNamed(context, AppRoutes.listRecipes, arguments: args);
       },
       child: Container(
-        height: 150.0,
-        width: size.width * 70,
+        height: _size.height * 0.22,
+        width: _size.width * 70,
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(20.0),
@@ -67,7 +65,7 @@ class BookmarkListCard extends StatelessWidget {
                             i < snapshot.data!.docs.length && i < 3;
                             i++)
                           buildListImageSizedBox(
-                              size,
+                              _size,
                               snapshot.data!.docs.isNotEmpty
                                   ? snapshot.data!.docs[i]['postId']
                                   : 'null'),
@@ -103,7 +101,7 @@ class BookmarkListCard extends StatelessWidget {
             height: 10.0,
           ),
           Text(
-            NumberFormatter.formatter(recipeCount) + ' recipe(s)',
+            recipeCount == '1' ? NumberFormatter.formatter(recipeCount) + ' recipe' : NumberFormatter.formatter(recipeCount) + ' recipes',
             style: const TextStyle(
               fontSize: 15.0,
               fontWeight: FontWeight.normal,
@@ -132,7 +130,7 @@ class BookmarkListCard extends StatelessWidget {
           return ClipRRect(
             borderRadius: BorderRadius.circular(15.0),
             child: SizedBox(
-              height: 80.0,
+              // height: size.height * 8.0,
               width: size.width * 0.3,
               child: CachedNetworkImage(
                 fit: BoxFit.cover,

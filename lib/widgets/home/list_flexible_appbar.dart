@@ -79,7 +79,7 @@ class ListFlexibleAppBar extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   trailing: Text(
-                    NumberFormatter.formatter(recipeCount) + ' recipe(s)',
+                    recipeCount == '1' ? NumberFormatter.formatter(recipeCount) + ' recipe' : NumberFormatter.formatter(recipeCount) + ' recipes',
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),

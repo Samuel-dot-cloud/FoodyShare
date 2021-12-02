@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:food_share/helpers/recipe_detail_helper.dart';
 import 'package:food_share/utils/constants.dart';
 import 'package:food_share/utils/pallete.dart';
-import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AboutApp extends StatefulWidget {
   const AboutApp({Key? key}) : super(key: key);
@@ -13,6 +12,7 @@ class AboutApp extends StatefulWidget {
 
 class _AboutAppState extends State<AboutApp> {
   final List<bool> _isOpen = [true, true, true];
+  final String _url = 'https://github.com/Samuel-dot-cloud/foodyshare-privacy/blob/main/privacy-policy.md';
 
   ExpansionPanel _buildInfoPanel(
       {required String header,
@@ -185,7 +185,7 @@ class _AboutAppState extends State<AboutApp> {
                   showLicensePage(
                     context: context,
                     applicationName: Constants.appName,
-                    applicationVersion: '1.0.0',
+                    applicationVersion: '1.0.0+1',
                     applicationLegalese: 'Copyright Samuel Wahome',
                     applicationIcon: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -201,24 +201,30 @@ class _AboutAppState extends State<AboutApp> {
                   height: size.height * 0.01,
                 ),
                 _buildOptionsTile(Icons.group_outlined, 'Privacy Policy',
-                    'Read FoodyShare\'s Privacy Policy.', () {}),
-                SizedBox(
-                  height: size.height * 0.01,
-                ),
-                _buildOptionsTile(Icons.bug_report_outlined, 'Report a bug',
-                    'Tell us if you found a bug.', () {
-                      Provider.of<RecipeDetailHelper>(context,
-                          listen: false).launchEmail(
-                          email: 'samuelwahome.k5@gmail.com',
-                          subject:
-                          'App Bug report',
-                          message: '{ Report here }');
-                    }),
+                    'Read FoodyShare\'s Privacy Policy.', () {
+                  _launchURL();
+                }),
+                // SizedBox(
+                //   height: size.height * 0.01,
+                // ),
+                // _buildOptionsTile(Icons.bug_report_outlined, 'Report a bug',
+                //     'Tell us if you found a bug.', () {
+                //       Provider.of<RecipeDetailHelper>(context,
+                //           listen: false).launchEmail(
+                //           email: 'appfoodyshare@gmail.com',
+                //           subject:
+                //           'App Bug report',
+                //           message: '{ Report here }');
+                //     }),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  void _launchURL() async {
+    if (!await launch(_url)) throw 'Could not launch $_url';
   }
 }
