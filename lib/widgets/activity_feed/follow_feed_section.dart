@@ -15,7 +15,7 @@ import 'follow_feed_item.dart';
 class FollowFeedSection extends StatefulWidget {
   const FollowFeedSection({Key? key}) : super(key: key);
 
-  static const int feedLimit = 10;
+  static const int _feedLimit = 10;
 
   @override
   _FollowFeedSectionState createState() => _FollowFeedSectionState();
@@ -23,7 +23,7 @@ class FollowFeedSection extends StatefulWidget {
 
 class _FollowFeedSectionState extends State<FollowFeedSection>
     with AutomaticKeepAliveClientMixin<FollowFeedSection> {
-  final activityFeedRef = FirebaseFirestore.instance.collection('feed');
+  final _activityFeedRef = FirebaseFirestore.instance.collection('feed');
 
   ///Follow Feed pagination logic
 
@@ -34,7 +34,7 @@ class _FollowFeedSectionState extends State<FollowFeedSection>
 
   DocumentSnapshot? _lastDocument;
 
-  bool _hasMoreData = true;
+  // bool _hasMoreData = true;
 
   Stream<List<DocumentSnapshot>> listenToFeedRealTime() {
     _getFeed();
@@ -42,29 +42,29 @@ class _FollowFeedSectionState extends State<FollowFeedSection>
   }
 
   _getFeed() async {
-    final CollectionReference _activityCollectionReference = activityFeedRef
+    final CollectionReference _activityCollectionReference = _activityFeedRef
         .doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId)
         .collection('feedItems')
         .doc('userNotifications')
         .collection('followActivity');
     var pageFeedQuery = _activityCollectionReference
         .orderBy('timestamp', descending: true)
-        .limit(FollowFeedSection.feedLimit);
+        .limit(FollowFeedSection._feedLimit);
 
     if (_lastDocument != null) {
       pageFeedQuery = pageFeedQuery.startAfterDocument(_lastDocument!);
     }
 
-    if (!_hasMoreData) {
-      Fluttertoast.showToast(
-          msg: 'No more follow feed items to display',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.blueAccent,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    }
+    // if (!_hasMoreData) {
+    //   Fluttertoast.showToast(
+    //       msg: 'No more follow feed items to display',
+    //       toastLength: Toast.LENGTH_SHORT,
+    //       gravity: ToastGravity.BOTTOM,
+    //       timeInSecForIosWeb: 1,
+    //       backgroundColor: Colors.blueAccent,
+    //       textColor: Colors.white,
+    //       fontSize: 16.0);
+    // }
 
     var currentRequestIndex = _allPagedResults.length;
     pageFeedQuery.snapshots().listen(
@@ -90,7 +90,7 @@ class _FollowFeedSectionState extends State<FollowFeedSection>
             _lastDocument = snapshot.docs.last;
           }
 
-          _hasMoreData = generalFeeds.length == FollowFeedSection.feedLimit;
+          // _hasMoreData = generalFeeds.length == FollowFeedSection._feedLimit;
         }
       },
     );

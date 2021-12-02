@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/helpers/activity_feed_helper.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
@@ -14,7 +13,7 @@ import 'activity_feed_item.dart';
 class LikeAndCommentFeedSection extends StatefulWidget {
   const LikeAndCommentFeedSection({Key? key}) : super(key: key);
 
-  static const int feedLimit = 10;
+  static const int _feedLimit = 10;
 
   @override
   State<LikeAndCommentFeedSection> createState() =>
@@ -23,7 +22,7 @@ class LikeAndCommentFeedSection extends StatefulWidget {
 
 class _LikeAndCommentFeedSectionState extends State<LikeAndCommentFeedSection>
     with AutomaticKeepAliveClientMixin<LikeAndCommentFeedSection> {
-  final activityFeedRef = FirebaseFirestore.instance.collection('feed');
+  final _activityFeedRef = FirebaseFirestore.instance.collection('feed');
 
   ///Comments pagination logic
 
@@ -34,7 +33,7 @@ class _LikeAndCommentFeedSectionState extends State<LikeAndCommentFeedSection>
 
   DocumentSnapshot? _lastDocument;
 
-  bool _hasMoreData = true;
+  // bool _hasMoreData = true;
 
   Stream<List<DocumentSnapshot>> listenToFeedRealTime() {
     _getFeed();
@@ -42,29 +41,29 @@ class _LikeAndCommentFeedSectionState extends State<LikeAndCommentFeedSection>
   }
 
   _getFeed() async {
-    final CollectionReference _activityCollectionReference = activityFeedRef
+    final CollectionReference _activityCollectionReference = _activityFeedRef
         .doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId)
         .collection('feedItems')
         .doc('userNotifications')
         .collection('postActivity');
     var pageFeedQuery = _activityCollectionReference
         .orderBy('timestamp', descending: true)
-        .limit(LikeAndCommentFeedSection.feedLimit);
+        .limit(LikeAndCommentFeedSection._feedLimit);
 
     if (_lastDocument != null) {
       pageFeedQuery = pageFeedQuery.startAfterDocument(_lastDocument!);
     }
 
-    if (!_hasMoreData) {
-      Fluttertoast.showToast(
-          msg: 'No more feed items to display',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.blueAccent,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    }
+    // if (!_hasMoreData) {
+    //   Fluttertoast.showToast(
+    //       msg: 'No more feed items to display',
+    //       toastLength: Toast.LENGTH_SHORT,
+    //       gravity: ToastGravity.BOTTOM,
+    //       timeInSecForIosWeb: 1,
+    //       backgroundColor: Colors.blueAccent,
+    //       textColor: Colors.white,
+    //       fontSize: 16.0);
+    // }
 
     var currentRequestIndex = _allPagedResults.length;
     pageFeedQuery.snapshots().listen(
@@ -90,8 +89,8 @@ class _LikeAndCommentFeedSectionState extends State<LikeAndCommentFeedSection>
             _lastDocument = snapshot.docs.last;
           }
 
-          _hasMoreData =
-              generalFeeds.length == LikeAndCommentFeedSection.feedLimit;
+          // _hasMoreData =
+          //     generalFeeds.length == LikeAndCommentFeedSection.feedLimit;
         }
       },
     );

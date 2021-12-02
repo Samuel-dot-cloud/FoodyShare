@@ -1,13 +1,9 @@
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/activity_feed/follow_feed_section.dart';
 import 'package:food_share/widgets/activity_feed/like_and_comment_feed_section.dart';
-import 'package:lottie/lottie.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
-final activityFeedRef = FirebaseFirestore.instance.collection('feed');
 
 class ActivityFeed extends StatelessWidget {
   const ActivityFeed({Key? key}) : super(key: key);

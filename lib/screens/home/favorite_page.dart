@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/helpers/recipe_detail_helper.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/pallete.dart';
@@ -29,7 +28,6 @@ class _FavoriteRecipesState extends State<FavoriteRecipes>
 
   static const int favoriteRecipeLimit = 5;
   DocumentSnapshot? _lastDocument;
-  bool _hasMoreData = true;
 
   getFavorites() async {
     final CollectionReference _favoriteCollectionReference = usersRef
@@ -70,7 +68,6 @@ class _FavoriteRecipesState extends State<FavoriteRecipes>
             _lastDocument = snapshot.docs.last;
           }
 
-          _hasMoreData = generalRecipes.length == favoriteRecipeLimit;
         }
       },
     );

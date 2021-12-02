@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_share/config/size_config.dart';
 import 'package:food_share/models/onboarding_model.dart';
 import 'package:food_share/services/analytics_service.dart';
-import 'package:food_share/viewmodel/main.dart';
+import 'package:food_share/main.dart';
 import 'package:food_share/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

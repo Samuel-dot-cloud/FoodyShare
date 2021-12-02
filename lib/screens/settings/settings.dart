@@ -1,12 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:food_share/models/entitlement.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/services/firebase_operations.dart';
+import 'package:food_share/services/revenuecat_provider.dart';
 import 'package:food_share/utils/constants.dart';
 import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/purchase_api.dart';
 import 'package:food_share/widgets/profile/settings_menu.dart';
+import 'package:food_share/widgets/settings/paywall_widget.dart';
 import 'package:food_share/widgets/settings/theme_options.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +20,7 @@ class Settings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size _size = MediaQuery.of(context).size;
+    final _entitlement = Provider.of<RevenueCatProvider>(context, listen: false).entitlement;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -51,7 +56,24 @@ class Settings extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: _size.height * 0.05,
+              height: _size.height * 0.02,
+            ),
+            Container(
+              height: _size.height * 0.06,
+              width: _size.width * 0.50,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30.0),
+                color: Colors.orangeAccent,
+              ),
+              child: Center(
+                child: Text(
+                  _entitlement == Entitlement.free ? 'Upgrade to PRO 💳' : 'PRO member 🎁',
+                  style: kBodyText.copyWith(fontSize: 18.0),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: _size.height * 0.02,
             ),
             SettingsMenu(
               size: _size,
@@ -72,37 +94,39 @@ class Settings extends StatelessWidget {
                         top: Radius.circular(15.0),
                       ),
                     ),
-                    builder: (context){
-                  return SizedBox(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: const [
-                        Padding(
-                          padding: EdgeInsets.only(
-                            left: 20.0,
-                            top: 20.0,
-                            bottom: 20.0,
-                          ),
-                          child: Text(
-                            'Set Theme:',
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.bold,
+                    builder: (context) {
+                      return SizedBox(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: const [
+                            Padding(
+                              padding: EdgeInsets.only(
+                                left: 20.0,
+                                top: 20.0,
+                                bottom: 20.0,
+                              ),
+                              child: Text(
+                                'Set Theme:',
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                          ),
+                            Expanded(child: ThemeOptions())
+                          ],
                         ),
-                        Expanded(child: ThemeOptions())
-                      ],
-                    ),
-                  );
-                });
+                      );
+                    });
               },
               text: 'Themes',
               icon: FontAwesomeIcons.palette,
             ),
             SettingsMenu(
               size: _size,
-              onPressed: () {},
+              onPressed: () {
+                fetchOffers(context);
+              },
               text: 'In App Payments',
               icon: Icons.monetization_on_outlined,
             ),
@@ -127,5 +151,32 @@ class Settings extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future fetchOffers(BuildContext context) async {
+    final offerings = await PurchaseAPI.fetchOffers();
+
+    if (offerings.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Billing service error 🤖‼'),
+      ));
+    } else {
+      final packages = offerings
+          .map((offer) => offer.availablePackages)
+          .expand((pair) => pair)
+          .toList();
+
+      showModalBottomSheet(
+          context: context,
+          builder: (context) => PaywallWidget(
+              title: '⭐ Upgrade Your Plan',
+              description:
+                  'Upgrade to pro membership to access more app features',
+              packages: packages,
+              onClickedPackage: (package) async {
+                await PurchaseAPI.purchasePackage(package);
+                Navigator.pop(context);
+              }));
+    }
   }
 }
