@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_share/models/entitlement.dart';
+import 'package:food_share/services/revenuecat_provider.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/recipe/recipe_card.dart';
 import 'package:food_share/widgets/refresh_widget.dart';
+import 'package:provider/provider.dart';
 
 import '../../utils/loading_animation.dart';
 
@@ -18,7 +20,7 @@ class DiscoverRecipe extends StatefulWidget {
 
 class _DiscoverRecipeState extends State<DiscoverRecipe>
     with AutomaticKeepAliveClientMixin<DiscoverRecipe> {
-  CollectionReference recipesRef =
+  final CollectionReference _recipesRef =
       FirebaseFirestore.instance.collection('recipes');
 
   final StreamController<List<DocumentSnapshot>> _recipeController =
@@ -26,15 +28,15 @@ class _DiscoverRecipeState extends State<DiscoverRecipe>
 
   final List<List<DocumentSnapshot>> _allPagedResults = [<DocumentSnapshot>[]];
 
-  static const int recipeLimit = 10;
+  static const int _recipeLimit = 10;
   DocumentSnapshot? _lastDocument;
   // bool _hasMoreData = true;
 
   getRecipes() async {
-    final CollectionReference _recipeCollectionReference = recipesRef;
+    final CollectionReference _recipeCollectionReference = _recipesRef;
     var pageRecipeQuery = _recipeCollectionReference
         .orderBy('timestamp', descending: true)
-        .limit(recipeLimit);
+        .limit(_recipeLimit);
 
     if (_lastDocument != null) {
       pageRecipeQuery = pageRecipeQuery.startAfterDocument(_lastDocument!);
@@ -89,6 +91,7 @@ class _DiscoverRecipeState extends State<DiscoverRecipe>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final _entitlement = Provider.of<RevenueCatProvider>(context, listen: true).entitlement;
     return Scaffold(
       body: RefreshWidget(
         onRefresh: () async {
@@ -125,23 +128,26 @@ class _DiscoverRecipeState extends State<DiscoverRecipe>
                     const SizedBox(
                       height: 10.0,
                     ),
-                    OutlinedButton(
-                      onPressed: () {
-                        getRecipes();
-                      },
-                      child: const Text(
-                        'LOAD MORE',
-                        style: TextStyle(
-                          fontSize: 12.0,
-                          fontWeight: FontWeight.w700,
+                    Visibility(
+                      visible: _entitlement == Entitlement.free ? false : true,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          getRecipes();
+                        },
+                        child: const Text(
+                          'LOAD MORE',
+                          style: TextStyle(
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
-                      ),
-                      style: ButtonStyle(
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                            side: const BorderSide(color: kBlue),
+                        style: ButtonStyle(
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                              side: const BorderSide(color: kBlue),
+                            ),
                           ),
                         ),
                       ),

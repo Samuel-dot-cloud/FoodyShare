@@ -64,30 +64,26 @@ class _PaywallWidgetState extends State<PaywallWidget> {
 
   Widget buildPackage(BuildContext context, Package package) {
     final product = package.product;
-
     return Card(
       color: Colors.orangeAccent,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-      child: Theme(
-        data: ThemeData.light(),
-        child: ListTile(
-          contentPadding: const EdgeInsets.all(8.0),
-          title: Text(
-            product.title,
-            style: const TextStyle(
-              fontSize: 18.0,
-            ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(8.0),
+        title: Text(
+          product.title,
+          style: const TextStyle(
+            fontSize: 18.0,
           ),
-          subtitle: Text(product.description),
-          trailing: Text(
-            product.priceString,
-            style: const TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          onTap: () => widget.onClickedPackage(package),
         ),
+        subtitle: Text(product.description),
+        trailing: Text(
+          product.priceString,
+          style: const TextStyle(
+            fontSize: 16.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        onTap: () => widget.onClickedPackage(package),
       ),
     );
   }

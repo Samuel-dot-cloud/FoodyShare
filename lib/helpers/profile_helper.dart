@@ -18,6 +18,12 @@ class ProfileHelper with ChangeNotifier {
   checkFollowingSheet(BuildContext context, String userId) {
     return showModalBottomSheet(
         context: context,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(15.0),
+          ),
+        ),
         builder: (context) {
           return Container(
             height: MediaQuery.of(context).size.height * 0.4,
@@ -65,6 +71,12 @@ class ProfileHelper with ChangeNotifier {
   checkFollowerSheet(BuildContext context, String userId) {
     return showModalBottomSheet(
         context: context,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(15.0),
+          ),
+        ),
         builder: (context) {
           return Container(
             height: MediaQuery.of(context).size.height * 0.4,
