@@ -3,10 +3,11 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_share/models/entitlement.dart';
 import 'package:food_share/routes/alt_profile_arguments.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/helpers/profile_helper.dart';
+import 'package:food_share/services/revenuecat_provider.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/profile/profile_post_image.dart';
 import 'package:food_share/widgets/refresh_widget.dart';
@@ -28,7 +29,7 @@ class AltProfile extends StatefulWidget {
 class _AltProfileState extends State<AltProfile> {
   @override
   void initState() {
-    checkIfFollowing();
+    _checkIfFollowing();
     _isButtonDisabled = false;
     _isNotProfileOwner =
         Provider.of<FirebaseOperations>(context, listen: false).getUserId !=
@@ -47,36 +48,36 @@ class _AltProfileState extends State<AltProfile> {
 
   final List<List<DocumentSnapshot>> _allPagedResults = [<DocumentSnapshot>[]];
 
-  static const int recipeGridLimit = 5;
+  static const int _recipeGridLimit = 6;
   DocumentSnapshot? _lastDocument;
-  bool _hasMoreData = true;
+  // bool _hasMoreData = true;
 
   Stream<List<DocumentSnapshot>> listenToRecipeGridRealTime() {
-    getRecipeGrid();
+    _getRecipeGrid();
     return _recipeGridController.stream;
   }
 
-  getRecipeGrid() async {
+  _getRecipeGrid() async {
     final CollectionReference _recipeCollectionReference =
         usersRef.doc(widget.arguments.userUID).collection('recipes');
     var pageRecipeQuery = _recipeCollectionReference
         .orderBy('timestamp', descending: true)
-        .limit(recipeGridLimit);
+        .limit(_recipeGridLimit);
 
     if (_lastDocument != null) {
       pageRecipeQuery = pageRecipeQuery.startAfterDocument(_lastDocument!);
     }
 
-    if (!_hasMoreData) {
-      Fluttertoast.showToast(
-          msg: 'No more recipes to display',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.blueAccent,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    }
+    // if (!_hasMoreData) {
+    //   Fluttertoast.showToast(
+    //       msg: 'No more recipes to display',
+    //       toastLength: Toast.LENGTH_SHORT,
+    //       gravity: ToastGravity.BOTTOM,
+    //       timeInSecForIosWeb: 1,
+    //       backgroundColor: Colors.blueAccent,
+    //       textColor: Colors.white,
+    //       fontSize: 16.0);
+    // }
 
     var currentRequestIndex = _allPagedResults.length;
     pageRecipeQuery.snapshots().listen(
@@ -102,7 +103,7 @@ class _AltProfileState extends State<AltProfile> {
             _lastDocument = snapshot.docs.last;
           }
 
-          _hasMoreData = generalRecipes.length == recipeGridLimit;
+          // _hasMoreData = generalRecipes.length == _recipeGridLimit;
         }
       },
     );
@@ -111,7 +112,7 @@ class _AltProfileState extends State<AltProfile> {
   bool _isFollowing = false;
   late bool _isNotProfileOwner;
 
-  checkIfFollowing() async {
+  _checkIfFollowing() async {
     DocumentSnapshot doc = await FirebaseFirestore.instance
         .collection('users')
         .doc(
@@ -131,15 +132,16 @@ class _AltProfileState extends State<AltProfile> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    Size _size = MediaQuery.of(context).size;
+    final _entitlement = Provider.of<RevenueCatProvider>(context, listen: true).entitlement;
     return Scaffold(
       body: SlidingUpPanel(
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(24.0),
           topRight: Radius.circular(24.0),
         ),
-        minHeight: (size.height / 2.3),
-        maxHeight: (size.height / 1.2),
+        minHeight: (_size.height / 2.3),
+        maxHeight: (_size.height / 1.2),
         parallaxEnabled: true,
         color: Theme.of(context).scaffoldBackgroundColor,
         body: SingleChildScrollView(
@@ -151,7 +153,7 @@ class _AltProfileState extends State<AltProfile> {
                 child: Hero(
                   tag: widget.arguments.authorImage,
                   child: Image(
-                    height: (size.height / 2) + 120,
+                    height: (_size.height / 2) + 120,
                     width: double.infinity,
                     fit: BoxFit.cover,
                     image: CachedNetworkImageProvider(
@@ -210,7 +212,7 @@ class _AltProfileState extends State<AltProfile> {
                 onRefresh: () async {
                   _allPagedResults.clear();
                   _lastDocument = null;
-                  await getRecipeGrid();
+                  await _getRecipeGrid();
                 },
                 child: SingleChildScrollView(
                   child: Padding(
@@ -252,24 +254,27 @@ class _AltProfileState extends State<AltProfile> {
                                     const SizedBox(
                                       height: 10.0,
                                     ),
-                                    OutlinedButton(
-                                      onPressed: () {
-                                        getRecipeGrid();
-                                      },
-                                      child: const Text(
-                                        'SEE MORE',
-                                        style: TextStyle(
-                                          fontSize: 12.0,
-                                          fontWeight: FontWeight.w700,
+                                    Visibility(
+                                      visible: _entitlement == Entitlement.free ? false : true,
+                                      child: OutlinedButton(
+                                        onPressed: () {
+                                          _getRecipeGrid();
+                                        },
+                                        child: const Text(
+                                          'SEE MORE',
+                                          style: TextStyle(
+                                            fontSize: 12.0,
+                                            fontWeight: FontWeight.w700,
+                                          ),
                                         ),
-                                      ),
-                                      style: ButtonStyle(
-                                        shape: MaterialStateProperty.all<
-                                            RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(30.0),
-                                            side: const BorderSide(color: kBlue),
+                                        style: ButtonStyle(
+                                          shape: MaterialStateProperty.all<
+                                              RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30.0),
+                                              side: const BorderSide(color: kBlue),
+                                            ),
                                           ),
                                         ),
                                       ),

@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:food_share/config/size_config.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/constants.dart';
 import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/purchase_api.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
@@ -23,11 +25,16 @@ class StartupView extends StatelessWidget {
         .whenComplete(() => Future.delayed(
                 const Duration(
                   milliseconds: 1000,
-                ), () {
+                ), () async {
               if (_auth.currentUser == null) {
-                Navigator.pushReplacementNamed(context, AppRoutes.login);
+                WidgetsBinding.instance?.addPostFrameCallback((_) {
+                  Navigator.pushReplacementNamed(context, AppRoutes.login);
+                });
               } else {
-                Navigator.pushReplacementNamed(context, AppRoutes.bottomNav);
+                WidgetsBinding.instance?.addPostFrameCallback((_) async {
+                  await PurchaseAPI.init(context);
+                  Navigator.pushReplacementNamed(context, AppRoutes.bottomNav);
+                });
               }
             }));
 
@@ -49,7 +56,7 @@ class StartupView extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children:[
+              children: [
                 Text(
                   Constants.appName,
                   style: TextStyle(

@@ -12,7 +12,11 @@ class AboutApp extends StatefulWidget {
 
 class _AboutAppState extends State<AboutApp> {
   final List<bool> _isOpen = [true, true, true];
-  final String _url = 'https://github.com/Samuel-dot-cloud/foodyshare-privacy/blob/main/privacy-policy.md';
+
+  final String _privacyUrl =
+      'https://github.com/Samuel-dot-cloud/foodyshare-privacy/blob/main/privacy-policy.md';
+  final String _termsUrl =
+      'https://github.com/Samuel-dot-cloud/foodyshare-privacy/blob/main/terms-of-service.md';
 
   ExpansionPanel _buildInfoPanel(
       {required String header,
@@ -180,12 +184,12 @@ class _AboutAppState extends State<AboutApp> {
                 SizedBox(
                   height: size.height * 0.03,
                 ),
-                _buildOptionsTile(Icons.library_books_outlined, 'App Licenses',
+                _buildOptionsTile(Icons.launch_outlined, 'App Licenses',
                     'Check out app library licenses.', () {
                   showLicensePage(
                     context: context,
                     applicationName: Constants.appName,
-                    applicationVersion: '1.0.0+1',
+                    applicationVersion: '1.0.1+2',
                     applicationLegalese: 'Copyright Samuel Wahome',
                     applicationIcon: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -202,8 +206,15 @@ class _AboutAppState extends State<AboutApp> {
                 ),
                 _buildOptionsTile(Icons.group_outlined, 'Privacy Policy',
                     'Read FoodyShare\'s Privacy Policy.', () {
-                  _launchURL();
+                  _launchURL(_privacyUrl);
                 }),
+                SizedBox(
+                  height: size.height * 0.01,
+                ),
+                _buildOptionsTile(Icons.library_books_outlined, 'Terms of Service',
+                    'Read FoodyShare\'s Terms of Services.', () {
+                      _launchURL(_termsUrl);
+                    }),
                 // SizedBox(
                 //   height: size.height * 0.01,
                 // ),
@@ -224,7 +235,7 @@ class _AboutAppState extends State<AboutApp> {
     );
   }
 
-  void _launchURL() async {
-    if (!await launch(_url)) throw 'Could not launch $_url';
+  void _launchURL(String url) async {
+    if (!await launch(url)) throw 'Could not launch $url';
   }
 }

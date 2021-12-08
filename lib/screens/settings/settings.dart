@@ -20,7 +20,7 @@ class Settings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size _size = MediaQuery.of(context).size;
-    final _entitlement = Provider.of<RevenueCatProvider>(context, listen: false).entitlement;
+    final _entitlement = Provider.of<RevenueCatProvider>(context, listen: true).entitlement;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -58,17 +58,20 @@ class Settings extends StatelessWidget {
             SizedBox(
               height: _size.height * 0.02,
             ),
-            Container(
-              height: _size.height * 0.06,
-              width: _size.width * 0.50,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30.0),
-                color: Colors.orangeAccent,
-              ),
-              child: Center(
-                child: Text(
-                  _entitlement == Entitlement.free ? 'Upgrade to PRO 💳' : 'PRO member 🎁',
-                  style: kBodyText.copyWith(fontSize: 18.0),
+            InkWell(
+              onTap: () => _fetchOffers(context),
+              child: Container(
+                height: _size.height * 0.06,
+                width: _size.width * 0.50,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30.0),
+                  color: Colors.orangeAccent,
+                ),
+                child: Center(
+                  child: Text(
+                    _entitlement == Entitlement.free ? 'Upgrade to PRO 💳' : 'PRO member 🎁',
+                    style: kBodyText.copyWith(fontSize: 18.0),
+                  ),
                 ),
               ),
             ),
@@ -125,7 +128,7 @@ class Settings extends StatelessWidget {
             SettingsMenu(
               size: _size,
               onPressed: () {
-                fetchOffers(context);
+                _fetchOffers(context);
               },
               text: 'In App Payments',
               icon: Icons.monetization_on_outlined,
@@ -140,8 +143,9 @@ class Settings extends StatelessWidget {
             ),
             SettingsMenu(
               size: _size,
-              onPressed: () {
+              onPressed: () async {
                 Provider.of<AuthService>(context, listen: false).logOut();
+                await PurchaseAPI.logout();
                 Navigator.pushReplacementNamed(context, AppRoutes.login);
               },
               text: 'Log out',
@@ -153,7 +157,7 @@ class Settings extends StatelessWidget {
     );
   }
 
-  Future fetchOffers(BuildContext context) async {
+  Future _fetchOffers(BuildContext context) async {
     final offerings = await PurchaseAPI.fetchOffers();
 
     if (offerings.isEmpty) {
@@ -168,6 +172,12 @@ class Settings extends StatelessWidget {
 
       showModalBottomSheet(
           context: context,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(15.0),
+            ),
+          ),
           builder: (context) => PaywallWidget(
               title: '⭐ Upgrade Your Plan',
               description:

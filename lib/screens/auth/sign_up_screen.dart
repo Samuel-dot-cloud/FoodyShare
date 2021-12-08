@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -12,8 +13,10 @@ import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/widgets/auth/background_image.dart';
 import 'package:food_share/widgets/rounded_button.dart';
 import 'package:food_share/widgets/auth/text_input_field.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -33,6 +36,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _passwordValid = true;
   bool _displayNameValid = true;
   bool _usernameValid = true;
+
+  final String _privacyUrl =
+      'https://github.com/Samuel-dot-cloud/foodyshare-privacy/blob/main/privacy-policy.md';
+  final String _termsUrl =
+      'https://github.com/Samuel-dot-cloud/foodyshare-privacy/blob/main/terms-of-service.md';
 
   registerUser() async {
     setState(() {
@@ -124,6 +132,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
+  void _launchURL(String url) async {
+    if (!await launch(url)) throw 'Could not launch $url';
+  }
+
   @override
   Widget build(BuildContext context) {
     Size _size = MediaQuery.of(context).size;
@@ -212,7 +224,54 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             inputFormatters: const [],
                           ),
                           const SizedBox(
-                            height: 25.0,
+                            height: 10.0,
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: RichText(
+                              overflow: TextOverflow.fade,
+                              text: TextSpan(
+                                style: GoogleFonts.josefinSans(
+                                  textStyle: const TextStyle(
+                                    fontSize: 17.0,
+                                  ),
+                                ),
+                                children: <TextSpan>[
+                                  const TextSpan(
+                                      text:
+                                          'By continuing, you are indicating that you accept our '),
+                                  TextSpan(
+                                    text: 'Terms of Service',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      decoration: TextDecoration.underline,
+                                      color: kBlue,
+                                    ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        _launchURL(_termsUrl);
+                                      },
+                                  ),
+                                  const TextSpan(text: ' and'),
+                                  TextSpan(
+                                    text: ' Privacy Policy.',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      color: kBlue,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        _launchURL(_privacyUrl);
+                                      },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10.0,
                           ),
                           RoundedButton(
                             buttonName: 'Register',
@@ -221,7 +280,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             },
                           ),
                           const SizedBox(
-                            height: 30.0,
+                            height: 25.0,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,

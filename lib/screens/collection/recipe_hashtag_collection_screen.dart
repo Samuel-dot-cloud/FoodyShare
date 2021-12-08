@@ -110,18 +110,18 @@ class RecipeHashtagCollectionScreen extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.add_outlined,
-            ),
-            onPressed: () {
-              final args = CurateHashtagArguments(
-                  collectionID: arguments.collectionDocId);
-              Navigator.pushNamed(context, AppRoutes.curate, arguments: args);
-            },
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(
+        //       Icons.add_outlined,
+        //     ),
+        //     onPressed: () {
+        //       final args = CurateHashtagArguments(
+        //           collectionID: arguments.collectionDocId);
+        //       Navigator.pushNamed(context, AppRoutes.curate, arguments: args);
+        //     },
+        //   ),
+        // ],
       ),
       body: SafeArea(
         child: RefreshWidget(

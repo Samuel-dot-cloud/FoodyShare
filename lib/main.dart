@@ -16,7 +16,6 @@ import 'package:food_share/services/revenuecat_provider.dart';
 import 'package:food_share/services/theme_service.dart';
 import 'package:food_share/utils/constants.dart';
 import 'package:food_share/utils/profile_util.dart';
-import 'package:food_share/utils/purchase_api.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
@@ -30,7 +29,6 @@ void main() async {
   await Firebase.initializeApp();
   await FirebaseAppCheck.instance
       .activate(webRecaptchaSiteKey: 'recaptcha-v3-site-key');
-  await PurchaseAPI.init();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   isViewed = prefs.getInt('onboard');
   darkModeOn = prefs.getBool("switchState") ?? false;
