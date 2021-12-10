@@ -49,4 +49,14 @@ class AnalyticsService with ChangeNotifier{
   Future logOnboardComplete() async {
     await _analytics.logTutorialComplete();
   }
+
+  Future logCreateRecipe(String username) async {
+    await _analytics
+        .logEvent(
+        name: 'create_recipe',
+        parameters: {
+          'username': username,
+        }
+    );
+  }
 }

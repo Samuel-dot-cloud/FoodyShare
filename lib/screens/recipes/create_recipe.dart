@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/config/size_config.dart';
 import 'package:food_share/routes/app_routes.dart';
+import 'package:food_share/services/analytics_service.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/form_values.dart';
 import 'package:food_share/utils/pallete.dart';
@@ -17,8 +18,8 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class CreateRecipe extends StatefulWidget {
-  CreateRecipe({Key? key, required this.file}) : super(key: key);
-  XFile file;
+  const CreateRecipe({Key? key, required this.file}) : super(key: key);
+  final XFile file;
 
   // CustomUser? currentUser;
 
@@ -27,21 +28,21 @@ class CreateRecipe extends StatefulWidget {
 }
 
 class _CreateRecipeState extends State<CreateRecipe> {
-  late File photoFile;
-  bool isUploading = false;
-  String postId = const Uuid().v4();
-  final Timestamp timestamp = Timestamp.now();
-  final recipesRef = FirebaseFirestore.instance.collection('recipes');
-  final usersRef = FirebaseFirestore.instance.collection('users');
-  final hashtagsRef = FirebaseFirestore.instance.collection('hashtags');
-  final collectionsRef = FirebaseFirestore.instance.collection('collections');
-  firebase_storage.Reference reference =
+  late File _photoFile;
+  bool _isUploading = false;
+  final String _postId = const Uuid().v4();
+  final Timestamp _timestamp = Timestamp.now();
+  final _recipesRef = FirebaseFirestore.instance.collection('recipes');
+  final _usersRef = FirebaseFirestore.instance.collection('users');
+  final _hashtagsRef = FirebaseFirestore.instance.collection('hashtags');
+  final _collectionsRef = FirebaseFirestore.instance.collection('collections');
+  final firebase_storage.Reference _reference =
       firebase_storage.FirebaseStorage.instance.ref();
-  DocumentSnapshot? hashtagData;
+  DocumentSnapshot? _hashtagData;
 
   @override
   void initState() {
-    photoFile = File(widget.file.path);
+    _photoFile = File(widget.file.path);
     super.initState();
   }
 
@@ -49,7 +50,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
       imageFile, firebase_storage.Reference reference) async {
     String urlString = '';
     firebase_storage.UploadTask task =
-        reference.child('recipe-images/$postId.jpg').putFile(imageFile);
+        reference.child('recipe-images/$_postId.jpg').putFile(imageFile);
     await (task.whenComplete(() async {
       urlString = await task.snapshot.ref.getDownloadURL();
     }).catchError((onError) {
@@ -68,20 +69,20 @@ class _CreateRecipeState extends State<CreateRecipe> {
 
   /// Adding recipes to hashtag collections
   processHashtags(String hashtagID, String postId) {
-    return hashtagsRef.doc(hashtagID).get().then((value) {
-      hashtagData = value;
+    return _hashtagsRef.doc(hashtagID).get().then((value) {
+      _hashtagData = value;
     }).whenComplete(() async {
-      return collectionsRef
-          .doc(hashtagData!['collection_id'])
+      return _collectionsRef
+          .doc(_hashtagData!['collection_id'])
           .collection('hashtags')
-          .doc(hashtagData!['hashtag_id'])
+          .doc(_hashtagData!['hashtag_id'])
           .collection('recipes')
           .doc(postId)
           .set({
         'post_id': postId,
-        'timestamp': timestamp,
+        'timestamp': _timestamp,
       }).whenComplete(() async {
-        return collectionsRef.doc(hashtagData!['collection_id']).update({
+        return _collectionsRef.doc(_hashtagData!['collection_id']).update({
           'recipe_no': FieldValue.increment(1),
         });
       });
@@ -97,8 +98,8 @@ class _CreateRecipeState extends State<CreateRecipe> {
       required List<Map<String, String>> ingredients,
       required List<Map<String, String>> preparation,
       required List<String> hashtagID}) async {
-    recipesRef.doc(postId).set({
-      'postId': postId,
+    _recipesRef.doc(_postId).set({
+      'postId': _postId,
       'authorId':
           Provider.of<FirebaseOperations>(context, listen: false).getUserId,
       'mediaUrl': mediaUrl,
@@ -110,18 +111,20 @@ class _CreateRecipeState extends State<CreateRecipe> {
       'preparation': preparation,
       'hashtags': hashtagID,
       'videoURL': '',
-      'timestamp': timestamp,
+      'timestamp': _timestamp,
     }).whenComplete(() async {
       return addRecipeDetails();
     }).whenComplete(() async {
       for (var id in hashtagID) {
-        processHashtags(id, postId);
+        processHashtags(id, _postId);
       }
     }).whenComplete(() async {
       setState(() {
-        photoFile = File('');
-        isUploading = false;
+        _photoFile = File('');
+        _isUploading = false;
       });
+      Provider.of<AnalyticsService>(context, listen: false).logCreateRecipe(
+          Provider.of<FirebaseOperations>(context, listen: false).getUsername);
       Fluttertoast.showToast(
           msg: 'Recipe uploaded successfully 👍🍲',
           toastLength: Toast.LENGTH_LONG,
@@ -136,22 +139,22 @@ class _CreateRecipeState extends State<CreateRecipe> {
 
   ///Adding recipe details to user collection to display in profile section
   Future addRecipeDetails() async {
-    return usersRef
+    return _usersRef
         .doc(Provider.of<FirebaseOperations>(context, listen: false).getUserId)
         .collection('recipes')
-        .doc(postId)
+        .doc(_postId)
         .set({
-      'postId': postId,
-      'timestamp': timestamp,
+      'postId': _postId,
+      'timestamp': _timestamp,
     }).whenComplete(() async {
-      var doc = await usersRef
+      var doc = await _usersRef
           .doc(
               Provider.of<FirebaseOperations>(context, listen: false).getUserId)
           .collection('counts')
           .doc('recipeCount')
           .get();
       if (doc.exists) {
-        return usersRef
+        return _usersRef
             .doc(Provider.of<FirebaseOperations>(context, listen: false)
                 .getUserId)
             .collection('counts')
@@ -160,7 +163,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
           'count': FieldValue.increment(1),
         });
       } else {
-        return usersRef
+        return _usersRef
             .doc(Provider.of<FirebaseOperations>(context, listen: false)
                 .getUserId)
             .collection('counts')
@@ -174,10 +177,10 @@ class _CreateRecipeState extends State<CreateRecipe> {
 
   void _addRecipe(BuildContext context, FormValues values) async {
     setState(() {
-      isUploading = true;
+      _isUploading = true;
     });
     await compressImage();
-    String mediaUrl = await uploadImage(photoFile, reference);
+    String mediaUrl = await uploadImage(_photoFile, _reference);
     createRecipePost(
       cookingTime: values.cookingTime.toString(),
       servings: values.servings.toString(),
@@ -194,12 +197,12 @@ class _CreateRecipeState extends State<CreateRecipe> {
     final tempDir = await getTemporaryDirectory();
     final path = tempDir.path;
     image_plugin.Image? imageFile =
-        image_plugin.decodeImage(photoFile.readAsBytesSync());
-    final compressedImageFile = File('$path/img_$postId.jpg')
+        image_plugin.decodeImage(_photoFile.readAsBytesSync());
+    final compressedImageFile = File('$path/img_$_postId.jpg')
       ..writeAsBytesSync(image_plugin.encodeJpg(imageFile!, quality: 85));
 
     setState(() {
-      photoFile = compressedImageFile;
+      _photoFile = compressedImageFile;
     });
   }
 
@@ -234,7 +237,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
             minimum: const EdgeInsets.all(15.0),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                isUploading
+                _isUploading
                     ? const LinearProgressIndicator(
                         backgroundColor: Colors.cyanAccent,
                         valueColor:
@@ -258,7 +261,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
                         child: Container(
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: FileImage(photoFile),
+                              image: FileImage(_photoFile),
                               fit: BoxFit.cover,
                             ),
                           ),
