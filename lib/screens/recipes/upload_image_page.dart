@@ -16,11 +16,11 @@ class ImageUpload extends StatefulWidget {
 
 class _ImageUploadState extends State<ImageUpload> {
   late XFile file;
-  final ImagePicker picker = ImagePicker();
+  final ImagePicker _picker = ImagePicker();
 
-  handleTakePhoto() async {
+  _handleTakePhoto() async {
     Navigator.pop(context);
-     file = (await picker.pickImage(
+     file = (await _picker.pickImage(
       source: ImageSource.camera,
       maxHeight: 675.0,
       maxWidth: 960.0,
@@ -31,9 +31,9 @@ class _ImageUploadState extends State<ImageUpload> {
     photoCondition();
   }
 
-  handleChooseFromGallery() async {
+  _handleChooseFromGallery() async {
     Navigator.pop(context);
-    XFile? file = await picker.pickImage(
+    XFile? file = await _picker.pickImage(
       source: ImageSource.gallery,
     );
     setState(() {
@@ -58,7 +58,7 @@ class _ImageUploadState extends State<ImageUpload> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
-          backgroundColor: Colors.blue,
+          backgroundColor: kBlue,
           textColor: Colors.white,
           fontSize: 16.0);
       navigateToAddRecipeDetails();
@@ -95,7 +95,7 @@ class _ImageUploadState extends State<ImageUpload> {
                   fontSize: 16.0,
                 ),
               ),
-              onPressed: handleTakePhoto,
+              onPressed: _handleTakePhoto,
             ),
             Padding(
               padding: const EdgeInsets.only(
@@ -115,7 +115,7 @@ class _ImageUploadState extends State<ImageUpload> {
                   fontSize: 16.0,
                 ),
               ),
-              onPressed: handleChooseFromGallery,
+              onPressed: _handleChooseFromGallery,
             ),
             Padding(
               padding: const EdgeInsets.only(
