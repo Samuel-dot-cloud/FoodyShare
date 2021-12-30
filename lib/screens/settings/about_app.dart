@@ -189,8 +189,8 @@ class _AboutAppState extends State<AboutApp> {
                   showLicensePage(
                     context: context,
                     applicationName: Constants.appName,
-                    applicationVersion: '1.0.1+2',
-                    applicationLegalese: 'Copyright Samuel Wahome',
+                    applicationVersion: '1.0.2+4',
+                    // applicationLegalese: 'Copyright Samuel Wahome',
                     applicationIcon: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Image.asset(
