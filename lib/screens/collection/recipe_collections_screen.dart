@@ -10,7 +10,7 @@ class RecipeCollectionsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    CollectionReference collectionsRef =
+    CollectionReference _collectionsRef =
         FirebaseFirestore.instance.collection('collections');
 
     Center _defaultNoCollections() {
@@ -62,7 +62,7 @@ class RecipeCollectionsScreen extends StatelessWidget {
       body: SafeArea(
         child: Expanded(
           child: StreamBuilder<QuerySnapshot>(
-            stream: collectionsRef
+            stream: _collectionsRef
                 .orderBy('timestamp', descending: true)
                 .snapshots().asBroadcastStream(),
             builder: (context, snapshot) {

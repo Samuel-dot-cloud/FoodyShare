@@ -1,14 +1,13 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 
 class AnalyticsService with ChangeNotifier{
-  final FirebaseAnalytics _analytics = FirebaseAnalytics();
+  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
 
   FirebaseAnalyticsObserver getAnalyticsObserver() => FirebaseAnalyticsObserver(analytics: _analytics);
 
   Future setUserProperties({required String userID, required String userRole}) async {
-    await _analytics.setUserId(userID);
+    await _analytics.setUserId(id: userID);
     await _analytics.setUserProperty(name: 'user_role', value: userRole);
 
     /// property to indicate if it's a pro member
