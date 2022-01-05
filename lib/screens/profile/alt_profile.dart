@@ -50,6 +50,7 @@ class _AltProfileState extends State<AltProfile> {
 
   static const int _recipeGridLimit = 6;
   DocumentSnapshot? _lastDocument;
+
   // bool _hasMoreData = true;
 
   Stream<List<DocumentSnapshot>> listenToRecipeGridRealTime() {
@@ -123,7 +124,7 @@ class _AltProfileState extends State<AltProfile> {
           Provider.of<FirebaseOperations>(context, listen: false).getUserId,
         )
         .get();
-    if(mounted){
+    if (mounted) {
       setState(() {
         _isFollowing = doc.exists;
       });
@@ -133,7 +134,8 @@ class _AltProfileState extends State<AltProfile> {
   @override
   Widget build(BuildContext context) {
     Size _size = MediaQuery.of(context).size;
-    final _entitlement = Provider.of<RevenueCatProvider>(context, listen: true).entitlement;
+    final _entitlement =
+        Provider.of<RevenueCatProvider>(context, listen: true).entitlement;
     return Scaffold(
       body: SlidingUpPanel(
         borderRadius: const BorderRadius.only(
@@ -172,6 +174,24 @@ class _AltProfileState extends State<AltProfile> {
                     Icons.arrow_back_ios,
                     color: Colors.white,
                     size: 32.0,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 40.0,
+                right: 40.0,
+                child: Tooltip(
+                  message: 'Report this user',
+                  child: InkWell(
+                    onTap: () {
+                      Provider.of<ProfileHelper>(context, listen: false)
+                          .showReportDialog(context, widget.arguments.userUID);
+                    },
+                    child: const Icon(
+                      Icons.report_outlined,
+                      color: Colors.white,
+                      size: 32.0,
+                    ),
                   ),
                 ),
               ),
@@ -255,7 +275,9 @@ class _AltProfileState extends State<AltProfile> {
                                       height: 10.0,
                                     ),
                                     Visibility(
-                                      visible: _entitlement == Entitlement.free ? false : true,
+                                      visible: _entitlement == Entitlement.free
+                                          ? false
+                                          : true,
                                       child: OutlinedButton(
                                         onPressed: () {
                                           _getRecipeGrid();
@@ -273,7 +295,8 @@ class _AltProfileState extends State<AltProfile> {
                                             RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(30.0),
-                                              side: const BorderSide(color: kBlue),
+                                              side: const BorderSide(
+                                                  color: kBlue),
                                             ),
                                           ),
                                         ),
