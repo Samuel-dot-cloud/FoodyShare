@@ -3,8 +3,9 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_share/services/firebase_operations.dart';
-import 'package:food_share/utils/pallete.dart';
 import 'package:provider/provider.dart';
+
+import '../utils/palette.dart';
 
 class BottomNavHelper with ChangeNotifier {
   Widget bottomNavigationBar(

@@ -60,38 +60,36 @@ class RecipeCollectionsScreen extends StatelessWidget {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Expanded(
-          child: StreamBuilder<QuerySnapshot>(
-            stream: _collectionsRef
-                .orderBy('timestamp', descending: true)
-                .snapshots().asBroadcastStream(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return const Text('Error');
-              }
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return loadingAnimation('Loading collections...');
-              }
-              if (snapshot.hasData) {
-                return ListView.builder(
-                    physics: const ScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: snapshot.data!.docs.length,
-                    itemBuilder: (BuildContext context, int index) => Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12.0,
-                            vertical: 12.0,
-                          ),
-                          child: RecipeCollectionCard(
-                            collectionDoc: snapshot.data!.docs[index],
-                          ),
-                        ));
-              } else {
-                _defaultNoCollections();
-              }
-              return const Text('Loading ...');
-            },
-          ),
+        child: StreamBuilder<QuerySnapshot>(
+          stream: _collectionsRef
+              .orderBy('timestamp', descending: true)
+              .snapshots().asBroadcastStream(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Text('Error');
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return loadingAnimation('Loading collections...');
+            }
+            if (snapshot.hasData) {
+              return ListView.builder(
+                  physics: const ScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (BuildContext context, int index) => Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12.0,
+                          vertical: 12.0,
+                        ),
+                        child: RecipeCollectionCard(
+                          collectionDoc: snapshot.data!.docs[index],
+                        ),
+                      ));
+            } else {
+              _defaultNoCollections();
+            }
+            return const Text('Loading ...');
+          },
         ),
       ),
     );

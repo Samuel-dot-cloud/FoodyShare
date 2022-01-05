@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:food_share/models/user_model.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/helpers/profile_helper.dart';
-import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/palette.dart';
 import 'package:food_share/utils/loading_animation.dart';
 import 'package:provider/provider.dart';
 
