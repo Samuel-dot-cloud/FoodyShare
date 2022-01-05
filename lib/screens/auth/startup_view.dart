@@ -5,7 +5,7 @@ import 'package:food_share/config/size_config.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/constants.dart';
-import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/palette.dart';
 import 'package:food_share/utils/purchase_api.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';

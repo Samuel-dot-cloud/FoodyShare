@@ -8,7 +8,7 @@ import 'package:food_share/routes/alt_profile_arguments.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/helpers/profile_helper.dart';
 import 'package:food_share/services/revenuecat_provider.dart';
-import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/palette.dart';
 import 'package:food_share/widgets/profile/profile_post_image.dart';
 import 'package:food_share/widgets/refresh_widget.dart';
 import 'package:provider/provider.dart';

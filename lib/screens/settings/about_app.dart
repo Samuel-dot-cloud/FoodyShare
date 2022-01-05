@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_share/utils/constants.dart';
-import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/palette.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutApp extends StatefulWidget {

@@ -8,6 +8,8 @@ import 'package:food_share/routes/recipe_hashtags_arguments.dart';
 import 'package:food_share/services/analytics_service.dart';
 import 'package:provider/provider.dart';
 
+import '../../utils/palette.dart';
+
 class RecipeCollectionCard extends StatelessWidget {
   const RecipeCollectionCard({
     Key? key,
@@ -29,104 +31,106 @@ class RecipeCollectionCard extends StatelessWidget {
             collectionDocId: collectionDoc['collection_id']);
         Navigator.pushNamed(context, AppRoutes.hashtags, arguments: args);
       },
-      child: AspectRatio(
-        aspectRatio: 1.65,
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: _size * 1.0,
-            vertical: _size * 1.0,
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              color: _colorFromHex(collectionDoc['color']),
-              borderRadius: BorderRadius.circular(_size * 1.8),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.all(_size * 0.5),
-                    child: Column(
-                      children: [
-                        const Spacer(),
-                        Text(
-                          collectionDoc['name'],
-                          style: TextStyle(
-                            fontSize: _size * 2.2,
-                            color: Colors.white,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        SizedBox(
-                          height: _size * 0.1,
-                        ),
-                        Text(
-                          collectionDoc['description'],
-                          style: TextStyle(
-                            color: Colors.white54,
-                            fontSize: _size * 1.5,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const Spacer(),
-                        // _buildInfoRow(size,
-                        //     data: Icons.person,
-                        //     text: collectionDoc['author_no'].toString() +
-                        //         ' authors'),
-                        // SizedBox(
-                        //   height: size * 0.1,
-                        // ),
-                        _buildInfoRow(_size,
-                            data: FontAwesomeIcons.utensils,
-                            text: collectionDoc['recipe_no'].toString() +
-                                ' recipes'),
-                        SizedBox(
-                          height: _size * 0.1,
-                        ),
-                        _buildInfoRow(_size,
-                            data: Icons.grid_3x3_outlined,
-                            text: collectionDoc['hashtag_no'].toString() +
-                                ' hashtags'),
-                        const Spacer(),
+      child: SizedBox(
+        height: _size * 16.0,
+        child: Stack(
+          children: [
+            Positioned(
+                top: _size * 3.5,
+                left: _size * 2.0,
+                child: Material(
+                  child: Container(
+                    height: _size * 18.0,
+                    width: _size * 10.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(0.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.3),
+                          offset: const Offset(-10.0, 10.0),
+                          blurRadius: 20.0,
+                          spreadRadius: 4.0,
+                        )
                       ],
                     ),
                   ),
-                ),
-                SizedBox(
-                  width: _size * 0.5,
-                ),
-                AspectRatio(
-                  aspectRatio: 0.71,
-                  child: CachedNetworkImage(
-                    fit: BoxFit.cover,
-                    alignment: Alignment.centerLeft,
-                    imageUrl: collectionDoc['imageUrl'],
-                    progressIndicatorBuilder:
-                        (context, url, downloadProgress) =>
-                            CircularProgressIndicator(
-                      value: downloadProgress.progress,
-                      backgroundColor: Colors.cyanAccent,
-                      valueColor:
-                          const AlwaysStoppedAnimation<Color>(Colors.yellow),
-                    ),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
+                )),
+            Positioned(
+                top: 0.0,
+                left: 20.0,
+                child: Card(
+                  elevation: 10.0,
+                  shadowColor: Colors.grey.withOpacity(0.5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
                   ),
-                ),
-              ],
-            ),
-          ),
+                  child: Container(
+                    height: _size * 11.0,
+                    width: _size * 10.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image: CachedNetworkImageProvider(
+                            collectionDoc['imageUrl']),
+                      ),
+                    ),
+                  ),
+                )),
+            Positioned(
+                top: _size * 3.5,
+                left: _size * 14.0,
+                child: SizedBox(
+                  height: _size * 15.0,
+                  width: _size * 17.0,
+                  child: Column(
+                    children: [
+                      Text(
+                        collectionDoc['name'],
+                        style: TextStyle(
+                          fontSize: _size * 1.8,
+                          color: kBlue,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        collectionDoc['description'],
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: _size * 1.4,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const Divider(
+                        color: Colors.black,
+                      ),
+                      _buildInfoRow(_size,
+                          data: FontAwesomeIcons.utensils,
+                          text: collectionDoc['recipe_no'].toString() +
+                              ' recipes'),
+                      SizedBox(
+                        height: _size * 0.1,
+                      ),
+                      _buildInfoRow(_size,
+                          data: Icons.grid_3x3_outlined,
+                          text: collectionDoc['hashtag_no'].toString() +
+                              ' hashtags'),
+                    ],
+                  ),
+                )),
+          ],
         ),
       ),
     );
   }
 
-  Color _colorFromHex(String hexColor) {
-    final hexCode = hexColor.replaceAll('#', '');
-    return Color(int.parse('FF$hexCode', radix: 16));
-  }
+  // Color _colorFromHex(String hexColor) {
+  //   final hexCode = hexColor.replaceAll('#', '');
+  //   return Color(int.parse('FF$hexCode', radix: 16));
+  // }
 
   Row _buildInfoRow(double size,
       {required IconData data, required String text}) {
@@ -134,7 +138,6 @@ class RecipeCollectionCard extends StatelessWidget {
       children: [
         Icon(
           data,
-          color: Colors.white,
         ),
         SizedBox(
           width: size,
@@ -142,7 +145,6 @@ class RecipeCollectionCard extends StatelessWidget {
         Text(
           text,
           style: TextStyle(
-            color: Colors.white,
             fontSize: size * 1.1,
           ),
         ),

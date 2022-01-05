@@ -6,7 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/helpers/activity_feed_helper.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/utils/loading_animation.dart';
-import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/palette.dart';
 import 'package:provider/provider.dart';
 
 import '../refresh_widget.dart';

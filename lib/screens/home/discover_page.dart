@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/models/entitlement.dart';
 import 'package:food_share/services/revenuecat_provider.dart';
-import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/palette.dart';
 import 'package:food_share/widgets/recipe/recipe_card.dart';
 import 'package:food_share/widgets/refresh_widget.dart';
 import 'package:provider/provider.dart';

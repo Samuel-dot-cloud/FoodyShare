@@ -7,7 +7,7 @@ import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/recipe_details_arguments.dart';
 import 'package:food_share/services/analytics_service.dart';
 import 'package:food_share/services/firebase_operations.dart';
-import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/palette.dart';
 import 'package:food_share/widgets/recipe/like_button.dart';
 import 'package:provider/provider.dart';
 

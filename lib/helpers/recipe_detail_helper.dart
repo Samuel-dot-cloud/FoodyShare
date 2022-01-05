@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/palette.dart';
 import 'package:food_share/widgets/recipe/create_list_form.dart';
 import 'package:food_share/widgets/recipe/lists_selection_view.dart';
 import 'package:food_share/widgets/report_form.dart';
