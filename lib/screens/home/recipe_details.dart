@@ -400,13 +400,9 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                     ? _buildOptionListTile(
                         () {
                           Provider.of<RecipeDetailHelper>(context,
-                              listen: false).launchEmail(
-                              email: 'appfoodyshare@gmail.com',
-                              subject:
-                                  'Report recipe ID ' + widget.arguments.postID,
-                              message: '{ Report here }');
+                              listen: false).showReportDialog(context, widget.arguments.postID);
                         },
-                        Icons.info_outline_rounded,
+                        Icons.report_outlined,
                         'Report this recipe',
                       )
                     : const SizedBox(

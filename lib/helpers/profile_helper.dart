@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:food_share/helpers/recipe_detail_helper.dart';
 import 'package:food_share/utils/number_formatter.dart';
 import 'package:food_share/utils/pallete.dart';
 import 'package:food_share/utils/profile_util.dart';
@@ -515,6 +516,49 @@ class ProfileHelper with ChangeNotifier {
         ],
       ),
     );
+  }
+
+  Future<void> showReportDialog(BuildContext context, String userUID) async {
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0)),
+            elevation: 15.0,
+            child: SizedBox(
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  const SizedBox(
+                    height: 20.0,
+                  ),
+                  const Center(
+                    child: Text(
+                      'What would you like to report?',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Divider(
+                      thickness: 0.3,
+                      height: 0.5,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                  Provider.of<RecipeDetailHelper>(context, listen: false).buildRow(context, Icons.photo_camera_outlined, 'Profile picture', 'user', userUID),
+                  Provider.of<RecipeDetailHelper>(context, listen: false).buildRow(context, Icons.ballot_outlined, 'Nickname', 'user', userUID),
+                  Provider.of<RecipeDetailHelper>(context, listen: false).buildRow(context, Icons.comment_outlined, 'Rudeness', 'user', userUID),
+                  Provider.of<RecipeDetailHelper>(context, listen: false).buildRow(context, Icons.more_outlined, 'Other problem', 'user', userUID),
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   Center _defaultNoAssociation() {

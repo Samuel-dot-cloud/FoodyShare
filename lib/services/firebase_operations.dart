@@ -13,6 +13,7 @@ class FirebaseOperations with ChangeNotifier {
   final _usersRef = FirebaseFirestore.instance.collection('users');
   final _recipesRef = FirebaseFirestore.instance.collection('recipes');
   final _commentsRef = FirebaseFirestore.instance.collection('comments');
+  final _reportsRef = FirebaseFirestore.instance.collection('reports');
   final _hashtagsRef = FirebaseFirestore.instance.collection('hashtags');
   final _collectionsRef = FirebaseFirestore.instance.collection('collections');
   final firebase_storage.Reference _reference =
@@ -91,8 +92,7 @@ class FirebaseOperations with ChangeNotifier {
       'photoUrl': url,
     }).whenComplete(() {
       Fluttertoast.showToast(
-          msg:
-              'Image updated successfully. \nYou may need to restart the application to notice the changes made.',
+          msg: 'Image updated successfully.',
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
@@ -425,6 +425,25 @@ class FirebaseOperations with ChangeNotifier {
         });
       });
       notifyListeners();
+    });
+  }
+
+  Future submitReport(
+      String category, String reportID, dynamic reportData) async {
+    await _reportsRef
+        .doc(category)
+        .collection('complaints')
+        .doc(reportID)
+        .set(reportData)
+        .whenComplete(() {
+      Fluttertoast.showToast(
+          msg: 'Report submitted successfully',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: kBlue,
+          textColor: Colors.white,
+          fontSize: 16.0);
     });
   }
 }

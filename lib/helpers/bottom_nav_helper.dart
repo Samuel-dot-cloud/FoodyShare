@@ -42,7 +42,6 @@ class BottomNavHelper with ChangeNotifier {
         ),
         CircleAvatar(
           radius: 16.5,
-          backgroundColor: kBlue,
           backgroundImage: CachedNetworkImageProvider(
               Provider.of<FirebaseOperations>(context, listen: true)
                   .getUserImage),
