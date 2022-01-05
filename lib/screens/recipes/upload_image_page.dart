@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_share/screens/recipes/create_recipe.dart';
-import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/palette.dart';
 import 'package:food_share/widgets/rounded_button.dart';
 import 'package:lottie/lottie.dart';
 import 'package:image_picker/image_picker.dart';

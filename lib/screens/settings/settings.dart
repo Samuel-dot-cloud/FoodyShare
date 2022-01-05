@@ -7,7 +7,7 @@ import 'package:food_share/services/auth_service.dart';
 import 'package:food_share/services/firebase_operations.dart';
 import 'package:food_share/services/revenuecat_provider.dart';
 import 'package:food_share/utils/constants.dart';
-import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/palette.dart';
 import 'package:food_share/utils/purchase_api.dart';
 import 'package:food_share/widgets/profile/settings_menu.dart';
 import 'package:food_share/widgets/settings/paywall_widget.dart';

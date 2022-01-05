@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_share/helpers/recipe_detail_helper.dart';
 import 'package:food_share/utils/number_formatter.dart';
-import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/palette.dart';
 import 'package:food_share/utils/profile_util.dart';
 import 'package:food_share/widgets/profile/user_tile.dart';
 import 'package:google_fonts/google_fonts.dart';

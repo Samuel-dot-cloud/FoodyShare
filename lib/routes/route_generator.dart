@@ -19,7 +19,7 @@ import 'package:food_share/screens/home/recipe_details.dart';
 import 'package:food_share/screens/settings/about_app.dart';
 import 'package:food_share/screens/settings/edit_profile.dart';
 import 'package:food_share/screens/settings/settings.dart';
-import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/palette.dart';
 import 'package:food_share/viewmodel/bottom_nav.dart';
 import 'package:lottie/lottie.dart';
 

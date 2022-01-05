@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/palette.dart';
 import 'package:food_share/widgets/activity_feed/follow_feed_section.dart';
 import 'package:food_share/widgets/activity_feed/like_and_comment_feed_section.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';

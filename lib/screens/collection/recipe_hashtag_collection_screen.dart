@@ -7,7 +7,7 @@ import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/curate_hashtag_arguments.dart';
 import 'package:food_share/routes/recipe_hashtags_arguments.dart';
 import 'package:food_share/utils/loading_animation.dart';
-import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/palette.dart';
 import 'package:food_share/widgets/collections/recipe_hashtag_card.dart';
 import 'package:food_share/widgets/refresh_widget.dart';
 

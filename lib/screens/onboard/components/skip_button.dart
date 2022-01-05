@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_share/config/size_config.dart';
 import 'package:food_share/models/onboarding_model.dart';
-import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/palette.dart';
 
 class SkipButton extends StatelessWidget {
   const SkipButton({

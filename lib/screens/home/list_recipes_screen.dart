@@ -8,7 +8,7 @@ import 'package:food_share/helpers/list_recipes_helper.dart';
 import 'package:food_share/routes/app_routes.dart';
 import 'package:food_share/routes/list_recipes_arguments.dart';
 import 'package:food_share/services/firebase_operations.dart';
-import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/palette.dart';
 import 'package:food_share/widgets/home/favorite_post_image.dart';
 import 'package:food_share/widgets/home/list_flexible_appbar.dart';
 import 'package:food_share/widgets/refresh_widget.dart';

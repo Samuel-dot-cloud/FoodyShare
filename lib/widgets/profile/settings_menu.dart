@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food_share/utils/pallete.dart';
+import 'package:food_share/utils/palette.dart';
 
 class SettingsMenu extends StatelessWidget {
   const SettingsMenu({
